@@ -13,4 +13,9 @@ $body-font-family: 'Noto Sans TC';
         // To pin point specific classes of some components
         font-family: $body-font-family !important;
     }
+    
+    * {
+        font-family: $body-font-family, sans-serif !important;
+    }
 }
+

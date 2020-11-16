@@ -1,0 +1,85 @@
+<template lang="pug">
+v-card(tile, height="100%")
+    v-toolbar(dark, color="primary")
+        v-toolbar-title 個人
+
+    v-list(two-line)
+        v-list-item
+            v-list-item-avatar
+                //- v-img(:src="avatar")
+                v-icon(large) mdi-account-outline
+
+            v-list-item-content
+                v-list-item-title.headline {{ name }}
+                v-list-item-subtitle 編輯資料
+                    v-icon mdi-chevron-right
+
+    v-divider
+
+    v-list(subheader)
+        //- v-subheader(inset) 控制
+
+        v-list-item(@click="")
+            v-list-item-icon
+                v-icon mdi-swap-horizontal
+            v-list-item-content
+                v-list-item-title 切換模式
+
+        v-list-item(@click="")
+            v-list-item-icon
+                v-icon mdi-text-box-outline
+            v-list-item-content
+                v-list-item-title 履歷範本
+            v-list-item-icon
+                v-icon mdi-chevron-right
+
+        v-list-item(@click="")
+            v-list-item-icon
+                v-icon mdi-account-cancel-outline
+            v-list-item-content
+                v-list-item-title 黑名單
+            v-list-item-icon
+                v-icon mdi-chevron-right
+
+    v-divider
+
+    v-list(subheader)
+        //- v-subheader(inset) 控制
+        v-list-item(@click="showRegister = true")
+            v-list-item-icon
+                v-icon mdi-account-plus-outline
+            v-list-item-content
+                v-list-item-title 註冊
+            RegisterDialog(v-model="showRegister")
+
+        v-list-item(@click="showLogin = true")
+            v-list-item-icon
+                v-icon mdi-login-variant
+            v-list-item-content
+                v-list-item-title 登入
+            LoginDialog(v-model="showLogin")
+
+        v-list-item
+            v-list-item-icon
+                v-icon mdi-logout-variant
+            v-list-item-content
+                v-list-item-title 登出
+</template>
+
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator'
+import LoginDialog from '@/client/components/LoginDialog.vue'
+import RegisterDialog from '@/client/components/RegisterDialog.vue'
+
+@Component({ components: { LoginDialog, RegisterDialog } })
+export default class extends Vue {
+    name = '何文子'
+    avatar = 'https://www.flaticon.com/svg/static/icons/svg/147/147144.svg'
+
+    showLogin = false
+    showRegister = false
+}
+</script>
+
+<style lang="scss" scoped>
+</style>
