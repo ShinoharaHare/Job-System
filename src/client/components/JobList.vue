@@ -1,7 +1,7 @@
 <template lang="pug">
 v-list(three-line, :height="height")
     span(:key="i", v-for="({ title, location, tags }, i) in items")
-        v-list-item
+        v-list-item(@click="showJob")
             //- v-list-item-avatar
             v-list-item-avatar
                 v-icon mdi-briefcase-variant
@@ -32,6 +32,10 @@ export default class extends Vue {
 
     @Prop()
     height = 'auto'
+
+    showJob () {
+        this.$router.push('/job')
+    }
 
     get count () {
         return this.items.length

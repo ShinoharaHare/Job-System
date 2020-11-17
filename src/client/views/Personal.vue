@@ -25,21 +25,23 @@ v-card(tile, height="100%")
             v-list-item-content
                 v-list-item-title 切換模式
 
-        v-list-item(@click="")
+        v-list-item(@click="showResumeTemplate = true")
             v-list-item-icon
                 v-icon mdi-text-box-outline
             v-list-item-content
                 v-list-item-title 履歷範本
             v-list-item-icon
                 v-icon mdi-chevron-right
+            ResumeTemplatesDialog(v-model="showResumeTemplate")
 
-        v-list-item(@click="")
+        v-list-item(@click="showBlacklist = true")
             v-list-item-icon
                 v-icon mdi-account-cancel-outline
             v-list-item-content
                 v-list-item-title 黑名單
             v-list-item-icon
                 v-icon mdi-chevron-right
+            BlacklistDialog(v-model="showBlacklist")
 
     v-divider
 
@@ -70,14 +72,18 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import LoginDialog from '@/client/components/LoginDialog.vue'
 import RegisterDialog from '@/client/components/RegisterDialog.vue'
+import BlacklistDialog from '@/client/components/BlacklistDialog.vue'
+import ResumeTemplatesDialog from '@/client/components/ResumeTemplatesDialog.vue'
 
-@Component({ components: { LoginDialog, RegisterDialog } })
+@Component({ components: { LoginDialog, RegisterDialog, BlacklistDialog, ResumeTemplatesDialog } })
 export default class extends Vue {
     name = '何文子'
     avatar = 'https://www.flaticon.com/svg/static/icons/svg/147/147144.svg'
 
     showLogin = false
     showRegister = false
+    showBlacklist = false
+    showResumeTemplate = false
 }
 </script>
 

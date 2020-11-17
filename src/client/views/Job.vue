@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
-        v-btn(icon, @click="")
+        v-btn(icon, @click="back")
             v-icon mdi-arrow-left
 
         v-toolbarti-title 工作說明
@@ -76,6 +76,10 @@ export default class extends Vue {
     time = '一直抓'
     number = 1
     contact = '09xxxxxxxx'
+
+    back () {
+        this.$router.back()
+    }
 }
 </script>
 

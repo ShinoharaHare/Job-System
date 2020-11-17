@@ -27,7 +27,17 @@ export default class extends Vue {
             icon: 'mdi-home'
         },
         {
-            path: '/favorites',
+            path: '/published',
+            text: '刊登管理',
+            icon: 'mdi-briefcase'
+        },
+        {
+            path: '/applied',
+            text: '應徵管理',
+            icon: 'mdi-file-document'
+        },
+        {
+            path: '/favorite',
             text: '收藏',
             icon: 'mdi-heart'
         },

@@ -11,10 +11,10 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Home.vue')
     },
     {
-        path: '/favorites',
-        name: 'Favorites',
+        path: '/favorite',
+        name: 'Favorite',
         meta: { title: '收藏 | Job System' },
-        component: () => import('@/client/views/Favorites.vue')
+        component: () => import('@/client/views/Favorite.vue')
     },
     {
         path: '/notification',
@@ -32,6 +32,21 @@ const routes: Array<RouteConfig> = [
         path: '/job',
         name: 'Job',
         component: () => import('@/client/views/Job.vue')
+    },
+    {
+        path: '/published',
+        name: 'Published',
+        component: () => import('@/client/views/Published.vue')
+    },
+    {
+        path: '/applied',
+        name: 'Applied',
+        component: () => import('@/client/views/Applied.vue')
+    },
+    {
+        path: '/statistics',
+        name: 'Statistics',
+        component: () => import('@/client/views/Statistics.vue')
     }
 ]
 

@@ -18,7 +18,8 @@ module.exports = {
         semi: 'off',
         quotes: ['error', 'single'],
         '@typescript-eslint/no-explicit-any': 'off',
-        'no-undef': 'off'
+        'no-undef': 'off',
+        '@typescript-eslint/no-empty-function': 'off'
     },
     overrides: [
         {
