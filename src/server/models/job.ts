@@ -1,16 +1,25 @@
-import { createSchema, Type, typedModel, ExtractDoc } from 'ts-mongoose'
+import { SAccount } from './account'
 
-const SJob = createSchema({
-    title: Type.string({ require: true}),
-    content: Type.string({ default: ''}),
-    vacanies: Type.number({ require: true}),
-    time: Type.array({ require: true}).of(Type.object().of({
-        startTime: Type.string(),
-        endTime: Type.string()
-    })),
-    tags: Type.string({ require: true}),
-    publisher: Type.string({ require: true})
+import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mongoose'
+
+const Time = createSchema({
+    startTime: Type.string({ required: true }),
+    endTime: Type.string({ required: true })
 })
 
-export type IJob = ExtractDoc<typeof SJob>
+export const SJob = createSchema({
+    title: Type.string({ required: true }),
+    content: Type.string({ default: '' }),
+    vacanies: Type.number({ required: true }),
+    time: Type.array({ required: true }).of(Time),
+    tags: Type.string({ required: true }),
+    publisher: Type.objectId({ required: true })
+})
+
+SJob.add({
+    publisher: Type.ref(Type.objectId({ required: true })).to('Account', SAccount)
+})
+
+export type DJob = ExtractDoc<typeof SJob>
+export type IJob = ExtractProps<typeof SJob>
 export const Job = typedModel('Job', SJob)

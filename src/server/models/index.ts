@@ -9,3 +9,8 @@ connect(config.MONGODB_URI, {
     useUnifiedTopology: true,
     useFindAndModify: false
 })
+
+export { Account, IAccount, DAccount } from './account'
+export { Applyment, IApplyment, DApplyment } from './applyment'
+export { Job, IJob, DJob } from './job'
+export { Tag, ITag, DTag } from './tag'

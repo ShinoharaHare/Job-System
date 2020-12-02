@@ -1,27 +1,39 @@
-import { createSchema, Type, typedModel, ExtractDoc } from 'ts-mongoose'
+import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mongoose'
+import { SJob } from './job'
 
-const SAccount = createSchema({
-    email: Type.string({ require: true, unique: true}),
-    password: Type.string({ require: true}),
-    ntouStudentID: Type.string({ default: ''}),
-    ntouPassword: Type.string({ default: ''}),
-    syllabus: Type.array().of(Type.object().of({
-        courseName: Type.string(),
-        startTime: Type.string(),
-        endTime: Type.string()
-    })),
-    blacklist: Type.array().of(Type.objectId()),
-    resumeTemplates: Type.object().of({
-        name: Type.string(),
-        content: Type.string()
-    }),
-    notification: Type.object().of({
-        name: Type.string(),
-        content: Type.string(),
-        isRead: Type.boolean()
-    }),
-    favorite: Type.objectId()
+const Syllabus = createSchema({
+    courseName: Type.string({ required: true }),
+    startTime: Type.string({ required: true }),
+    endTime: Type.string({ required: true })
 })
 
-export type IAccount = ExtractDoc<typeof SAccount>
+const ResumeTemplate = createSchema({
+    name: Type.string({ required: true }),
+    content: Type.string({ required: true })
+})
+
+const Notification = createSchema({
+    name: Type.string({ required: true }),
+    content: Type.string({ required: true }),
+    isRead: Type.boolean({ default: false })
+})
+
+export const SAccount = createSchema({
+    email: Type.string({ required: true, unique: true }),
+    hash: Type.string({ required: true }),
+    ntouStudentID: Type.string({ default: '' }),
+    ntouPassword: Type.string({ default: '' }),
+    syllabus: Type.array().of(Syllabus),
+    blacklist: Type.array({ default: [] }).of(Type.objectId()),
+    resumeTemplates: Type.array({ default: [] }).of(ResumeTemplate),
+    notification: Type.array({ default: [] }).of(Notification),
+    favorite: Type.array({ default: [] }).of(Type.ref(Type.objectId()).to('Job', SJob))
+})
+
+SAccount.add({
+    blacklist: Type.array({ default: [] }).of(Type.ref(Type.objectId()).to('Account', SAccount))
+})
+
+export type DAccount = ExtractDoc<typeof SAccount>
+export type IAccount = ExtractProps<typeof SAccount>
 export const Account = typedModel('Account', SAccount)
