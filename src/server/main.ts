@@ -2,7 +2,7 @@ import config from './config'
 import api from './routes/api'
 
 import express from 'express'
-import session from 'express-session'
+import cookieParser from 'cookie-parser'
 import history from 'connect-history-api-fallback'
 
 import * as path from 'path'
@@ -11,13 +11,7 @@ const app = express()
 
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
-app.use(
-    session({
-        secret: config.SESSION_SECRET,
-        resave: false,
-        saveUninitialized: true
-    })
-)
+app.use(cookieParser())
 
 app.use('/api', api)
 

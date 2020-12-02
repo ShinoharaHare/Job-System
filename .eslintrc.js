@@ -19,7 +19,9 @@ module.exports = {
         quotes: ['error', 'single'],
         '@typescript-eslint/no-explicit-any': 'off',
         'no-undef': 'off',
-        '@typescript-eslint/no-empty-function': 'off'
+        '@typescript-eslint/no-empty-function': 'warn',
+        '@typescript-eslint/interface-name-prefix': 'off',
+        '@typescript-eslint/no-unused-vars': 'warn'
     },
     overrides: [
         {
