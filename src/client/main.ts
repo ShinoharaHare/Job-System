@@ -7,6 +7,8 @@ import vuetify from './plugins/vuetify'
 import './plugins'
 import './registerServiceWorker'
 
+import './scss/main.scss'
+
 Vue.config.productionTip = false
 
 new Vue({

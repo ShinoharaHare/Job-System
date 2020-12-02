@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans+TC&display=swap');
+@import '~vuetify/src/styles/settings/variables';
+
+$body-font-family: 'Noto Sans TC';
+
+.v-application {
+    font-family: $body-font-family, sans-serif !important;
+    
+    .headline,
+    title,
+    subheading,
+    [class*="text-"] {
+        // To pin point specific classes of some components
+        font-family: $body-font-family !important;
+    }
+    
+    * {
+        font-family: $body-font-family, sans-serif !important;
+    }
+}
+

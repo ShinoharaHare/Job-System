@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve:client": "vue-cli-service serve",
-    "serve:server": "nodemon --delay 2 -e ts,tsx --exec ts-node src/server/main.ts",
+    "serve:server": "nodemon --watch src/server --delay 1 -e ts,tsx --exec \"ts-node --files -r tsconfig-paths/register src/server/main.ts\"",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "lint": "vue-cli-service lint"
@@ -15,6 +15,7 @@
     "core-js": "^3.6.5",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "mongoose": "^5.10.11",
     "register-service-worker": "^1.7.1",
     "ts-mongoose": "0.0.21",
     "vue": "^2.6.11",
@@ -29,6 +30,7 @@
     "@types/express": "^4.17.8",
     "@types/express-session": "^1.17.0",
     "@types/jest": "^24.0.19",
+    "@types/mongoose": "^5.7.36",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -54,12 +56,13 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "ts-node": "^9.0.0",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "~3.9.3",
     "vue-cli-plugin-pug": "^1.0.7",
     "vue-cli-plugin-vuetify": "~2.0.7",
     "vue-property-decorator": "^8.5.1",
     "vue-template-compiler": "^2.6.11",
-    "vuetify-loader": "^1.3.0",
+    "vuetify-loader": "^1.6.0",
     "vuex-module-decorators": "^1.0.1"
   },
   "gitHooks": {
