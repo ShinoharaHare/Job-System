@@ -4,7 +4,7 @@ import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mon
 
 export const STag = createSchema({
     name: Type.string({ required: true, unique: true }),
-    jobs: Type.array({ default: [] }).of(Type.ref(Type.objectId()).to('Job', SJob))
+    jobs: Type.array().of(Type.ref(Type.objectId()).to('Job', SJob))
 })
 
 export type DTag = ExtractDoc<typeof STag>

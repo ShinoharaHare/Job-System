@@ -12,7 +12,7 @@ export const SJob = createSchema({
     content: Type.string({ default: '' }),
     vacanies: Type.number({ required: true }),
     time: Type.array({ required: true }).of(Time),
-    tags: Type.string({ required: true }),
+    tags: Type.array({ required: true }).of(Type.string()),
     publisher: Type.objectId({ required: true })
 })
 

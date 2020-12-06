@@ -24,14 +24,14 @@ export const SAccount = createSchema({
     ntouStudentID: Type.string({ default: '' }),
     ntouPassword: Type.string({ default: '' }),
     syllabus: Type.array().of(Syllabus),
-    blacklist: Type.array({ default: [] }).of(Type.objectId()),
-    resumeTemplates: Type.array({ default: [] }).of(ResumeTemplate),
-    notification: Type.array({ default: [] }).of(Notification),
-    favorite: Type.array({ default: [] }).of(Type.ref(Type.objectId()).to('Job', SJob))
+    blacklist: Type.array().of(Type.objectId()),
+    resumeTemplates: Type.array().of(ResumeTemplate),
+    notification: Type.array().of(Notification),
+    favorite: Type.array().of(Type.ref(Type.objectId()).to('Job', SJob))
 })
 
 SAccount.add({
-    blacklist: Type.array({ default: [] }).of(Type.ref(Type.objectId()).to('Account', SAccount))
+    blacklist: Type.array().of(Type.ref(Type.objectId()).to('Account', SAccount))
 })
 
 export type DAccount = ExtractDoc<typeof SAccount>
