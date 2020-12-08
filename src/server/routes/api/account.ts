@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken'
 const router = Router()
 
 // 註冊
-router.post('/', required(['email', 'hash']), async (req, res) => {
+router.post('/', required('email', 'hash'), async(req, res) => {
     try {
         console.log(req.body)
         const account = await Account.create({
@@ -26,7 +26,7 @@ router.post('/', required(['email', 'hash']), async (req, res) => {
 })
 
 // 登入
-router.post('/login', required(['email', 'hash']), async (req, res) => {
+router.post('/login', required('email', 'hash'), async(req, res) => {
     const account = await Account.findOne({
         email: req.body.email,
         hash: req.body.hash
@@ -43,7 +43,7 @@ router.post('/login', required(['email', 'hash']), async (req, res) => {
     }
 })
 
-router.post('/link', auth, async (req, res) => {
+router.post('/link', auth, async(req, res) => {
     res.json()
 })
 

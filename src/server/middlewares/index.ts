@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken'
 
 type Middleware = (req: Request, res: Response, next: NextFunction) => void
 
-export const auth: Middleware = async (req, res, next) => {
+export const auth: Middleware = async(req, res, next) => {
     try {
         const decoded: any = jwt.verify(req.cookies.token, config.JWT_SECRET)
         req.account = await Account.findById(decoded.id)
@@ -20,7 +20,7 @@ export const auth: Middleware = async (req, res, next) => {
     }
 }
 
-export const required: (fields: string[]) => Middleware = fields => {
+export const required: (...fields: string[]) => Middleware = (...fields) => {
     return (req, res, next) => {
         let params: any
         switch (req.method) {
