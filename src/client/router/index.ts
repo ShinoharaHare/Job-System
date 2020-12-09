@@ -47,6 +47,11 @@ const routes: Array<RouteConfig> = [
         path: '/statistics',
         name: 'Statistics',
         component: () => import('@/client/views/Statistics.vue')
+    },
+    {
+        path: '/link-ntou',
+        name: 'LinkNTOU',
+        component: () => import('@/client/views/LinkNTOU.vue')
     }
 ]
 

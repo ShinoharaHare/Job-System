@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
-        v-btn(icon, @click="back")
+        v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
 
         v-toolbarti-title 工作說明
@@ -77,7 +77,7 @@ export default class extends Vue {
     number = 1
     contact = '09xxxxxxxx'
 
-    back () {
+    back() {
         this.$router.back()
     }
 }

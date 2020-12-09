@@ -4,6 +4,7 @@ import { Account } from '@/server/models'
 
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
+import { login } from '@/server/ntou-as'
 
 const router = Router()
 
@@ -43,8 +44,22 @@ router.post('/login', required('email', 'hash'), async(req, res) => {
     }
 })
 
-router.post('/link', auth, async(req, res) => {
-    res.json()
+router.post('/link-ntou', required('ntouID', 'ntouPW'), async(req, res) => {
+    try {
+        const account = await login(req.body.ntouID, req.body.ntouPW)
+        const personal = await account.personal.read()
+        const course = await account.course.listCurrent()
+
+        res.status(200).json({
+            state: 0,
+            personal,
+            course
+        })
+    } catch (error) {
+        res.status(200).json({
+            state: -1
+        })
+    }
 })
 
 export default router
