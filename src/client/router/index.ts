@@ -52,6 +52,16 @@ const routes: Array<RouteConfig> = [
         path: '/link-ntou',
         name: 'LinkNTOU',
         component: () => import('@/client/views/LinkNTOU.vue')
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: () => import('@/client/views/Login.vue')
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/client/views/Register.vue')
     }
 ]
 

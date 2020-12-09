@@ -11,7 +11,6 @@ const router = Router()
 // 註冊
 router.post('/', required('email', 'hash'), async(req, res) => {
     try {
-        console.log(req.body)
         const account = await Account.create({
             email: req.body.email,
             hash: req.body.hash
