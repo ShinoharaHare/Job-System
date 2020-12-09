@@ -7,6 +7,10 @@ v-card(flat, tile, height="100%")
     v-container(fluid, fill-height)
         v-row(justify="center", align="center")
             v-col
+                v-img(contain, max-height="400", :src="banner")
+
+                //- v-card-text.text-center.headline 辦個帳號吧
+
                 v-card-text
                     v-container
                         v-row
@@ -49,11 +53,10 @@ const Acccount = namespace('Account')
 
 @Component
 export default class extends Vue {
-    @Prop()
-    value!: boolean
-
     @Acccount.Action
     register!: Function
+
+    banner = require('@/client/assets/logo/logo_transparent.png')
 
     email = ''
     password = ''

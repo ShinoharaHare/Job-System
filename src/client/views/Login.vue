@@ -36,9 +36,6 @@ const Account = namespace('Account')
 
 @Component
 export default class extends Vue {
-    @Prop()
-    value!: boolean
-
     @Account.Action
     login!: Function
 
