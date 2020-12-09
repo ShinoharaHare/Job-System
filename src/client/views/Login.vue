@@ -5,14 +5,20 @@ v-card(flat, tile, height="100%")
             v-icon mdi-arrow-left
 
     v-container(fluid, fill-height)
+
         v-row(justify="center", align="center")
-            v-col
+            v-col(sm="12" md = "6")
+                h1 Login
                 v-card-text
-                    v-text-field(label="Email", type="email", v-model="email")
+                    v-text-field(
+                        label="Email",
+                        type="email",
+                        v-model="email"
+                    )
                     v-text-field(
                         label="密碼",
                         type="password",
-                        v-model="password"
+                        v-model="password",
                     )
 
                 v-card-actions
@@ -23,7 +29,6 @@ v-card(flat, tile, height="100%")
                         :loading="loading"
                     ) 登入
                     v-spacer
-
         v-row
 
 </template>
