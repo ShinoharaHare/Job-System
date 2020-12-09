@@ -5,7 +5,7 @@ v-card(flat, tile, height="100%")
             v-icon mdi-arrow-left
 
     v-container(fluid)
-        v-sheet.mx-auto(color="white" width = "600" elevation="12" outlined rounded)
+        v-sheet.mx-md-auto(color="white"  elevation="12" outlined rounded)
             v-row(justify="center", align="center")
                 v-icon(size = "100" justify="center" align="center") mdi-account
             v-row(justify="center", align="center")
@@ -13,19 +13,38 @@ v-card(flat, tile, height="100%")
             v-row(justify="center", align="center")
                 v-col(sm="12" md = "9")
                     v-card-text
-                        v-text-field(
-                            outlined,
-                            label="Email",
-                            type="email",
-                            v-model="email"
-                        )
-                        v-text-field(
-                            outlined,
-                            label="密碼",
-                            type="password",
-                            v-model="password",
-                        )
-                    a(href="http://www.wibibi.com" style="text-decoration:none;") 忘記密碼?
+                        form
+                            v-text-field(
+                                outlined,
+                                color="primary",
+                                label="Email",
+                                type="email",
+                                v-model="email",
+                            )
+                            v-text-field(
+                                outlined,
+                                color="primary",
+                                label="密碼",
+                                type="password",
+                                v-model="password",
+                            )
+                    v-dialog(v-model="dialog" width="300" height="700")
+                        template(v-slot:activator="{ on, attrs }")
+                            v-btn(color="primary" text v-bind="attrs" v-on="on") 忘記密碼
+                        v-card
+                            v-card-title(class="justify-center")
+                                v-icon(size = "50" justify="center" align="center") mdi-lock-outline
+                                h 忘記密碼?
+
+                            v-card-text 請輸入你的信箱，並到信箱根據步驟重設密碼
+                                v-text-field(
+                                    outlined,
+                                    color="primary",
+                                    label="Email",
+                                    type="email",
+                                    v-model="resetEmail",
+                                )
+
                     v-card-actions
                         v-spacer
                         v-btn(
@@ -55,16 +74,25 @@ export default class extends Vue {
     login!: Function
 
     email = ''
+    resetEmail = ''
     password = ''
     loading = false
+    dialog = false
 
     async loginWrapper() {
-        this.loading = true
-        const success = await this.login({
-            email: this.email,
-            password: this.password
-        })
-        this.loading = false
+        if (this.email.length === 0) {
+
+        } else if (this.password.length === 0) {
+
+        } else {
+            this.loading = true
+            const success = await this.login({
+                email: this.email,
+                password: this.password
+            })
+            console.log(success)
+            this.loading = false
+        }
     }
 }
 </script>
