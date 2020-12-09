@@ -47,6 +47,16 @@ const routes: Array<RouteConfig> = [
         path: '/statistics',
         name: 'Statistics',
         component: () => import('@/client/views/Statistics.vue')
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/client/views/Register.vue')
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: () => import('@/client/views/Login.vue')
     }
 ]
 

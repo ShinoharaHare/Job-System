@@ -47,19 +47,17 @@ v-card(tile, height="100%")
 
     v-list(subheader)
         //- v-subheader(inset) 控制
-        v-list-item(@click="showRegister = true")
+        v-list-item(@click="$router.push('Register')")
             v-list-item-icon
                 v-icon mdi-account-plus-outline
             v-list-item-content
                 v-list-item-title 註冊
-            RegisterDialog(v-model="showRegister")
 
-        v-list-item(@click="showLogin = true")
+        v-list-item(@click="$router.push('Login')")
             v-list-item-icon
                 v-icon mdi-login-variant
             v-list-item-content
                 v-list-item-title 登入
-            LoginDialog(v-model="showLogin")
 
         v-list-item
             v-list-item-icon
@@ -70,18 +68,13 @@ v-card(tile, height="100%")
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import LoginDialog from '@/client/components/LoginDialog.vue'
-import RegisterDialog from '@/client/components/RegisterDialog.vue'
 import BlacklistDialog from '@/client/components/BlacklistDialog.vue'
 import ResumeTemplatesDialog from '@/client/components/ResumeTemplatesDialog.vue'
 
-@Component({ components: { LoginDialog, RegisterDialog, BlacklistDialog, ResumeTemplatesDialog } })
+@Component({ components: { BlacklistDialog, ResumeTemplatesDialog } })
 export default class extends Vue {
     name = '何文子'
     avatar = 'https://www.flaticon.com/svg/static/icons/svg/147/147144.svg'
-
-    showLogin = false
-    showRegister = false
     showBlacklist = false
     showResumeTemplate = false
 }

@@ -21,7 +21,9 @@ module.exports = {
         'no-undef': 'off',
         '@typescript-eslint/no-empty-function': 'warn',
         '@typescript-eslint/interface-name-prefix': 'off',
-        '@typescript-eslint/no-unused-vars': 'warn'
+        '@typescript-eslint/no-unused-vars': 'warn',
+        'no-useless-escape': 'off',
+        'space-before-function-paren': ['error', 'never']
     },
     overrides: [
         {

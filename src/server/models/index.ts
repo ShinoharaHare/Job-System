@@ -1,7 +1,6 @@
 import config from '@/server/config'
 
 import { set, connect } from 'mongoose'
-import { createSchema, Type, typedModel, ExtractDoc } from 'ts-mongoose'
 
 set('useCreateIndex', true)
 connect(config.MONGODB_URI, {
@@ -10,7 +9,7 @@ connect(config.MONGODB_URI, {
     useFindAndModify: false
 })
 
-export { Account, IAccount, DAccount } from './account'
-export { Applyment, IApplyment, DApplyment } from './applyment'
-export { Job, IJob, DJob } from './job'
-export { Tag, ITag, DTag } from './tag'
+export * from './account'
+export * from './applyment'
+export * from './job'
+export * from './tag'
