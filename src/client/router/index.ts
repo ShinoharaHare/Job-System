@@ -62,6 +62,11 @@ const routes: Array<RouteConfig> = [
         path: '/register',
         name: 'Register',
         component: () => import('@/client/views/Register.vue')
+    },
+    {
+        path: '/timetable',
+        name: 'Timetable',
+        component: () => import('@/client/components/Timetable.vue')
     }
 ]
 

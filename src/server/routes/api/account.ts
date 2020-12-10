@@ -4,7 +4,7 @@ import { Account } from '@/server/models'
 
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
-import { login } from '@/server/ntou-as'
+import { login, mapSegment2Time } from '@/server/ntou-as'
 
 const router = Router()
 
@@ -43,20 +43,28 @@ router.post('/login', required('email', 'hash'), async(req, res) => {
     }
 })
 
-router.post('/link-ntou', required('ntouID', 'ntouPW'), async(req, res) => {
+router.post('/link-ntou', auth, required('ntouID', 'ntouPW'), async(req, res) => {
     try {
         const account = await login(req.body.ntouID, req.body.ntouPW)
         const personal = await account.personal.read()
-        const course = await account.course.listCurrent()
+        const courses = await account.course.listCurrent()
+        const arr: any[] = []
+        for (const course of courses) {
+            arr.push({
+                name: course.name,
+                ...mapSegment2Time(Number(course.time.slice(1))),
+                weekday: course.time[0]
+            })
+        }
 
         res.status(200).json({
-            state: 0,
+            success: true,
             personal,
-            course
+            courses: arr
         })
     } catch (error) {
         res.status(200).json({
-            state: -1
+            success: false
         })
     }
 })

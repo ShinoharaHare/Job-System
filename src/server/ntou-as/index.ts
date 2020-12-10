@@ -7,3 +7,5 @@ export async function login(id: string, pw: string) {
     await account.login()
     return account
 }
+
+export { mapSegment2Time } from './utils'

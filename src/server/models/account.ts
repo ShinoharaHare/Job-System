@@ -1,10 +1,11 @@
 import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mongoose'
 import { SJob } from './job'
 
-const Syllabus = createSchema({
-    courseName: Type.string({ required: true }),
-    startTime: Type.string({ required: true }),
-    endTime: Type.string({ required: true })
+const SEvent = createSchema({
+    name: Type.string({ required: true }),
+    start: Type.string({ required: true }),
+    end: Type.string({ required: true }),
+    weekday: Type.number({ required: true })
 })
 
 const ResumeTemplate = createSchema({
@@ -23,7 +24,7 @@ export const SAccount = createSchema({
     hash: Type.string({ required: true }),
     ntouStudentID: Type.string({ default: '' }),
     ntouPassword: Type.string({ default: '' }),
-    syllabus: Type.array().of(Syllabus),
+    events: Type.array().of(SEvent),
     blacklist: Type.array().of(Type.objectId()),
     resumeTemplates: Type.array().of(ResumeTemplate),
     notification: Type.array().of(Notification),
@@ -37,3 +38,5 @@ SAccount.add({
 export type DAccount = ExtractDoc<typeof SAccount>
 export type IAccount = ExtractProps<typeof SAccount>
 export const Account = typedModel('Account', SAccount)
+
+export type IEvent = ExtractDoc<typeof SEvent>
