@@ -18,12 +18,15 @@ module.exports = {
         semi: 'off',
         quotes: ['error', 'single'],
         '@typescript-eslint/no-explicit-any': 'off',
-        'no-undef': 'off',
         '@typescript-eslint/no-empty-function': 'warn',
         '@typescript-eslint/interface-name-prefix': 'off',
         '@typescript-eslint/no-unused-vars': 'warn',
+        '@typescript-eslint/no-unused-expressions': 'warn',
+        'no-unused-expressions': 'warn',
+        'no-undef': 'off',
         'no-useless-escape': 'off',
-        'space-before-function-paren': ['error', 'never']
+        'space-before-function-paren': ['error', 'never'],
+        'prefer-promise-reject-errors': 'off'
     },
     overrides: [
         {
