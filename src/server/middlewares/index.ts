@@ -5,7 +5,9 @@ import { Account } from '@/server/models'
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 
-type Middleware = (req: Request, res: Response, next: NextFunction) => void
+export * from './job'
+
+export type Middleware = (req: Request, res: Response, next: NextFunction) => void
 
 export const auth: Middleware = async(req, res, next) => {
     try {
