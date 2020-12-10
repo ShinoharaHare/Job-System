@@ -23,10 +23,10 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Notification.vue')
     },
     {
-        path: '/personal',
-        name: 'Personal',
-        meta: { title: '個人 | Job System' },
-        component: () => import('@/client/views/Personal.vue')
+        path: '/setting',
+        name: 'Setting',
+        meta: { title: '設定 | Job System' },
+        component: () => import('@/client/views/Setting.vue')
     },
     {
         path: '/job/:id',

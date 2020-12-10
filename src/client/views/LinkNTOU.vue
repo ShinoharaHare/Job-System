@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card(tile, height="100%")
+v-card.link-ntou(tile, height="100%")
     v-toolbar(flat)
         v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
@@ -42,31 +42,45 @@ v-card(tile, height="100%")
             v-row
 
     v-expand-transition(mode="out-in")
-        div(v-if="browsing")
+        v-card(height="100%", v-show="browsing")
             v-card-text
-                v-stepper.pb-0(v-model="step", vertical, alt-labels)
+                v-stepper.pb-0(v-model="step", alt-labels)
                     v-stepper-header
                         v-stepper-step(editable, step="1") 個人資料
                         v-divider
                         v-stepper-step(editable, step="2") 時間表
 
                     v-stepper-items
-                        v-stepper-content(step="1")
-                            v-divider.mt-2(inset)
+                        v-stepper-content.pa-0.ma-0(step="1")
                             v-card-actions
                                 v-spacer
-                                v-btn(text, color="error") 取消
-                                v-btn(text, color="primary") 下一步
+                                v-btn(
+                                    outlined,
+                                    color="error",
+                                    @click="browsing = false"
+                                ) 取消
+                                v-btn(
+                                    outlined,
+                                    color="primary",
+                                    @click="step++"
+                                ) 下一步
+                            v-divider
+                            .content-wrapper
+                                PersonalInfo(ref="personalInfo")
 
-                        v-stepper-content.timetable-wrapper.px-0.ma-0(
-                            step="2"
-                        )
-                            Timetable(:data="courses")
-                            v-divider.mt-2(inset)
+                        v-stepper-content.pa-0.ma-0(step="2")
                             v-card-actions
                                 v-spacer
-                                v-btn(text, color="error") 上一步
-                                v-btn(text, color="success") 確認匯入
+                                v-btn(outlined, color="error", @click="step--") 上一步
+                                v-btn(
+                                    outlined,
+                                    color="primary",
+                                    :loading="importing",
+                                    @click="importData"
+                                ) 匯入
+                            v-divider
+                            .content-wrapper
+                                Timetable(ref="timetable")
 
     //- v-dialog(v-model="dialog.show" fullscreen hide-overlay)
     //-     TimeTable
@@ -75,8 +89,9 @@ v-card(tile, height="100%")
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import Timetable from '@/client/components/Timetable.vue'
+import PersonalInfo from '@/client/components/PersonalInfo.vue'
 
-@Component({ components: { Timetable } })
+@Component({ components: { Timetable, PersonalInfo } })
 export default class extends Vue {
     ntouLogo = require('@/client/assets/ntou-logo.png')
     ntouID = ''
@@ -86,7 +101,10 @@ export default class extends Vue {
 
     browsing = false
     step = 1
-    courses: any[] = []
+    importing = false
+
+    timetable!: any
+    personalInfo!: any
 
     required = (v: string) => !!v.length || '必填'
 
@@ -100,25 +118,42 @@ export default class extends Vue {
 
         if (data.success) {
             this.browsing = true
-            this.courses = data.courses
+            this.timetable.setData(data.courses)
+            this.personalInfo.setData(data.personal)
         } else {
-
+            // 錯誤訊息
         }
     }
 
-    mounted() {
-        setTimeout(() => {
-            // this.browsing = !this.browsing
-        }, 1000)
+    async importData() {
+        this.importing = true
+        const { status } = await axios.patch('/api/account', {
+            data: {
+                personal: this.personalInfo.getData(),
+                events: this.timetable.getData()
+            }
+        })
+        this.importing = false
+    }
 
-        ;(window as any).aaaa = this
+    mounted() {
+        this.personalInfo = this.$refs.personalInfo
+        this.timetable = this.$refs.timetable
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.timetable-wrapper {
-    max-height: 600px;
+.content-wrapper {
+    max-height: 490px;
     overflow: scroll;
+}
+</style>
+
+<style lang="scss">
+.link-ntou {
+    .v-stepper__label {
+        display: inline !important;
+    }
 }
 </style>

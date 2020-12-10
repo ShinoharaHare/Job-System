@@ -51,9 +51,9 @@ export default class extends Vue {
             icon: 'mdi-bell'
         },
         {
-            path: '/personal',
-            text: '個人',
-            icon: 'mdi-account'
+            path: '/setting',
+            text: '設定',
+            icon: 'mdi-cog'
         }
     ]
 }

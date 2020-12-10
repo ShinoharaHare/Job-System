@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
-        v-toolbar-title 個人
+        v-toolbar-title 設定
 
     v-list(two-line)
         v-list-item
@@ -59,7 +59,7 @@ v-card(tile, height="100%")
             v-list-item-content
                 v-list-item-title 登入
 
-        v-list-item
+        v-list-item(@click="logout")
             v-list-item-icon
                 v-icon mdi-logout-variant
             v-list-item-content
@@ -77,6 +77,13 @@ export default class extends Vue {
     avatar = 'https://www.flaticon.com/svg/static/icons/svg/147/147144.svg'
     showBlacklist = false
     showResumeTemplate = false
+
+    async logout() {
+        const { status } = await axios.post('/api/account/logout')
+        if (status === 204) {
+            location.reload()
+        }
+    }
 }
 </script>
 

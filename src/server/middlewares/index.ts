@@ -30,6 +30,8 @@ export const required: (...fields: string[]) => Middleware = (...fields) => {
             params = req.query
             break
         case 'POST':
+        case 'PATCH':
+        case 'PUT':
             params = req.body
             break
         }

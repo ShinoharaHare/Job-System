@@ -9,7 +9,7 @@ v-card(flat, tile)
         :events="events",
         :first-interval="firstInterval",
         :interval-width="intervalWidth",
-        disabled
+        disabled,
         @click:event="onClickEvent",
         @click:time="onClickTime"
     )
@@ -117,17 +117,12 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
 @Component
 export default class extends Vue {
-    @Prop({ default: () => [] })
-    data!: IEvent[]
-
-    @Prop({ default: undefined })
-    readOnly!: boolean
-
     events: any[] = []
     weekdays = [1, 2, 3, 4, 5, 6, 0]
     firstInterval = 0
     intervalWidth = 100
     now = '2020-12-7'
+    calendar!: any
 
     isEventClicked = false
 
@@ -192,13 +187,8 @@ export default class extends Vue {
         this.removeDialog.show = false
     }
 
-    async submit() {
-
-    }
-
-    @Watch('data')
-    onDataChanged(cur: IEvent[], old: IEvent[]) {
-        for (const e of cur) {
+    setData(data: IEvent[]) {
+        for (const e of data) {
             const date = this.weekdayToDate(e.weekday)
             this.events.push({
                 name: e.name,
@@ -208,12 +198,25 @@ export default class extends Vue {
         }
     }
 
-    mounted() {
-        const calendar: any = this.$refs.calendar
-        calendar.scrollToTime('8:00')
-        this.onDataChanged(this.data, [])
+    getData() {
+        const arr: any[] = []
+        for (const e of this.events) {
+            const start = this.calendar.parseTimestamp(e.start)
+            const end = this.calendar.parseTimestamp(e.end)
 
-        ; (window as any).timetable = this
+            arr.push({
+                name: e.name,
+                weekday: start.weekday,
+                start: `${String(start.hour).padStart(2, '0')}:${String(start.minute).padStart(2, '0')}`,
+                end: `${String(end.hour).padStart(2, '0')}:${String(end.minute).padStart(2, '0')}`
+            })
+        }
+        return arr
+    }
+
+    mounted() {
+        this.calendar = this.$refs.calendar
+        this.calendar.scrollToTime('8:00')
     }
 }
 </script>
