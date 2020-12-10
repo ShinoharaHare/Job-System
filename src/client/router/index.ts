@@ -29,7 +29,7 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Personal.vue')
     },
     {
-        path: '/job',
+        path: '/job/:id',
         name: 'Job',
         component: () => import('@/client/views/Job.vue')
     },
