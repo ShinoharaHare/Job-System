@@ -5,23 +5,22 @@ v-card(flat, tile, height="100%")
             v-icon mdi-arrow-left
 
     v-container(fluid)
-        v-sheet.mx-md-auto(color="white"  elevation="12" outlined rounded max-width="450")
+        v-sheet.mx-md-auto(color="white"  elevation="12" outlined rounded max-width="450" )
             v-row(justify="center", align="center")
-                v-icon(size = "100" justify="center" align="center") mdi-account
-            v-row(justify="center", align="center")
+                v-img(contain, max-height="300", :src="banner")
+            //v-row(justify="center", align="center")
                 h1 USER LOGIN
             v-row(justify="center", align="center")
                 v-col(sm="12" md = "9")
                     v-card-text
-                        v-form(ref="entryForm",@submit.prevent="submitHandler")
+                        v-form(ref="form",v-model="form.valid", @submit.prevent="onSubmit")
                             v-text-field(
-                                :rules="numberRules",
                                 outlined,
                                 color="primary",
                                 label="Email",
                                 type="email",
-                                v-model="email",
-                                required,
+                                v-model="form.fields.email",
+                                :rules="form.rules.email",
                             )
                             v-text-field(
                                 outlined,
@@ -30,7 +29,8 @@ v-card(flat, tile, height="100%")
                                 :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'",
                                 :type="show ? 'text' : 'password'",
                                 @click:append="() => (show  = !show)",
-                                v-model="password",
+                                v-model="form.fields.password",
+                                :rules="form.rules.password",
                             )
                     //忘記密碼
                     v-dialog(v-model="dialog" max-width="450" max-height="700")
@@ -43,18 +43,23 @@ v-card(flat, tile, height="100%")
 
                             v-row.mx-6(align="center")
                                 p 請輸入你的信箱，並到信箱開啟驗證信根據步驟重設密碼
-                                v-text-field(
-                                    outlined,
-                                    color="primary",
-                                    label="Email",
-                                    type="email",
-                                    v-model="resetEmail",
-                                )
+                                v-card-text
+                                    v-form(ref="formForget",v-model="formForget.valid", @submit.prevent="onSubmit")
+                                        v-text-field(
+                                            outlined,
+                                            color="primary",
+                                            label="Email",
+                                            type="email",
+                                            v-model="formForget.fields.email",
+                                            :rules="formForget.rules.email"
+                                        )
                             v-card-actions()
                                 v-flex(class="text-center")
                                     v-btn(
                                         color="primary",
-                                        :loading="loading"
+                                        type="submit",
+                                        :loading="loading",
+                                        :disabled="!formForget.valid"
                                     ) 發送驗證碼
 
                     v-card-actions
@@ -66,6 +71,7 @@ v-card(flat, tile, height="100%")
                             @click="loginWrapper",
                             type="submit",
                             :loading="loading"
+                            :disabled="!form.valid"
                         ) 登入
                         v-spacer
             v-row
@@ -83,35 +89,51 @@ export default class extends Vue {
     @Account.Action
     login!: Function
 
-    email = ''
-    resetEmail = ''
-    password = ''
+    banner = require('@/client/assets/logo/logo_transparent_cut.png')
     loading = false
     dialog = false
     show = false
-    numberRules = ''
 
-    public submitHandler(): void {
+    form = {
+        valid: false,
+        fields: {
+            email: '',
+            password: ''
+        },
+        rules: {
+            email: [
+                this.requireRule()
+            ],
+            password: [
+                this.requireRule()
+            ]
+        }
+    }
 
+    formForget = {
+        valid: false,
+        fields: {
+            email: ''
+        },
+        rules: {
+            email: [
+                this.requireRule()
+            ]
+        }
+    }
+
+    public requireRule(message = '此欄位不得為空'): (value: any) => boolean|string {
+        return (value) => (!!value || value === 0) || message;
     }
 
     async loginWrapper() {
-        if (this.email.length === 0) {
-
-        } else if (this.password.length === 0) {
-
-        } else {
-            this.loading = true
-            const success = await this.login({
-                email: this.email,
-                password: this.password
-            })
-            this.loading = false
-
-            // if(this.value){
-            //     this.$router.push('Personal')
-            // }
-        }
+        this.loading = true
+        const success = await this.login({
+            email: this.form.fields.email,
+            password: this.form.fields.password
+        })
+        console.log(success)
+        this.loading = false
     }
 }
 </script>
