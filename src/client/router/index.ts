@@ -66,7 +66,12 @@ const routes: Array<RouteConfig> = [
     {
         path: '/timetable',
         name: 'Timetable',
-        component: () => import('@/client/components/Timetable.vue')
+        component: () => import('@/client/views/Timetable.vue')
+    },
+    {
+        path: '/personal',
+        name: 'Personal',
+        component: () => import('@/client/views/Personal.vue')
     }
 ]
 

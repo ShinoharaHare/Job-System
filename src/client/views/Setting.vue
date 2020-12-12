@@ -4,15 +4,29 @@ v-card(tile, height="100%")
         v-toolbar-title 設定
 
     v-list(two-line)
-        v-list-item
+        v-list-item(to="/personal")
             v-list-item-avatar
-                //- v-img(:src="avatar")
                 v-icon(large) mdi-account-outline
 
             v-list-item-content
                 v-list-item-title.headline {{ name }}
                 v-list-item-subtitle 編輯資料
                     v-icon mdi-chevron-right
+
+    v-divider
+
+    v-list(subheader)
+        v-list-item(to="/link-ntou")
+            v-list-item-icon
+                v-icon mdi-link-variant
+            v-list-item-content
+                v-list-item-title 連結海大校務系統
+
+        v-list-item(to="/timetable")
+            v-list-item-icon
+                v-icon mdi-timetable
+            v-list-item-content
+                v-list-item-title 課表
 
     v-divider
 
@@ -47,13 +61,13 @@ v-card(tile, height="100%")
 
     v-list(subheader)
         //- v-subheader(inset) 控制
-        v-list-item(@click="$router.push('Register')")
+        v-list-item(to="/register")
             v-list-item-icon
                 v-icon mdi-account-plus-outline
             v-list-item-content
                 v-list-item-title 註冊
 
-        v-list-item(@click="$router.push('Login')")
+        v-list-item(to="/login")
             v-list-item-icon
                 v-icon mdi-login-variant
             v-list-item-content
@@ -68,16 +82,15 @@ v-card(tile, height="100%")
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { namespace } from 'vuex-class'
 import BlacklistDialog from '@/client/components/BlacklistDialog.vue'
 import ResumeTemplatesDialog from '@/client/components/ResumeTemplatesDialog.vue'
-import { namespace } from 'vuex-class'
 
 const Account = namespace('Account')
 
 @Component({ components: { BlacklistDialog, ResumeTemplatesDialog } })
 export default class extends Vue {
-    name = '何文子'
-    avatar = 'https://www.flaticon.com/svg/static/icons/svg/147/147144.svg'
+    name = '用戶名'
     showBlacklist = false
     showResumeTemplate = false
 

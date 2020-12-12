@@ -33,6 +33,7 @@ v-card.link-ntou(tile, height="100%")
                             v-spacer
                             v-btn(
                                 outlined,
+                                width="70%",
                                 color="success",
                                 :loading="loading",
                                 :disabled="!valid",
@@ -134,6 +135,10 @@ export default class extends Vue {
             }
         })
         this.importing = false
+
+        if (status === 200) {
+            this.$router.back()
+        }
     }
 
     mounted() {

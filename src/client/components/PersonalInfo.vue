@@ -74,6 +74,8 @@ v-card(flat, tile)
                 )
                     template(v-slot:activator="{ on, attrs }")
                         v-text-field(
+                            outlined,
+                            dense,
                             readonly,
                             label="生日",
                             prepend-icon="mdi-cake-variant",
@@ -92,11 +94,13 @@ v-card(flat, tile)
                         v-btn(
                             text,
                             color="primary",
-                            @click="$refs.dialog.save(date)"
+                            @click="$refs.dialog.save(data.birthday)"
                         ) 確認
 
             v-col
                 v-text-field(
+                    outlined,
+                    dense,
                     label="血型",
                     prepend-icon="mdi-water",
                     v-model="data.bloodType"
