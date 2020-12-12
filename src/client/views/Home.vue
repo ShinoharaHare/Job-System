@@ -5,6 +5,7 @@ v-card(tile, height="100%")
             v-row
                 v-col
                     v-text-field(append-outer-icon="mdi-magnify")
+
             v-row
                 v-col
                     v-carousel(height="270")
@@ -43,10 +44,10 @@ export default class extends Vue {
 
     jobs: any[] = []
 
-    mounted () {
+    mounted() {
         for (let i = 0; i < 10; i++) {
             this.jobs.push({
-                title: '抓雞雞',
+                title: '外場人員',
                 location: '海洋大學店',
                 tags: ['短期', '假日']
             })
