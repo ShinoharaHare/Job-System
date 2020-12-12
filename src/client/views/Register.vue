@@ -15,8 +15,9 @@ v-card(flat, tile, height="100%")
                             v-row
                                 v-col(cols="12")
                                     v-text-field(
-                                        label="Email",
+                                        label="E-mail",
                                         type="email",
+                                        prepend-icon="mdi-email",
                                         :rules="[requiredRule, emailRule]",
                                         v-model="email"
                                     )
@@ -25,6 +26,7 @@ v-card(flat, tile, height="100%")
                                     v-text-field(
                                         label="密碼",
                                         type="password",
+                                        prepend-icon="mdi-lock",
                                         :rules="[requiredRule, passwordRule]",
                                         v-model="password"
                                     )
@@ -32,6 +34,7 @@ v-card(flat, tile, height="100%")
                                     v-text-field(
                                         label="確認密碼",
                                         type="password",
+                                        prepend-icon="mdi-lock-check",
                                         :rules="[requiredRule, confirmRule]",
                                         v-model="confirmPassword"
                                     )

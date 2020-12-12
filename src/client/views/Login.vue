@@ -24,7 +24,7 @@ v-card(flat, tile, height="100%")
                                 :rules="[requiredRule, emailRule]",
                                 outlined,
                                 color="primary",
-                                label="Email",
+                                label="E-mail",
                                 type="email",
                                 v-model="email",
                                 required
@@ -39,7 +39,9 @@ v-card(flat, tile, height="100%")
                                 @click:append="() => (show = !show)",
                                 v-model="password"
                             )
-                    //忘記密碼
+
+                    //- 忘記密碼
+
                     v-dialog(
                         v-model="dialog",
                         max-width="450",
