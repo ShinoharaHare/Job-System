@@ -5,56 +5,80 @@ v-card(flat, tile, height="100%")
             v-icon mdi-arrow-left
 
     v-container(fluid)
-        v-sheet.mx-md-auto(color="white"  elevation="12" outlined rounded max-width="450")
+        v-sheet.mx-auto(
+            color="white",
+            elevation="12",
+            outlined,
+            rounded,
+            max-width="450"
+        )
             v-row(justify="center", align="center")
-                v-icon(size = "100" justify="center" align="center") mdi-account
+                v-icon(size="100", justify="center", align="center") mdi-account
             v-row(justify="center", align="center")
                 h1 USER LOGIN
             v-row(justify="center", align="center")
-                v-col(sm="12" md = "9")
+                v-col(sm="12", md="9")
                     v-card-text
-                        v-form(ref="entryForm",@submit.prevent="submitHandler")
+                        v-form(v-model="valid1")
                             v-text-field(
-                                :rules="numberRules",
+                                :rules="[requiredRule, emailRule]",
                                 outlined,
                                 color="primary",
                                 label="Email",
                                 type="email",
                                 v-model="email",
-                                required,
+                                required
                             )
                             v-text-field(
                                 outlined,
                                 color="primary",
                                 label="密碼",
+                                :rules="[requiredRule]",
                                 :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'",
                                 :type="show ? 'text' : 'password'",
-                                @click:append="() => (show  = !show)",
-                                v-model="password",
+                                @click:append="() => (show = !show)",
+                                v-model="password"
                             )
                     //忘記密碼
-                    v-dialog(v-model="dialog" max-width="450" max-height="700")
+                    v-dialog(
+                        v-model="dialog",
+                        max-width="450",
+                        max-height="700"
+                    )
                         template(v-slot:activator="{ on, attrs }")
-                            v-btn(color="primary" text v-bind="attrs" v-on="on") 忘記密碼
+                            v-btn(
+                                color="primary",
+                                text,
+                                v-bind="attrs",
+                                v-on="on"
+                            ) 忘記密碼
                         v-card
-                            v-card-title(class="justify-center")
-                                v-icon(size = "50" justify="center" align="center") mdi-lock-outline
+                            v-card-title.justify-center
+                                v-icon(
+                                    size="50",
+                                    justify="center",
+                                    align="center"
+                                ) mdi-lock-outline
                                 h 忘記密碼?
 
-                            v-row.mx-6(align="center")
-                                p 請輸入你的信箱，並到信箱開啟驗證信根據步驟重設密碼
-                                v-text-field(
-                                    outlined,
-                                    color="primary",
-                                    label="Email",
-                                    type="email",
-                                    v-model="resetEmail",
-                                )
-                            v-card-actions()
-                                v-flex(class="text-center")
+                            v-row(align="center")
+                                v-col.px-6
+                                    p 請輸入你的信箱，並到信箱開啟驗證信根據步驟重設密碼
+                                    v-form(v-model="valid2")
+                                        v-text-field(
+                                            outlined,
+                                            color="primary",
+                                            label="Email",
+                                            type="email",
+                                            :rules="[requiredRule, emailRule]",
+                                            v-model="resetEmail"
+                                        )
+                            v-card-actions
+                                v-flex.text-center
                                     v-btn(
                                         color="primary",
-                                        :loading="loading"
+                                        :loading="loading",
+                                        :disabled="!valid2"
                                     ) 發送驗證碼
 
                     v-card-actions
@@ -65,11 +89,11 @@ v-card(flat, tile, height="100%")
                             color="primary",
                             @click="loginWrapper",
                             type="submit",
-                            :loading="loading"
+                            :loading="loading",
+                            :disabled="!valid1"
                         ) 登入
                         v-spacer
             v-row
-
 </template>
 
 <script lang="ts">
@@ -91,26 +115,31 @@ export default class extends Vue {
     show = false
     numberRules = ''
 
+    valid1 = false
+    valid2 = false
+
+    emailRule(v: string) {
+        return /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/.test(v) || '請輸入正確的Email'
+    }
+
+    requiredRule(v: string) {
+        return v.length > 0 || '必填'
+    }
+
     public submitHandler(): void {
 
     }
 
     async loginWrapper() {
-        if (this.email.length === 0) {
+        this.loading = true
+        const success = await this.login({
+            email: this.email,
+            password: this.password
+        })
+        this.loading = false
 
-        } else if (this.password.length === 0) {
-
-        } else {
-            this.loading = true
-            const success = await this.login({
-                email: this.email,
-                password: this.password
-            })
-            this.loading = false
-
-            // if(this.value){
-            //     this.$router.push('Personal')
-            // }
+        if (success) {
+            this.$router.push('/setting')
         }
     }
 }
