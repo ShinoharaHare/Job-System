@@ -23,13 +23,13 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Notification.vue')
     },
     {
-        path: '/personal',
-        name: 'Personal',
-        meta: { title: '個人 | Job System' },
-        component: () => import('@/client/views/Personal.vue')
+        path: '/setting',
+        name: 'Setting',
+        meta: { title: '設定 | Job System' },
+        component: () => import('@/client/views/Setting.vue')
     },
     {
-        path: '/job',
+        path: '/job/:id',
         name: 'Job',
         component: () => import('@/client/views/Job.vue')
     },
@@ -49,14 +49,24 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Statistics.vue')
     },
     {
-        path: '/register',
-        name: 'Register',
-        component: () => import('@/client/views/Register.vue')
+        path: '/link-ntou',
+        name: 'LinkNTOU',
+        component: () => import('@/client/views/LinkNTOU.vue')
     },
     {
         path: '/login',
         name: 'Login',
         component: () => import('@/client/views/Login.vue')
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/client/views/Register.vue')
+    },
+    {
+        path: '/timetable',
+        name: 'Timetable',
+        component: () => import('@/client/components/Timetable.vue')
     }
 ]
 

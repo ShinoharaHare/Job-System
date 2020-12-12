@@ -1,7 +1,7 @@
 <template lang="pug">
 v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
-        v-btn(icon, @click="back")
+        v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
 
         v-toolbarti-title 工作說明
@@ -11,49 +11,7 @@ v-card(tile, height="100%")
         v-btn(icon, @click="")
             v-icon mdi-share-variant-outline
 
-    //- v-speed-dial(bottom, right)
-    //-     template(#activator)
-    //-         v-btn(fab, color="success", @click="")
-
-    v-card-title {{ title }}
-
-    v-divider.mx-4
-
-    v-list(two-line)
-        v-list-item
-            v-list-item-content
-                v-list-item-title 工作內容
-                v-list-item-subtitle
-                    pre {{ description }}
-
-        v-list-item
-            v-list-item-content
-                v-list-item-title 工作待遇
-                v-list-item-subtitle {{ salary }}
-
-        v-list-item
-            v-list-item-content
-                v-list-item-title 工作地點
-                v-list-item-subtitle {{ location }}
-
-        v-divider.mx-4
-
-        v-list-item
-            v-list-item-content
-                v-list-item-title 任務時間
-                v-list-item-subtitle {{ time }}
-
-        v-list-item
-            v-list-item-content
-                v-list-item-title 需求人數
-                v-list-item-subtitle {{ number }}人
-
-        v-divider.mx-4
-
-        v-list-item
-            v-list-item-content
-                v-list-item-title 聯絡資訊
-                v-list-item-subtitle {{ contact }}
+    QuillEditor(:options="{ readOnly: true }", noToolbar)
 
     v-footer(absolute, padless)
         v-card(tile, width="100%")
@@ -64,21 +22,31 @@ v-card(tile, height="100%")
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import QuillEditor from '@/client/components/QuillEditor.vue'
+import { IJob } from '@/server/models'
+import router from '../router'
 
-@Component
+@Component({ components: { QuillEditor } })
 export default class extends Vue {
-    title = '抓雞雞'
-    salary = '單次 $10'
-    description = '幫忙抓雞雞'
-    location = '海洋大學店'
-
-    time = '一直抓'
-    number = 1
-    contact = '09xxxxxxxx'
-
-    back () {
+    job!: IJob | null
+    back() {
         this.$router.back()
+    }
+
+    async mounted() {
+        const id = this.$route.params.id
+        const { status, data } = await axios.get(`/api/job/${id}`)
+
+        switch (status) {
+        case 200:
+            this.job = data
+            break
+        case 404:
+            // 導向到404頁面
+            // this.$router.push('/404')
+            break
+        }
     }
 }
 </script>
