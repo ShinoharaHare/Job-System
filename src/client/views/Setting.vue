@@ -80,8 +80,11 @@ export default class extends Vue {
     avatar = 'https://www.flaticon.com/svg/static/icons/svg/147/147144.svg'
     showBlacklist = false
     showResumeTemplate = false
-    public mounted() {
-
+    async logout() {
+        const { status } = await axios.post('/api/account/logout')
+        if (status === 204) {
+            location.reload()
+        }
     }
 }
 
