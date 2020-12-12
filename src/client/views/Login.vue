@@ -139,7 +139,7 @@ export default class extends Vue {
         this.loading = false
 
         if (success) {
-            this.$router.push('/setting')
+            this.$router.replace('/setting')
         }
     }
 }
