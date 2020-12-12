@@ -70,6 +70,9 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import BlacklistDialog from '@/client/components/BlacklistDialog.vue'
 import ResumeTemplatesDialog from '@/client/components/ResumeTemplatesDialog.vue'
+import { namespace } from 'vuex-class'
+
+const Account = namespace('Account')
 
 @Component({ components: { BlacklistDialog, ResumeTemplatesDialog } })
 export default class extends Vue {
@@ -77,7 +80,11 @@ export default class extends Vue {
     avatar = 'https://www.flaticon.com/svg/static/icons/svg/147/147144.svg'
     showBlacklist = false
     showResumeTemplate = false
+    public mounted() {
+
+    }
 }
+
 </script>
 
 <style lang="scss" scoped>
