@@ -25,6 +25,34 @@ router.post('/', required('email', 'hash'), async(req, res) => {
     }
 })
 
+router.get('/', auth, async(req, res) => {
+    const data: any = {}
+    if (req.query.fields) {
+        const fields = req.query.fields as string[]
+        const account: any = req.account
+        for (const f of fields) {
+            data[f] = account[f]
+        }
+    } else {
+        Object.assign(data, req.account)
+    }
+
+    delete data.hash
+
+    res.status(200).json(data)
+})
+
+router.patch('/', auth, required('data'), async(req, res) => {
+    // console.log({ ...req.body.data })
+    await req.account!.updateOne({
+        ...req.body.data
+    })
+    // req.account!.personal = req.body.data.personal
+    // req.account!.markModified('personal')
+    // let doc = await req.account!.save()
+    res.status(200).json()
+})
+
 // 登入
 router.post('/login', required('email', 'hash'), async(req, res) => {
     const account = await Account.findOne({
@@ -45,17 +73,6 @@ router.post('/login', required('email', 'hash'), async(req, res) => {
 
 router.post('/logout', auth, async(req, res) => {
     res.status(204).clearCookie('token').json()
-})
-
-router.patch('/', auth, required('data'), async(req, res) => {
-    // console.log({ ...req.body.data })
-    await req.account!.updateOne({
-        ...req.body.data
-    })
-    // req.account!.personal = req.body.data.personal
-    // req.account!.markModified('personal')
-    // let doc = await req.account!.save()
-    res.status(200).json()
 })
 
 router.post('/add-events', auth, required('events'), async(req, res) => {
