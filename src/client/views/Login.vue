@@ -5,7 +5,7 @@ v-card(flat, tile, height="100%")
             v-icon mdi-arrow-left
 
     v-container(fluid)
-        v-sheet.mx-md-auto(color="white"  elevation="12" outlined rounded)
+        v-sheet.mx-md-auto(color="white"  elevation="12" outlined rounded max-width="450")
             v-row(justify="center", align="center")
                 v-icon(size = "100" justify="center" align="center") mdi-account
             v-row(justify="center", align="center")
@@ -13,22 +13,27 @@ v-card(flat, tile, height="100%")
             v-row(justify="center", align="center")
                 v-col(sm="12" md = "9")
                     v-card-text
-                        form
+                        v-form(ref="entryForm",@submit.prevent="submitHandler")
                             v-text-field(
+                                :rules="numberRules",
                                 outlined,
                                 color="primary",
                                 label="Email",
                                 type="email",
                                 v-model="email",
+                                required,
                             )
                             v-text-field(
                                 outlined,
                                 color="primary",
                                 label="密碼",
-                                type="password",
+                                :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'",
+                                :type="show ? 'text' : 'password'",
+                                @click:append="() => (show  = !show)",
                                 v-model="password",
                             )
-                    v-dialog(v-model="dialog" width="300" height="700")
+                    //忘記密碼
+                    v-dialog(v-model="dialog" max-width="450" max-height="700")
                         template(v-slot:activator="{ on, attrs }")
                             v-btn(color="primary" text v-bind="attrs" v-on="on") 忘記密碼
                         v-card
@@ -36,7 +41,8 @@ v-card(flat, tile, height="100%")
                                 v-icon(size = "50" justify="center" align="center") mdi-lock-outline
                                 h 忘記密碼?
 
-                            v-card-text 請輸入你的信箱，並到信箱根據步驟重設密碼
+                            v-row.mx-6(align="center")
+                                p 請輸入你的信箱，並到信箱開啟驗證信根據步驟重設密碼
                                 v-text-field(
                                     outlined,
                                     color="primary",
@@ -44,6 +50,12 @@ v-card(flat, tile, height="100%")
                                     type="email",
                                     v-model="resetEmail",
                                 )
+                            v-card-actions()
+                                v-flex(class="text-center")
+                                    v-btn(
+                                        color="primary",
+                                        :loading="loading"
+                                    ) 發送驗證碼
 
                     v-card-actions
                         v-spacer
@@ -52,6 +64,7 @@ v-card(flat, tile, height="100%")
                             x-large,
                             color="primary",
                             @click="loginWrapper",
+                            type="submit",
                             :loading="loading"
                         ) 登入
                         v-spacer
@@ -78,6 +91,12 @@ export default class extends Vue {
     password = ''
     loading = false
     dialog = false
+    show = false
+    numberRules = ''
+
+    public submitHandler(): void {
+
+    }
 
     async loginWrapper() {
         if (this.email.length === 0) {
@@ -90,8 +109,11 @@ export default class extends Vue {
                 email: this.email,
                 password: this.password
             })
-            console.log(success)
             this.loading = false
+
+            // if(this.value){
+            //     this.$router.push('Personal')
+            // }
         }
     }
 }
