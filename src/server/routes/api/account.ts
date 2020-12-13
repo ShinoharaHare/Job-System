@@ -5,6 +5,7 @@ import { Account } from '@/server/models'
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
 import { login, mapSegment2Time } from '@/server/ntou-as'
+import * as nodemailer from 'nodemailer'
 
 const router = Router()
 
@@ -70,6 +71,43 @@ router.post('/login', required('email', 'hash'), async(req, res) => {
             .json()
     }
 })
+
+// 忘記密碼
+router.post('/findPWD', required('email'), async(req, res) => {
+    const account = await Account.findOne({
+        email: req.body.email
+    })
+
+    if (account === null) {
+        res.status(404).json({ error: '無此帳號' })
+    } else {
+        const transporter = nodemailer.createTransport(
+            'smtps://<username>%40gmail.com:<password>@smtp.gmail.com'
+        );
+        const mailOptions = {
+            from: 'from_test@gmail.com',
+            to: 'to_test@gmail.com',
+            subject: 'Hello',
+            text: 'Hello from node.js'
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                res.status(400)
+                    .json(`error: ${error}`)
+            } else {
+                res.status(200)
+                    .json(`Message Sent ${info.response}`)
+            }
+        });
+    }
+})
+
+// router.post('/comment', required('commentedID','content'), async(req, res) => {//commentedID被評論的ObjectID
+//     const account = await Account.findOne({
+//         commentedID: req.body.commentedID,
+//         content: req.body.content
+//     })
+// })
 
 router.post('/logout', auth, async(req, res) => {
     res.status(204).clearCookie('token').json()
