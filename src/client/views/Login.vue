@@ -12,9 +12,11 @@ v-card(flat, tile, height="100%")
             rounded,
             max-width="450"
         )
+            //- v-row(justify="center", align="center")
+            //-     v-icon(size="100", justify="center", align="center") mdi-account
             v-row(justify="center", align="center")
-                v-icon(size="100", justify="center", align="center") mdi-account
-            v-row(justify="center", align="center")
+                v-img(contain, max-height="300", :src="logo")
+            //- v-row(justify="center", align="center")
                 h1 USER LOGIN
             v-row(justify="center", align="center")
                 v-col(sm="12", md="9")
@@ -61,27 +63,29 @@ v-card(flat, tile, height="100%")
                                     justify="center",
                                     align="center"
                                 ) mdi-lock-outline
-                                h 忘記密碼?
+                                h4 忘記密碼?
 
-                            v-row(align="center")
-                                v-col.px-6
-                                    p 請輸入你的信箱，並到信箱開啟驗證信根據步驟重設密碼
-                                    v-form(v-model="valid2")
-                                        v-text-field(
-                                            outlined,
-                                            color="primary",
-                                            label="Email",
-                                            type="email",
-                                            :rules="[requiredRule, emailRule]",
-                                            v-model="resetEmail"
-                                        )
-                            v-card-actions
-                                v-flex.text-center
-                                    v-btn(
+                            v-card-text.text-subtitle-2.text-center.black--text
+                                | 請輸入你的信箱，並到信箱開啟驗證信根據步驟重設密碼
+
+                            v-card-text
+                                v-form(v-model="valid2")
+                                    v-text-field(
+                                        outlined,
                                         color="primary",
-                                        :loading="loading",
-                                        :disabled="!valid2"
-                                    ) 發送驗證碼
+                                        label="E-mail",
+                                        type="email",
+                                        :rules="[requiredRule, emailRule]",
+                                        v-model="resetEmail"
+                                    )
+                            v-card-actions
+                                v-spacer
+                                v-btn(
+                                    color="primary",
+                                    :loading="loading",
+                                    :disabled="!valid2"
+                                ) 發送驗證碼
+                                v-spacer
 
                     v-card-actions
                         v-spacer
@@ -109,13 +113,14 @@ export default class extends Vue {
     @Account.Action
     login!: Function
 
-    email = ''
-    resetEmail = ''
-    password = ''
+    logo = require('@/client/assets/logo/logo_transparent_cut.png')
     loading = false
     dialog = false
     show = false
-    numberRules = ''
+
+    resetEmail = ''
+    email = ''
+    password = ''
 
     valid1 = false
     valid2 = false
@@ -126,10 +131,6 @@ export default class extends Vue {
 
     requiredRule(v: string) {
         return v.length > 0 || '必填'
-    }
-
-    public submitHandler(): void {
-
     }
 
     async loginWrapper() {
