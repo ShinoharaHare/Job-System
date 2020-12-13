@@ -140,7 +140,6 @@ export default class extends Vue {
             password: this.password
         })
         this.loading = false
-
         if (success) {
             this.$router.replace('/setting')
         }
