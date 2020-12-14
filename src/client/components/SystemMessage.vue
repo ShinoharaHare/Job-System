@@ -1,23 +1,28 @@
 <template lang="pug">
-v-snackbar(app, v-model="show") {{ message }}
+v-snackbar(app, v-model="show", :color="color", :timeout="timeout") {{ message }}
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import { namespace } from 'vuex-class'
-
-const Sysmsg = namespace('Sysmsg')
+import { Bus, IMessageData } from '@/client/sysmsg'
 
 @Component
 export default class extends Vue {
-    @Sysmsg.State
-    message!: string
+    show = false
+    message = ''
+    timeout = 3000
+    color = ''
 
-    @Sysmsg.State
-    timeout!: number
+    onMessage(data: IMessageData) {
+        this.color = data.color
+        this.timeout = data.timeout
+        this.message = data.message
+        this.show = true
+    }
 
-    @Sysmsg.State
-    show!: boolean
+    created() {
+        Bus.$on('message', this.onMessage)
+    }
 }
 </script>
 

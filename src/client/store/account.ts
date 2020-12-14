@@ -22,7 +22,7 @@ export default class extends VuexModule {
         const hash = sha256(password).toString()
         const { status, data } = await axios.post('/api/account/login', { email, hash })
 
-        return status === 200
+        return status
     }
 
     @Action
@@ -30,6 +30,6 @@ export default class extends VuexModule {
         const hash = sha256(password).toString()
         const { status, data } = await axios.post('/api/account', { email, hash })
 
-        return status === 200
+        return status
     }
 }
