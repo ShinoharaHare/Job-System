@@ -1,5 +1,11 @@
 <template lang="pug">
-v-snackbar(app, v-model="show", :color="color", :timeout="timeout") {{ message }}
+v-snackbar(
+    app,
+    v-model="show",
+    :color="color",
+    :timeout="timeout",
+    :multi-line="multiline"
+) {{ message }}
 </template>
 
 <script lang="ts">
@@ -12,11 +18,13 @@ export default class extends Vue {
     message = ''
     timeout = 3000
     color = ''
+    multiline = false
 
     onMessage(data: IMessageData) {
         this.color = data.color
         this.timeout = data.timeout
         this.message = data.message
+        this.multiline = data.multiline
         this.show = true
     }
 

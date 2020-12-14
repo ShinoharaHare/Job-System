@@ -7,19 +7,18 @@ export const Bus = new Vue()
 export interface IMessageOptions {
     color?: string;
     timeout?: number;
+    multiline?: boolean;
 }
 
-export interface IMessageData {
+export interface IMessageData extends Required<IMessageOptions> {
     message: string;
-    color: string;
-    timeout: number;
 }
 
 const Default: IMessageOptions = {
     color: '',
-    timeout: 1500
+    timeout: 2000
 }
 
 export function sendMessage(message: string, opts?: IMessageOptions) {
-    Bus.$emit('message', Object.assign({ message }, Default, opts))
+    Bus.$emit('message', { ...Default, message, ...opts })
 }
