@@ -105,6 +105,7 @@ v-card(flat, tile, height="100%")
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
+import { sendMessage } from '@/client/sysmsg'
 
 const Account = namespace('Account')
 
@@ -135,14 +136,24 @@ export default class extends Vue {
 
     async loginWrapper() {
         this.loading = true
-        const success = await this.login({
+        const status = await this.login({
             email: this.email,
             password: this.password
         })
         this.loading = false
 
-        if (success) {
+        switch (status) {
+        case 200:
             this.$router.replace('/setting')
+            sendMessage('登入成功')
+            break
+
+        case 401:
+            sendMessage('登入失敗', { color: 'error' })
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 }
