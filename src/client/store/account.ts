@@ -32,4 +32,10 @@ export default class extends VuexModule {
 
         return status
     }
+
+    @Action
+    async logout() {
+        const { status } = await axios.post('/api/account/logout')
+        return status
+    }
 }
