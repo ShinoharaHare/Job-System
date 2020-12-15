@@ -78,6 +78,7 @@ v-card(tile, height="100%")
                 v-icon mdi-logout-variant
             v-list-item-content
                 v-list-item-title 登出
+
 </template>
 
 <script lang="ts">
