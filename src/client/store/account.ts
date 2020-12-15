@@ -49,6 +49,12 @@ export default class extends VuexModule {
     async login({ email, password }: IPayload) {
         const hash = sha256(password).toString()
         const { status, data } = await axios.post('/api/account/login', { email, hash })
+        this.context.commit('setAccount', data) // account資料疑會在畫面重整後消失不見
+        if (this.account != null) {
+            this.context.commit('setIsLogin', true)
+        }
+        this.context.commit('setIsJobSeeker', true)
+        // return status === 200
 
         return status
     }
@@ -58,10 +64,36 @@ export default class extends VuexModule {
         const hash = sha256(password).toString()
         const { status, data } = await axios.post('/api/account', { email, hash })
 
+        return status === 201
+    }
+
+    @Action
+    async findPWD(email: string) {
+        const { status, data } = await axios.post('/api/account/findPWD', email)
+
+        return status === 200
+    }
+
+    @Action
+    async switchUserState() {
+        this.context.commit('setIsJobSeeker', !this.isJobSeeker)
+    }
+
+    @Action
+    async comment(content: string) {
+        const { status, data } = await axios.post('api/account/comment', content)
+
         return status
     }
 
     @Action
+    async search(keyword: string) {
+        const { status, data } = await axios.post('api/account/search', keyword)
+        this.context.commit('setSearchResults', data)
+
+        return status === 200
+    }
+
     async logout() {
         const { status } = await axios.post('/api/account/logout')
         return status
