@@ -16,6 +16,7 @@ import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
 import PersonalInfo from '@/client/components/PersonalInfo.vue'
+import { sendMessage } from '../sysmsg'
 
 @Component({ components: { PersonalInfo } })
 export default class extends Vue {
@@ -26,10 +27,17 @@ export default class extends Vue {
             data: { personal: this.personalInfo.getData() }
         })
 
-        if (status === 200) {
+        switch (status) {
+        case 200:
+            sendMessage('更新成功')
+            break
 
-        } else {
+        case 401:
+            sendMessage('尚未登入', { color: 'error' })
+            break
 
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 
@@ -37,8 +45,18 @@ export default class extends Vue {
         const { status, data } = await axios.get('/api/account', {
             params: { fields: ['personal'] }
         })
-        if (status === 200) {
+
+        switch (status) {
+        case 200:
             this.personalInfo.setData(data.personal)
+            break
+
+        case 401:
+            sendMessage('尚未登入', { color: 'error' })
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 

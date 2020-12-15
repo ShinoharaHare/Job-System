@@ -4,7 +4,7 @@ v-card(flat, tile, height="100%")
         v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
         v-spacer
-        v-btn(icon @click="save")
+        v-btn(icon, @click="save")
             v-icon mdi-check
 
     v-card-text
@@ -17,6 +17,7 @@ import { namespace } from 'vuex-class'
 
 import Timetable from '@/client/components/Timetable.vue'
 import { get } from 'mongoose'
+import { sendMessage } from '../sysmsg'
 
 const Acccount = namespace('Account')
 
@@ -29,10 +30,17 @@ export default class extends Vue {
             data: { events: this.timetable.getData() }
         })
 
-        if (status === 200) {
+        switch (status) {
+        case 200:
+            sendMessage('修改成功')
+            break
 
-        } else {
+        case 401:
+            sendMessage('尚未登入', { color: 'error' })
+            break
 
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 
@@ -40,10 +48,18 @@ export default class extends Vue {
         const { status, data } = await axios.get('/api/account', {
             params: { fields: ['events'] }
         })
-        if (status === 200) {
-            this.timetable.setData(data.events)
-        } else {
 
+        switch (status) {
+        case 200:
+            this.timetable.setData(data.events)
+            break
+
+        case 401:
+            sendMessage('尚未登入', { color: 'error' })
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 
