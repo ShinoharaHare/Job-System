@@ -73,12 +73,28 @@ v-card(tile, height="100%")
             v-list-item-content
                 v-list-item-title 登入
 
-        v-list-item(@click="logout")
+        v-list-item(@click="logoutDialog.show = true")
             v-list-item-icon
                 v-icon mdi-logout-variant
             v-list-item-content
                 v-list-item-title 登出
 
+            v-dialog(v-model="logoutDialog.show", max-width="300")
+                v-card
+                    v-card-title 確定要登出嗎?
+                    v-card-actions
+                        v-spacer
+                        v-btn(
+                            outlined,
+                            color="error",
+                            @click="logoutDialog.show = false"
+                        ) 取消
+                        v-btn(
+                            outlined,
+                            color="primary",
+                            :loading="logoutDialog.loading",
+                            @click="logout"
+                        ) 登出
 </template>
 
 <script lang="ts">
@@ -86,20 +102,41 @@ import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import BlacklistDialog from '@/client/components/BlacklistDialog.vue'
 import ResumeTemplatesDialog from '@/client/components/ResumeTemplatesDialog.vue'
+import { sendMessage } from '../sysmsg'
 
 const Account = namespace('Account')
 
 @Component({ components: { BlacklistDialog, ResumeTemplatesDialog } })
 export default class extends Vue {
+    @Account.Action('logout') _logout!: Function
+
     name = '用戶名'
     showBlacklist = false
     showResumeTemplate = false
 
+    logoutDialog = {
+        show: false,
+        loading: false
+    }
+
     async logout() {
-        const { status } = await axios.post('/api/account/logout')
-        if (status === 204) {
+        this.logoutDialog.loading = true
+        const status = await this._logout()
+        switch (status) {
+        case 204:
+            sendMessage('已登出')
+            this.logoutDialog.show = false
             location.reload()
+            break
+
+        case 401:
+            sendMessage('尚未登入', { color: 'error' })
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
+        this.logoutDialog.loading = false
     }
 }
 

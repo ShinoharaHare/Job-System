@@ -56,6 +56,7 @@ v-card(flat, tile, height="100%")
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
+import { sendMessage } from '../sysmsg'
 
 const Acccount = namespace('Account')
 
@@ -90,14 +91,24 @@ export default class extends Vue {
 
     async registerWrapper() {
         this.loading = true
-        const success = await this.register({
+        const status = await this.register({
             email: this.email,
             password: this.password
         })
         this.loading = false
 
-        if (success) {
+        switch (status) {
+        case 201:
             this.$router.replace('/login')
+            sendMessage('註冊成功，請登入')
+            break
+
+        case 409:
+            sendMessage('E-mail已被使用', { color: 'error' })
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 }

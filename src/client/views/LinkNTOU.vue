@@ -91,6 +91,7 @@ v-card.link-ntou(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import Timetable from '@/client/components/Timetable.vue'
 import PersonalInfo from '@/client/components/PersonalInfo.vue'
+import { sendMessage } from '../sysmsg'
 
 @Component({ components: { Timetable, PersonalInfo } })
 export default class extends Vue {
@@ -117,12 +118,26 @@ export default class extends Vue {
         })
         this.loading = false
 
-        if (data.success) {
-            this.browsing = true
-            this.timetable.setData(data.courses)
-            this.personalInfo.setData(data.personal)
-        } else {
-            // 錯誤訊息
+        switch (status) {
+        case 200:
+            if (data.success) {
+                this.browsing = true
+                this.timetable.setData(data.courses)
+                this.personalInfo.setData(data.personal)
+            } else {
+                sendMessage('無法登入海洋大學校務系統，請確認輸入的資料正確', {
+                    color: 'error',
+                    timeout: 3000
+                })
+            }
+            break
+
+        case 401:
+            sendMessage('尚未登入', { color: 'error' })
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 
@@ -136,8 +151,18 @@ export default class extends Vue {
         })
         this.importing = false
 
-        if (status === 200) {
+        switch (status) {
+        case 200:
             this.$router.back()
+            sendMessage('成功匯入資料')
+            break
+
+        case 401:
+            sendMessage('尚未登入', { color: 'error' })
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 
