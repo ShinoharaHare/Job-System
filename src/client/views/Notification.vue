@@ -20,12 +20,15 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-const Notification = namespace('Notification');
 
 @Component
 export default class extends Vue {
-    @Notification.Action
-    getList!: Function
+    async getList () {
+        const { data } =  await axios.post('/api/notification/list');
+        console.log("from ts");
+        console.log(data);
+        return data;
+    }
 
     messages: any[] = []
 
@@ -37,13 +40,6 @@ export default class extends Vue {
         this.messages = await this.getList();
         console.log("from vue");
         console.log(this.messages);
- 
-        // for (let i = 0; i < 25; i++) {
-        //     this.messages.push({
-        //         title: 'XXX接受你的履歷了!',
-        //         content: '海洋大學店的抓雞雞...'
-        //     })
-        // }
     }
 }
 </script>
