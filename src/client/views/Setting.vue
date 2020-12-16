@@ -61,12 +61,6 @@ v-card(tile, height="100%")
 
     v-list(subheader)
         //- v-subheader(inset) 控制
-        v-list-item(to="/register")
-            v-list-item-icon
-                v-icon mdi-account-plus-outline
-            v-list-item-content
-                v-list-item-title 註冊
-
         v-list-item(to="/login")
             v-list-item-icon
                 v-icon mdi-login-variant
