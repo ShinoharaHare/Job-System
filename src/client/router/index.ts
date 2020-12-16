@@ -79,7 +79,7 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Personal.vue')
     }
     // {
-    //     path: '/reset-password',
+    //     path: '/resetpassword',
     //     name: 'ResetPassword',
     //     component: () => import('@/client/views/ResetPassword.vue')
     // }
