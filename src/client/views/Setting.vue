@@ -141,12 +141,9 @@ export default class extends Vue {
         this.logoutDialog.loading = false
     }
 
-    switchUserState() {
-        const status = this._switchUserState()
-
-        if (status === 1) { sendMessage('已切換模式：應徵者', { color: 'success' }) } else if (status === 0) {
-            sendMessage('已切換模式：雇主', { color: 'success' })
-        } else { sendMessage('切換模式失敗', { color: 'error' }) }
+    async switchUserState() {
+        const isJobSeeker = await this._switchUserState()
+        sendMessage(`已切換模式：${isJobSeeker ? '應徵者' : '刊登者'}`)
     }
 }
 
