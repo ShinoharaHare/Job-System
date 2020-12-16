@@ -40,7 +40,7 @@ export default class extends VuexModule {
     }
 
     @Action
-    switchUserState() {
+    async switchUserState() {
         this.context.commit('setIsJobSeeker', !this.isJobSeeker)
 
         return this.isJobSeeker
