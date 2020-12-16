@@ -31,7 +31,8 @@ export default class extends Vue {
     showCandidates = false
     showEditor = false
 
-    mounted () {
+    async mounted () {
+        console.log(69, await axios.get('api/job'));
         for (let i = 0; i < 20; i++) {
             this.jobs.push({
                 name: '抓雞雞'

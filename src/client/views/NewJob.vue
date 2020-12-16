@@ -4,7 +4,7 @@ v-card(flat, tile, height="100%")
         v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
 
-    JobEditor
+    JobEditor(ref="JobEditor")
     v-card(tile, width="100%")
         v-card-actions
             v-spacer
@@ -21,8 +21,11 @@ import JobEditor from '@/client/components/JobEditor.vue'
 
 @Component({ components: { JobEditor } })
 export default class extends Vue {
-    submit(){
-        
+    async submit(){
+        const newData = (this.$refs.JobEditor as any).getJobData();
+        // console.log(newData);
+        const result = await axios.post('/api/job', newData);
+        console.log(result);
     }
 }
 </script>
