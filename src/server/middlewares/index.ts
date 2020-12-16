@@ -5,7 +5,9 @@ import { Account } from '@/server/models'
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 
-type Middleware = (req: Request, res: Response, next: NextFunction) => void
+export * from './job'
+
+export type Middleware = (req: Request, res: Response, next: NextFunction) => void
 
 export const auth: Middleware = async(req, res, next) => {
     try {
@@ -28,6 +30,8 @@ export const required: (...fields: string[]) => Middleware = (...fields) => {
             params = req.query
             break
         case 'POST':
+        case 'PATCH':
+        case 'PUT':
             params = req.body
             break
         }

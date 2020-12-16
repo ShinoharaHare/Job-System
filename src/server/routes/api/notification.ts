@@ -7,8 +7,7 @@ import { sendNots, messageSetRead } from '@/server/notification'
 
 const router = Router()
 
-// 取得已登錄用戶的所有通知訊息，回傳JSON
-router.post('/list', auth, async(req, res)=>{
+router.post('/list', auth, async(req, res) => {
     res.json(req.account?.notification);
 })
 

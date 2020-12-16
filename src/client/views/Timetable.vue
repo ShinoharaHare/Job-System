@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card(height="100%")
+v-card(flat, tile, height="100%")
     v-toolbar(flat)
         v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
@@ -8,28 +8,31 @@ v-card(height="100%")
             v-icon mdi-check
 
     v-card-text
-        PersonalInfo(ref="info")
+        Timetable(ref="timetable")
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-import PersonalInfo from '@/client/components/PersonalInfo.vue'
+import Timetable from '@/client/components/Timetable.vue'
+import { get } from 'mongoose'
 import { sendMessage } from '../sysmsg'
 
-@Component({ components: { PersonalInfo } })
+const Acccount = namespace('Account')
+
+@Component({ components: { Timetable } })
 export default class extends Vue {
-    personalInfo!: any
+    timetable!: any
 
     async save() {
         const { status } = await axios.patch('/api/account', {
-            data: { personal: this.personalInfo.getData() }
+            data: { events: this.timetable.getData() }
         })
 
         switch (status) {
         case 200:
-            sendMessage('更新成功')
+            sendMessage('修改成功')
             break
 
         case 401:
@@ -43,12 +46,12 @@ export default class extends Vue {
 
     async getData() {
         const { status, data } = await axios.get('/api/account', {
-            params: { fields: ['personal'] }
+            params: { fields: ['events'] }
         })
 
         switch (status) {
         case 200:
-            this.personalInfo.setData(data.personal)
+            this.timetable.setData(data.events)
             break
 
         case 401:
@@ -61,11 +64,21 @@ export default class extends Vue {
     }
 
     mounted() {
-        this.personalInfo = this.$refs.info
+        this.timetable = this.$refs.timetable
         this.getData()
     }
 }
 </script>
 
 <style lang="scss" scoped>
+.v-toolbar {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+.v-card__text {
+    padding-top: 56px;
+}
 </style>

@@ -21,7 +21,7 @@ export function extractHiddens(html: string) {
     return data
 }
 
-export function mapSegment2Time(segment: string) {
+export function mapSegment2Time(segment: number) {
     const segmentMap = [
         { start: '06:20', end: '08:10' },
         { start: '08:20', end: '09:10' },
@@ -39,4 +39,6 @@ export function mapSegment2Time(segment: string) {
         { start: '20:20', end: '21:10' },
         { start: '21:15', end: '22:05' }
     ]
+
+    return segmentMap[segment]
 }

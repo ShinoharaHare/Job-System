@@ -1,8 +1,7 @@
 import { Types } from 'mongoose'
 import { Account } from '@/server/models'
 
-// 發送通知到users[]，title為通知標題，messege為訊息本體
-export const sendNots = (users: any[], title: String, messege: String)=>{  //type???  Types.Objectid[]
+export const sendNots = (users: Types.ObjectId[], messege: string) => { // type???
     //                (condition, )
     Account.updateMany({
         _id: { "$in": users }
