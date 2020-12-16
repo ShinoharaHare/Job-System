@@ -14,8 +14,6 @@ export default class extends VuexModule {
     account: IAccount | null = null
     isLogin = false
     isJobSeeker = true
-    comments = ''
-    searchResults: IJob[] | null = null
 
     @Mutation
     setAccount(account: IAccount) {
@@ -32,31 +30,12 @@ export default class extends VuexModule {
         this.isJobSeeker = isJobSeeker
     }
 
-    @Mutation
-    setComment(content: string) {
-        this.comments = content
-    }
-
-    @Mutation
-    setSearchResults(searchResults: IJob[]) {
-        this.searchResults = new Array<IJob>()
-        for (let i = 0; i < searchResults.length; i++) {
-            this.searchResults[i] = searchResults[i]
-        }
-    }
-
     @Action
     async login({ email, password }: IPayload) {
         const hash = sha256(password).toString()
         const { status, data } = await axios.post('/api/account/login', { email, hash })
 
-        return status
-    }
-
-    @Action
-    async register({ email, password }: IPayload) {
-        const hash = sha256(password).toString()
-        const { status, data } = await axios.post('/api/account', { email, hash })
+        this.context.commit('setIsLogin', status === 200)
 
         return status
     }
@@ -68,46 +47,17 @@ export default class extends VuexModule {
     }
 
     @Action
-    async addFavorite({ title, content, vacanies, time, tags, publisher }: IJob) {
-        const { status, data } = await axios.post('api/account/addFavorite', { title, content, vacanies, time, tags, publisher })
-
-        return status
+    async switchUserState() {
+        this.context.commit('setIsJobSeeker', !this.isJobSeeker)
+        return this.isJobSeeker
     }
 
     @Action
-    async deleteFavorite({ title, content, vacanies, time, tags, publisher }: IJob) {
-        const { status, data } = await axios.post('api/account/deleteFavorite', { title, content, vacanies, time, tags, publisher })
-
-        return status
-    }
-
-    @Action
-    async block(account: IAccount) {
-        const { status, data } = await axios.post('api/account/block', account)
-    }
-
-    @Action
-    async unblock(account: IAccount) {
-        const { status, data } = await axios.post('api/account/unblock', account)
-    }
-
-    @Action
-    async addResume(name: string, content: string) {
-        const { status, data } = await axios.post('api/account/addResume', { name, content })
-    }
-
-    @Action
-    async deleteResume(name: string, content: string) {
-        const { status, data } = await axios.post('api/account/addResume', { name, content })
-    }
-
-    @Action
-    async updateResume(content: string) {
-        const { status, data } = await axios.post('api/account/addResume', { name, content })
-    }
-
-    @Action
-    async stat() {
-
+    async getAccountInfo() {
+        const { status, data } = await axios.get('/api/account')
+        if (status === 200) {
+            this.context.commit('setAccount', data)
+            this.context.commit('setIsLogin', true)
+        }
     }
 }

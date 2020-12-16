@@ -13,7 +13,11 @@ v-dialog(fullscreen, :value="value")
                     v-card-actions
                         v-spacer
                         v-btn(color="error") 移除
-                        v-btn(color="success") 修改
+                        v-btn(
+                            color="success",
+                            @click="showEditor = true"
+                        ) 修改
+                        EditResumeDialog(v-model="showEditor" )
 
         v-btn(
             fixed,
@@ -41,11 +45,11 @@ export default class extends Vue {
     list: any[] = []
     showEditor = false
 
-    changeValue (v: boolean) {
+    changeValue(v: boolean) {
         this.$emit('input', v)
     }
 
-    mounted () {
+    mounted() {
         for (let i = 0; i < 5; i++) {
             this.list.push({
                 name: '我的履歷'

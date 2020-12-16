@@ -33,7 +33,7 @@ v-card(tile, height="100%")
     v-list(subheader)
         //- v-subheader(inset) 控制
 
-        v-list-item(@click="")
+        v-list-item(@click="switchUserState")
             v-list-item-icon
                 v-icon mdi-swap-horizontal
             v-list-item-content
@@ -67,7 +67,7 @@ v-card(tile, height="100%")
             v-list-item-content
                 v-list-item-title 登入
 
-        v-list-item(@click="logoutDialog.show = true")
+        v-list-item(v-if="isLogin", @click="logoutDialog.show = true")
             v-list-item-icon
                 v-icon mdi-logout-variant
             v-list-item-content
@@ -103,6 +103,8 @@ const Account = namespace('Account')
 @Component({ components: { BlacklistDialog, ResumeTemplatesDialog } })
 export default class extends Vue {
     @Account.Action('logout') _logout!: Function
+    @Account.Action('switchUserState') _switchUserState!: Function
+    @Account.State isLogin!: boolean
 
     name = '用戶名'
     showBlacklist = false
@@ -131,6 +133,11 @@ export default class extends Vue {
             sendMessage('未知的錯誤', { color: 'error' })
         }
         this.logoutDialog.loading = false
+    }
+
+    async switchUserState() {
+        const isJobSeeker = await this._switchUserState()
+        sendMessage(`已切換模式：${isJobSeeker ? '應徵者' : '刊登者'}`)
     }
 }
 
