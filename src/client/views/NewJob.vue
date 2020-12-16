@@ -5,7 +5,13 @@ v-card(flat, tile, height="100%")
             v-icon mdi-arrow-left
 
     JobEditor
-
+    v-card(tile, width="100%")
+        v-card-actions
+            v-spacer
+            v-btn(color="error" @click="") 取消
+            v-spacer
+            v-btn(color="success" @click="submit()") 確認
+            v-spacer
 </template>
 
 <script lang="ts">
@@ -15,6 +21,8 @@ import JobEditor from '@/client/components/JobEditor.vue'
 
 @Component({ components: { JobEditor } })
 export default class extends Vue {
-
+    submit(){
+        
+    }
 }
 </script>

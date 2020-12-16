@@ -31,13 +31,6 @@ v-card(flat)
                             v-icon.mr-2(@click="") mdi-trash-can
                             v-icon(@click="") mdi-pencil
         QuillEditor(ref="QuillEditor")
-        v-card(tile, width="100%")
-            v-card-actions
-                v-spacer
-                v-btn(color="error" @click="") 取消
-                v-spacer
-                v-btn(color="success" @click="submit()") 確認
-                v-spacer
 </template>
 
 <script lang="ts">
@@ -66,10 +59,6 @@ export default class extends Vue {
     mounted() {
         // (window as any).test = this.$refs.QuillEditor;
         ; (this.$refs.QuillEditor as any).loadDefault();
-    }
-
-    submit(){
-        
     }
 }
 </script>
