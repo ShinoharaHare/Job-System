@@ -8,9 +8,9 @@ v-card(flat, tile, height="100%")
     v-card(tile, width="100%")
         v-card-actions
             v-spacer
-            v-btn(color="error" @click="") 取消
+            v-btn(color="error" @click="$router.back()") 取消
             v-spacer
-            v-btn(color="success" @click="submit()") 確認
+            v-btn(color="success" @click="submit") 確認
             v-spacer
 </template>
 
@@ -21,11 +21,12 @@ import JobEditor from '@/client/components/JobEditor.vue'
 
 @Component({ components: { JobEditor } })
 export default class extends Vue {
-    async submit(){
+    async submit() {
         const newData = (this.$refs.JobEditor as any).getJobData();
         // console.log(newData);
         const result = await axios.post('/api/job', newData);
         console.log(result);
+        this.$router.back();
     }
 }
 </script>
