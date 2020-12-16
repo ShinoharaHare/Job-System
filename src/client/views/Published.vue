@@ -4,8 +4,8 @@ v-card(tile, height="100%")
         v-toolbar-title 刊登管理
 
     v-expansion-panels.mt-2(tile, accordion, multiple)
-        v-expansion-panel(v-for="({ name }, i) in jobs", :key="i")
-            v-expansion-panel-header {{ name }}
+        v-expansion-panel(v-for="({ title }, i) in jobs", :key="i")
+            v-expansion-panel-header {{ title }}
             v-expansion-panel-content
                 v-card-actions
                     v-spacer
@@ -32,12 +32,9 @@ export default class extends Vue {
     showEditor = false
 
     async mounted () {
-        console.log(69, await axios.get('api/job'));
-        for (let i = 0; i < 20; i++) {
-            this.jobs.push({
-                name: '抓雞雞'
-            })
-        }
+        // console.log(69, await axios.get('api/job'));
+        const { data } = await axios.get('api/job');
+        this.jobs = data;
     }
 }
 </script>
