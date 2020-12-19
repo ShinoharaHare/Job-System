@@ -3,7 +3,7 @@ v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
         v-toolbar-title 刊登管理
 
-    v-expansion-panels.mt-2(tile, accordion, multiple)
+    v-expansion-panels.mt-8(tile, popout, focusable)
         v-expansion-panel(v-for="({ name }, i) in jobs", :key="i")
             v-expansion-panel-header {{ name }}
             v-expansion-panel-content
@@ -31,7 +31,7 @@ export default class extends Vue {
     showCandidates = false
     showEditor = false
 
-    mounted () {
+    mounted() {
         for (let i = 0; i < 20; i++) {
             this.jobs.push({
                 name: '抓雞雞'
