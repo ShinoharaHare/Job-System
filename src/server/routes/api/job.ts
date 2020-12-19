@@ -53,8 +53,12 @@ router.delete('/:id', auth, findJob, async(req, res) => {
 })
 
 // 工作清單
-router.get('/', async(req, res) => {
+router.get('/', auth, async(req, res) => {
+    const jobs = await Job.find({
+        publisher: req.account!.id
+    })
 
+    res.status(200).json(jobs)
 })
 
 // 搜尋工作

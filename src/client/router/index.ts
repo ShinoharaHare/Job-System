@@ -29,6 +29,11 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Setting.vue')
     },
     {
+        path: '/job/new',
+        name: 'NewJob',
+        component: () => import('@/client/views/NewJob.vue')
+    },
+    {
         path: '/job/:id',
         name: 'Job',
         component: () => import('@/client/views/Job.vue')
@@ -73,6 +78,11 @@ const routes: Array<RouteConfig> = [
         name: 'Personal',
         component: () => import('@/client/views/Personal.vue')
     }
+    // {
+    //     path: '/reset-password',
+    //     name: 'ResetPassword',
+    //     component: () => import('@/client/views/ResetPassword.vue')
+    // }
 ]
 
 const router = new VueRouter({
