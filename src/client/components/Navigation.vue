@@ -3,7 +3,7 @@ v-bottom-navigation(app, grow, shift, color="primary", v-if="show")
     v-btn(
         :to="path",
         :key="path",
-        v-for="{ path, text, icon, type } in items",
+        v-for="{ path, text, icon, type} in items",
         v-if="isShowItem(type)"
         height="inherit"
     )
@@ -22,12 +22,13 @@ export default class extends Vue {
     @Account.State
     isJobSeeker!: boolean
 
+    @Account.State isLogin!: boolean
+
     items = [
         {
             path: '/',
             text: '主頁',
-            icon: 'mdi-home',
-            type: 0
+            icon: 'mdi-home'
         },
         {
             path: '/published',
@@ -50,7 +51,8 @@ export default class extends Vue {
         {
             path: '/notification',
             text: '通知',
-            icon: 'mdi-bell'
+            icon: 'mdi-bell',
+            type: 2
         },
         {
             path: '/setting',
@@ -66,9 +68,11 @@ export default class extends Vue {
     isShowItem(type: number) {
         switch (type) {
         case 0:
-            return this.isJobSeeker
+            return this.isLogin && this.isJobSeeker
         case 1:
-            return !this.isJobSeeker
+            return this.isLogin && !this.isJobSeeker
+        case 2:
+            return this.isLogin
         default:
             return true
         }

@@ -3,7 +3,7 @@ v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
         v-toolbar-title 設定
 
-    v-list(two-line)
+    v-list(v-if="isLogin" two-line)
         v-list-item(to="/personal")
             v-list-item-avatar
                 v-icon(large) mdi-account-outline
@@ -15,7 +15,7 @@ v-card(tile, height="100%")
 
     v-divider
 
-    v-list(subheader)
+    v-list(v-if="isLogin" subheader)
         v-list-item(to="/link-ntou")
             v-list-item-icon
                 v-icon mdi-link-variant
@@ -30,7 +30,7 @@ v-card(tile, height="100%")
 
     v-divider
 
-    v-list(subheader)
+    v-list(v-if="isLogin" subheader)
         //- v-subheader(inset) 控制
 
         v-list-item(@click="switchUserState")
@@ -61,7 +61,7 @@ v-card(tile, height="100%")
 
     v-list(subheader)
         //- v-subheader(inset) 控制
-        v-list-item(to="/login")
+        v-list-item(v-if="!isLogin" to="/login")
             v-list-item-icon
                 v-icon mdi-login-variant
             v-list-item-content
