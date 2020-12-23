@@ -37,7 +37,7 @@ export const findPwd = (email: string) => {
 }
 
 // export const comment
-
+// 重設密碼
 export const resetPassword = (user: Types.ObjectId, hash: string) => {
     try {
         Account.update({ _id: user }, { $set: { hash: hash } })
@@ -47,7 +47,7 @@ export const resetPassword = (user: Types.ObjectId, hash: string) => {
         return `error: ${error}`;
     }
 }
-
+// 新增收藏工作
 export const addFavorite = (user: Types.ObjectId, job: Types.ObjectId) => {
     try {
         Account.update(
@@ -62,7 +62,7 @@ export const addFavorite = (user: Types.ObjectId, job: Types.ObjectId) => {
         return `error: ${error}`;
     }
 }
-
+// 刪除收藏工作
 export const deleteFavorite = (user: Types.ObjectId, job: Types.ObjectId) => {
     try {
         Account.update(
@@ -77,7 +77,7 @@ export const deleteFavorite = (user: Types.ObjectId, job: Types.ObjectId) => {
         return `error: ${error}`;
     }
 }
-
+// 新增黑名單帳號
 export const block = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
         Account.update(
@@ -92,7 +92,7 @@ export const block = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
         return `error: ${error}`;
     }
 }
-
+// 刪除黑名單帳號
 export const unblock = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
         Account.update(
@@ -107,14 +107,45 @@ export const unblock = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
         return `error: ${error}`;
     }
 }
-
+// 新增履歷
 export const addResume = (user: Types.ObjectId, name: string, content: string) => {
     try {
         Account.update(
             { _id: user },
             {
                 $push: {
-                    resumeTemplates: { name: name, content: content }
+                    resumeTemplates: { _id: {}, name: name, content: content }
+                }
+            })
+        return 200
+    } catch (error) {
+        return `error: ${error}`;
+    }
+}
+// 刪除履歷
+export const deleteResume = (user: Types.ObjectId, resume: Types.ObjectId) => {
+    try {
+        Account.update(
+            { _id: user },
+            {
+                $pull: {
+                    resumeTemplates: resume
+                }
+            })
+        return 200
+    } catch (error) {
+        return `error: ${error}`;
+    }
+}
+
+export const updateResume = (user: Types.ObjectId, resume: Types.ObjectId, name: string, content: string) => {
+    try {
+        Account.update(
+            { _id: user, 'resumeTemplates._id': resume },
+            {
+                $set: {
+                    'resumeTemplates.$.name': name,
+                    'resumeTemplates.$.content': content
                 }
             })
         return 200
