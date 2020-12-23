@@ -142,16 +142,8 @@ export default class extends Vue {
     }
 
     async switchUserState() {
-        const status = await this._switchUserState()
-
-        console.log(status)
-        if (status === true) {
-            sendMessage('已切換模式：應徵者', { color: 'success' })
-        } else if (status === false) {
-            sendMessage('已切換模式：雇主', { color: 'success' })
-        } else {
-            sendMessage('切換模式失敗', { color: 'error' })
-        }
+        const isJobSeeker = await this._switchUserState()
+        sendMessage(`已切換模式：${isJobSeeker ? '應徵者' : '刊登者'}`)
     }
 }
 

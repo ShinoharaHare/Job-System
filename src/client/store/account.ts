@@ -40,16 +40,15 @@ export default class extends VuexModule {
     }
 
     @Action
-    async switchUserState() {
-        this.context.commit('setIsJobSeeker', !this.isJobSeeker)
-
-        return this.isJobSeeker
-    }
-
-    @Action
     async logout() {
         const { status } = await axios.post('/api/account/logout')
         return status
+    }
+
+    @Action
+    async switchUserState() {
+        this.context.commit('setIsJobSeeker', !this.isJobSeeker)
+        return this.isJobSeeker
     }
 
     @Action
