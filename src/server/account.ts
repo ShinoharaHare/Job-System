@@ -21,7 +21,7 @@ export const findPwd = (email: string) => {
             subject: '帳號重設連結',
             text: 'Hello from node.js'
         };
-        transporter.sendMail(mailOptions, (error, info) => {
+        transporter.sendMail(mailOptions, (error: any, info: any) => {
             if (error) {
                 return console.log(`error: ${error}`);
                 // res.status(400)
