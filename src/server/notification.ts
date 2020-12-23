@@ -1,7 +1,7 @@
 import { Types } from 'mongoose'
 import { Account } from '@/server/models'
 
-export const sendNots = (users: string[], title: string, messege: string) => { // type???
+export const sendNots = (users: Types.ObjectId[], title: string, messege: string) => { // type???
     //                (condition, )
     Account.updateMany({
         _id: { "$in": users }
