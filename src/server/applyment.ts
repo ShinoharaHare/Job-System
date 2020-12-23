@@ -1,4 +1,4 @@
-import { DApplyment, Applyment } from './models';
+import { DApplyment, Applyment, Job } from './models';
 
 import { Types } from 'mongoose'
 
@@ -37,11 +37,21 @@ export const createApplyment = async(applicant: Types.ObjectId, job: Types.Objec
     });
     console.log('Applyment成功創建')
 }
-export const bossAcceptApplyment = async(applicant: Types.ObjectId) => {
+
+export const findDataApplyment = async(applicant: Types.ObjectId) => {
     const target = await Applyment.findById(applicant)
-    if (target) {
-        bossAccept(target)
-        sendNots(applicant, '')
+    const Data = await Job.findById(target?.job)
+    if (Data) {
+        return Data.content
+    }
+}
+
+export const bossAcceptApplyment = async(applicant: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applicant)
+    const targetJob = await Job.findById(targetApplyment?.job)
+    if (targetApplyment) {
+        bossAccept(targetApplyment)
+        sendNots(applicant, targetJob?.title + '的工作申請已成功被接受')
     }
     console.log('老闆成功接受')
 }
