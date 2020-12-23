@@ -13,7 +13,7 @@ v-card(tile, height="100%")
                     v-btn(color="success") 修改
                     v-btn(color="warning" @click="showCandidates = true") 應徵者
 
-    v-btn(fixed, bottom, right, fab, dark, color="primary", @click="showEditor = true")
+    v-btn(fixed, bottom, right, fab, dark, color="primary", to="/job/new")
         v-icon mdi-plus
 
     CandidatesDialog(v-model="showCandidates")
@@ -31,12 +31,10 @@ export default class extends Vue {
     showCandidates = false
     showEditor = false
 
-    mounted() {
-        for (let i = 0; i < 20; i++) {
-            this.jobs.push({
-                name: '抓雞雞'
-            })
-        }
+    async mounted() {
+        // console.log(69, await axios.get('api/job'));
+        const { data } = await axios.get('api/job');
+        this.jobs = data;
     }
 }
 </script>
