@@ -26,7 +26,7 @@ export const findPwd = (email: string) => {
                 <p>${process.env.CLIENT_URL}/resetpassword/</p>
             `
         };
-        transporter.sendMail(mailOptions, (error, info) => {
+        transporter.sendMail(mailOptions, (error: any, info: any) => {
             if (error) {
                 return `error: ${error}`;
             } else {
