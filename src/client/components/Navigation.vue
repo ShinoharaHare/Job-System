@@ -57,7 +57,8 @@ export default class extends Vue {
         {
             path: '/setting',
             text: '設定',
-            icon: 'mdi-cog'
+            icon: 'mdi-cog',
+            type: 2
         }
     ]
 

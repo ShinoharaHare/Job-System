@@ -1,32 +1,45 @@
 <template lang="pug">
 v-card(tile, height="100%")
+    v-toolbar(color="white")
+        v-img.mx-0(contain, max-height="55",max-width="200", :src="logo")
+        v-spacer
+        v-toolbar-items
+            v-btn(flat,to="/login", width="100" v-if="!isLogin") 登入
     v-card-text
         v-container
             v-row
                 v-col
-                    v-text-field(append-outer-icon="mdi-magnify")
+                    v-text-field(prepend-inner-icon="mdi-magnify",solo,clearable)
+                        template(v-slot:append="")
+                            v-btn.ma-0(  color="primary") 搜尋
 
-            v-row
-                v-col
-                    v-carousel(height="270")
-                        v-carousel-item(
-                            :key="i",
-                            :src="item.src",
-                            v-for="(item, i) in items"
-                        )
+            //- v-row
+            //-     v-col
+            //-         v-carousel(height="270")
+            //-             v-carousel-item(
+            //-                 :key="i",
+            //-                 :src="item.src",
+            //-                 v-for="(item, i) in items"
+            //-             )
 
             v-row
                 v-col
                     v-card
-                        JobList(:items="jobs", height="300")
+                        JobList(:items="jobs", height="500")
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import JobList from '@/client/components/JobList.vue'
+import { namespace } from 'vuex-class'
+
+const Account = namespace('Account')
 
 @Component({ components: { JobList } })
 export default class extends Vue {
+    @Account.State isLogin!: boolean
+    logo = require('@/client/assets/logo/logo_homepage.png')
+    drawer = false
     items = [
         {
             src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
@@ -61,4 +74,7 @@ export default class extends Vue {
     max-height: 0px;
     overflow-y: scroll;
 }
+    ::v-deep .v-toolbar__content {
+        padding: 0px !important;
+    }
 </style>

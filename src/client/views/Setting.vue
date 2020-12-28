@@ -122,7 +122,7 @@ export default class extends Vue {
         case 204:
             sendMessage('已登出')
             this.logoutDialog.show = false
-            location.reload()
+            location.replace('/')
             break
 
         case 401:
