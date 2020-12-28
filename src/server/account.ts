@@ -19,7 +19,11 @@ function makeid(length: number) {
 // 忘記密碼
 export const findPwd = async(email: string) => {
     // const email = "00757001@email.ntou.edu.tw"
-    const user = await Account.findOne({ email: email })
+    const account = await Account.findOne({ email: email })
+    if (account == null) {
+        console.log('無此帳號')
+        return 0
+    }
     const validCode = makeid(6)
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -41,46 +45,56 @@ export const findPwd = async(email: string) => {
     };
     transporter.sendMail(mailOptions, (error: any, info: any) => {
         if (error) {
-            console.log(`error: ${error}`);
+            console.log(`error: ${error}`)
+            return 404
         } else {
-            console.log(`Message Sent ${info.response}`);
+            console.log(`Message Sent ${info.response}`)
+            return 200
         }
     });
-    user!.resetPwd!.code = validCode
-    user!.resetPwd!.expired = new Date()
+    await Account.updateOne(
+        { email: email },
+        {
+            $set: {
+                resetPwd: {
+                    code: validCode,
+                    expired: (Date.now() + 10 * 60 * 1000)
+                }
+            }
+        })
 }
 
 export const checkValidation = async(email: string, code: string) => {
-    const user = await Account.findOne({ email: email })
-    const nowTime = new Date()
-    console.log(user!.resetPwd!.expired)
-    console.log(user!.resetPwd!.code)
-    if (user!.resetPwd!.expired!.getTime() > Date.now() - 10 * 60 * 1000) { // 10*60*1000 = 十分鐘
-        if (user!.resetPwd!.code === code) {
+    const valid = await Account.distinct('resetPwd', { email: email })
+    console.log(valid[0].code)
+    if (Date.now() < valid[0].expired) { // 10*60*1000 = 十分鐘
+        if (valid[0].code === code) {
             console.log('驗證碼正確')
-            return true
+            return 200
         } else {
             console.log('驗證碼錯誤')
-            return false// '驗證碼錯誤'
+            return 401// '驗證碼錯誤'
         }
     } else {
-        return false// '驗證碼已過期'
+        console.log('驗證碼已過期')
+        return 402// '驗證碼已過期'
     }
 }
 // 重設密碼
 export const resetPassword = async(email: string, newHash: string) => {
     try {
-        Account.update(
+        await Account.updateOne(
             { email: email },
             { $set: { hash: newHash } })
+        return 200
     } catch (error) {
         return `error: ${error}`;
     }
 }
 // 刪除收藏工作
-export const deleteFavorite = (user: Types.ObjectId, job: Types.ObjectId) => {
+export const deleteFavorite = async(user: Types.ObjectId, job: Types.ObjectId) => {
     try {
-        Account.update(
+        await Account.updateOne(
             { _id: user },
             {
                 $pull: {
@@ -93,9 +107,9 @@ export const deleteFavorite = (user: Types.ObjectId, job: Types.ObjectId) => {
     }
 }
 // 新增黑名單帳號
-export const block = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
+export const block = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
-        Account.update(
+        await Account.updateOne(
             { _id: user },
             {
                 $push: {
@@ -108,9 +122,9 @@ export const block = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     }
 }
 // 刪除黑名單帳號
-export const unblock = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
+export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
-        Account.update(
+        await Account.updateOne(
             { _id: user },
             {
                 $pull: {
@@ -123,9 +137,9 @@ export const unblock = (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     }
 }
 // 新增履歷
-export const addResume = (user: Types.ObjectId, name: string, content: string) => {
+export const addResume = async(user: Types.ObjectId, name: string, content: string) => {
     try {
-        Account.update(
+        await Account.updateOne(
             { _id: user },
             {
                 $push: {
@@ -138,9 +152,9 @@ export const addResume = (user: Types.ObjectId, name: string, content: string) =
     }
 }
 // 刪除履歷
-export const deleteResume = (user: Types.ObjectId, resume: Types.ObjectId) => {
+export const deleteResume = async(user: Types.ObjectId, resume: Types.ObjectId) => {
     try {
-        Account.update(
+        await Account.updateOne(
             { _id: user },
             {
                 $pull: {
@@ -153,9 +167,9 @@ export const deleteResume = (user: Types.ObjectId, resume: Types.ObjectId) => {
     }
 }
 
-export const updateResume = (user: Types.ObjectId, resume: Types.ObjectId, name: string, content: string) => {
+export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, name: string, content: string) => {
     try {
-        Account.update(
+        await Account.updateOne(
             { _id: user, 'resumeTemplates._id': resume },
             {
                 $set: {
@@ -170,4 +184,5 @@ export const updateResume = (user: Types.ObjectId, resume: Types.ObjectId, name:
 }
 
 // findPwd("hungjiewu@gmail.com")
-// checkValidation("hungjiewu@gmail.com","dKHOWB")
+// checkValidation("hungjiewu@gmail.com","RdKLyL")
+// resetPassword("hungjiewu@gmail.com","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")

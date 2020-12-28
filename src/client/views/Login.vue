@@ -80,12 +80,48 @@ v-card(flat, tile, height="100%")
                                                 :rules="[requiredRule, emailRule]",
                                                 v-model="resetEmail"
                                             )
+                                    v-dialog(
+                                        v-model="dialog2",
+                                        persistent,
+                                        max-width="450",
+                                        max-height="700"
+                                    )
+                                        v-card
+                                            v-card-title.justify-center
+                                                v-icon(
+                                                    size="50",
+                                                    justify="center",
+                                                    align="center"
+                                                ) mdi-email-outline
+                                                h4 輸入驗證碼
+
+                                            v-card-text.text-subtitle-2.text-center.black--text
+                                                | 我們已將驗證碼發送到您的信箱
+                                            v-card-text
+                                                v-form(v-model="valid3")
+                                                    v-text-field(
+                                                        outlined,
+                                                        color="primary",
+                                                        label="驗證碼",
+                                                        :rules="[requiredRule]",
+                                                        v-model="validCode"
+                                                    )
+                                            v-card-actions
+                                                v-spacer
+                                                v-btn(
+                                                    color="primary",
+                                                    :loading="loading",
+                                                    :disabled="!valid3"
+                                                    @click="resetPwd()"
+                                                ) 驗證
+                                                v-spacer
                                     v-card-actions
                                         v-spacer
                                         v-btn(
                                             color="primary",
                                             :loading="loading",
                                             :disabled="!valid2"
+                                            @click="dialog2 = !dialog2"
                                         ) 發送驗證碼
                                         v-spacer
                             v-card-actions
@@ -131,14 +167,18 @@ export default class extends Vue {
     logo = require('@/client/assets/logo/logo_transparent_cut.png')
     loading = false
     dialog = false
+    dialog2 = false
     show = false
 
     resetEmail = ''
     email = ''
     password = ''
+    validCode = ''
 
     valid1 = false
     valid2 = false
+    valid3 = false
+    validState = 0
 
     emailRule(v: string) {
         return /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/.test(v) || '請輸入正確的Email'
@@ -146,6 +186,24 @@ export default class extends Vue {
 
     requiredRule(v: string) {
         return v.length > 0 || '必填'
+    }
+
+    async resetPwd() {
+        this.loading = true
+        switch (this.validState) {
+        case 1:
+            this.$router.replace('/resetpassword')
+            sendMessage('驗證成功')
+            break
+        case 2:
+            sendMessage('驗證碼錯誤', { color: 'error' })
+            break
+        case 3:
+            sendMessage('驗證碼已過期', { color: 'error' })
+            break
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
+        }
     }
 
     async loginWrapper() {

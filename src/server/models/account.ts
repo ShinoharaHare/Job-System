@@ -50,7 +50,7 @@ export const SAccount = createSchema({
     personal: Type.schema().of(SPersonal),
     resetPwd: Type.object().of({
         code: Type.string({}),
-        expired: Type.date({})
+        expired: Type.number({})
     })
 })
 
