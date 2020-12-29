@@ -1,6 +1,6 @@
 import { auth, required } from '@/server/middlewares'
 import { Router } from 'express'
-import { bossRefuseApplyment } from '@/server/applyment'
+import { bossAcceptApplyment } from '@/server/applyment'
 import { Types } from 'mongoose'
 
 const router = Router()
@@ -10,9 +10,9 @@ router.post('/', auth, required('job', 'resume'), async(req, res) => {
 })
 
 router.get('/test', (req, res) => {
-    bossRefuseApplyment(Types.ObjectId('5fde0206359f4c512ce389be'))
+    bossAcceptApplyment(Types.ObjectId('5fd258253ec604545ce35e46'))
     res.json(
-        'refuse success'
+        'accept success'
     )
 })
 

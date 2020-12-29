@@ -40,30 +40,41 @@ export const createApplyment = async(applicant: Types.ObjectId, job: Types.Objec
 
 export const findDataApplyment = async(applicant: Types.ObjectId) => {
     const target = await Applyment.findById(applicant)
-    const Data = await Job.findById(target?.job)
-    if (Data) {
-        return Data.content
+    const data = await Job.findById(target?.job)
+    if (data) {
+        return data.content
     }
 }
 
 export const bossAcceptApplyment = async(applicant: Types.ObjectId) => {
-    const targetApplyment = await Applyment.findById(applicant)
+    const applicantarray: Types.ObjectId[] = [applicant]
+    const targetApplyment = await Applyment.findOne({ applicant: applicant })
     const targetJob = await Job.findById(targetApplyment?.job)
     if (targetApplyment) {
         bossAccept(targetApplyment)
-        sendNots(applicant, targetJob?.title + '的工作申請已成功被接受')
+        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功被接受 :)')
     }
     console.log('老闆成功接受')
 }
 export const bossRefuseApplyment = async(applicant: Types.ObjectId) => {
-    const target = await Applyment.findById(applicant)
-    if (target) { bossRefuse(target) }
+    const applicantarray: Types.ObjectId[] = [applicant]
+    const targetApplyment = await Applyment.findOne({ applicant: applicant })
+    const targetJob = await Job.findById(targetApplyment?.job)
+    if (targetApplyment) {
+        bossRefuse(targetApplyment)
+        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已被拒絕 :(')
+    }
     console.log('老闆成功拒絕')
 }
 export const applicantAcceptApplyment = async(applicant: Types.ObjectId) => {
-    const target = await Applyment.findById(applicant)
-    if (target) { applicantAccept(target) }
-    console.log('申請人成功拒絕')
+    const applicantarray: Types.ObjectId[] = [applicant]
+    const targetApplyment = await Applyment.findOne({ applicant: applicant })
+    const targetJob = await Job.findById(targetApplyment?.job)
+    if (targetApplyment) {
+        bossRefuse(targetApplyment)
+        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已被拒絕 :(')
+    }
+    console.log('申請人成功接受')
 }
 export const applicantGiveupApplyment = async(applicant: Types.ObjectId) => {
     const target = await Applyment.findById(applicant)
