@@ -1,5 +1,5 @@
 <template lang="pug">
-v-bottom-navigation(app, grow, shift, color="primary", v-if="show")
+v-bottom-navigation(app, grow, shift, color="primary", v-if="show&&isLogin")
     v-btn(
         :to="path",
         :key="path",
@@ -28,7 +28,8 @@ export default class extends Vue {
         {
             path: '/',
             text: '主頁',
-            icon: 'mdi-home'
+            icon: 'mdi-home',
+            type: 0
         },
         {
             path: '/published',
@@ -51,14 +52,12 @@ export default class extends Vue {
         {
             path: '/notification',
             text: '通知',
-            icon: 'mdi-bell',
-            type: 2
+            icon: 'mdi-bell'
         },
         {
             path: '/setting',
             text: '設定',
-            icon: 'mdi-cog',
-            type: 2
+            icon: 'mdi-cog'
         }
     ]
 
@@ -72,8 +71,6 @@ export default class extends Vue {
             return this.isLogin && this.isJobSeeker
         case 1:
             return this.isLogin && !this.isJobSeeker
-        case 2:
-            return this.isLogin
         default:
             return true
         }

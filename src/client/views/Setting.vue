@@ -15,7 +15,7 @@ v-card(tile, height="100%")
 
     v-divider
 
-    v-list(v-if="isLogin" subheader)
+    v-list(v-if="isJobSeeker" subheader)
         v-list-item(to="/link-ntou")
             v-list-item-icon
                 v-icon mdi-link-variant
@@ -39,7 +39,7 @@ v-card(tile, height="100%")
             v-list-item-content
                 v-list-item-title 切換模式
 
-        v-list-item(@click="showResumeTemplate = true")
+        v-list-item(@click="showResumeTemplate = true" v-if="isJobSeeker")
             v-list-item-icon
                 v-icon mdi-text-box-outline
             v-list-item-content
@@ -104,15 +104,28 @@ const Account = namespace('Account')
 export default class extends Vue {
     @Account.Action('logout') _logout!: Function
     @Account.Action('switchUserState') _switchUserState!: Function
+    @Account.State isJobSeeker!: boolean
     @Account.State isLogin!: boolean
 
-    name = '用戶名'
+    name = ''
     showBlacklist = false
     showResumeTemplate = false
 
     logoutDialog = {
         show: false,
         loading: false
+    }
+
+    async getName() {
+        const { status, data } = await axios.get('/api/account', {
+            params: { fields: ['personal'] }
+        })
+
+        switch (status) {
+        case 200:
+            this.name = data.personal.nameZH
+            break
+        }
     }
 
     async logout() {
@@ -138,6 +151,10 @@ export default class extends Vue {
     async switchUserState() {
         const isJobSeeker = await this._switchUserState()
         sendMessage(`已切換模式：${isJobSeeker ? '應徵者' : '刊登者'}`)
+    }
+
+    mounted() {
+        this.getName()
     }
 }
 
