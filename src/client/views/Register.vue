@@ -15,6 +15,15 @@ v-card(flat, tile, height="100%")
                             v-row
                                 v-col(cols="12")
                                     v-text-field(
+                                        label="用戶名",
+                                        type="name",
+                                        prepend-icon="mdi-account",
+                                        :rules="[requiredRule]",
+                                        v-model="username"
+                                    )
+                            v-row
+                                v-col(cols="12")
+                                    v-text-field(
                                         label="E-mail",
                                         type="email",
                                         prepend-icon="mdi-email",
@@ -67,6 +76,7 @@ export default class extends Vue {
 
     logo = require('@/client/assets/logo/logo_transparent.png')
 
+    username = ''
     email = ''
     password = ''
     confirmPassword = ''
