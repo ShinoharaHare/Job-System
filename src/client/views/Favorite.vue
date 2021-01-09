@@ -8,20 +8,28 @@ v-card(tile, height="100%")
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { namespace } from 'vuex-class'
+
+import { IJob, IAccount } from '@/server/models'
+
 import JobList from '@/client/components/JobList.vue'
+
+const Account = namespace('Account')
+
 
 @Component({ components: { JobList } })
 export default class extends Vue {
-    jobs: any[] = []
+    jobs: IJob[] = []
 
-    mounted () {
-        for (let i = 0; i < 10; i++) {
-            this.jobs.push({
-                title: '抓雞雞',
-                location: '海洋大學店',
-                tags: ['短期', '假日']
-            })
+    async loadData() {
+        let { status, data } = await axios.get('/api/job/favorite')
+        if (status == 200) {
+            this.jobs = data
         }
+    }
+
+    mounted() {
+        this.loadData()
     }
 }
 </script>

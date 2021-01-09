@@ -1,5 +1,5 @@
 import { auth, required } from '@/server/middlewares'
-import { abandon, accept, apply, find, reject } from '@/server/applyment'
+import { abandon, accept, apply, reject, findByApplicant, findByJob } from '@/server/applyment'
 
 import { Router } from 'express'
 
@@ -20,9 +20,12 @@ router.post('/', auth, required('job', 'resume'), async (req, res) => {
 })
 
 router.get('/', auth, async (req, res) => {
-    let job = req.query.job as string
-    let applicant = req.query.applicant as string
-    let result = await find(job, applicant)
+    let result: any
+    if (req.query.job) {
+        result = await findByJob(req.query.job as string)
+    } else {
+        result = await findByApplicant(req.account!.id)
+    }
 
     if (typeof result === 'number') {
         res.status(result).json()

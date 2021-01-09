@@ -11,7 +11,7 @@ v-card(tile, height="100%")
                     v-spacer
                     v-btn(color="error") 移除
                     v-btn(color="success") 修改
-                    v-btn(color="warning" @click="showCandidates = true") 應徵者
+                    v-btn(color="warning", @click="showCandidates = true") 應徵者
 
     v-btn(fixed, bottom, right, fab, dark, color="primary", to="/job/new")
         v-icon mdi-plus

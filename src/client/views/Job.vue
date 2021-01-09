@@ -41,10 +41,10 @@ v-card.wrapper(tile, height="100%")
     v-footer(fixed, padless)
         v-card(tile, width="100%")
             v-card-actions
-                v-btn(icon, large, @click="unfavorite", v-if="isFavorite")
+                v-btn(icon, large, @click="unfavorite(id)", v-if="isFavorite")
                     v-icon(color="pink") mdi-heart
 
-                v-btn(icon, large, @click="favorite", v-else)
+                v-btn(icon, large, @click="favorite(id)", v-else)
                     v-icon mdi-heart-outline
 
                 v-btn.mx-auto(
@@ -70,8 +70,8 @@ const Account = namespace('Account')
 @Component({ components: { RichTextEditor, TagPicker } })
 export default class extends Vue {
     @Account.State account!: IAccount
-    @Account.Mutation('favorite') _favorite!: Function
-    @Account.Mutation('unfavorite') _unfavorite!: Function
+    @Account.Action favorite!: Function
+    @Account.Action unfavorite!: Function
 
     @Ref() editor!: RichTextEditor
 
@@ -93,22 +93,7 @@ export default class extends Vue {
     }
 
     get isFavorite() {
-        console.log(this.account.favorite)
         return this.account.favorite!.findIndex((x: any) => x == this.id) != -1
-    }
-
-    async favorite() {
-        let { status } = await axios.post(`/api/job/${this.id}/favorite`)
-        if (status == 200) {
-            this._favorite(this.id)
-        }
-    }
-
-    async unfavorite() {
-        let { status } = await axios.post(`/api/job/${this.id}/unfavorite`)
-        if (status == 200) {
-            this._unfavorite(this.id)
-        }
     }
 
     async loadData() {

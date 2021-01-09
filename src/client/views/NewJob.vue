@@ -1,18 +1,18 @@
 <template lang="pug">
 v-card(flat, tile, height="100%")
-    v-toolbar(flat)
-        v-btn(icon, @click="$router.back()")
-            v-icon mdi-arrow-left
-
     JobEditor(ref="editor")
 
     v-footer(fixed, padless)
         v-card.flex(tile)
             v-card-actions
                 v-spacer
-                v-btn(outlined, color="error", @click="$router.back()") 取消
-                v-spacer
-                v-btn(outlined, color="primary", @click="submit") 新建
+                v-btn(
+                    outlined,
+                    color="error",
+                    width="40%",
+                    @click="$router.back()"
+                ) 取消
+                v-btn(outlined, color="primary", width="40%", @click="submit") 新建
                 v-spacer
 </template>
 
