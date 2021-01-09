@@ -122,6 +122,7 @@ v-card(flat, tile, height="100%")
                                             :loading="loading",
                                             :disabled="!valid2"
                                             @click="dialog2 = !dialog2"
+                                            @click="sentVerCode"
                                         ) 發送驗證碼
                                         v-spacer
                             v-card-actions
@@ -156,6 +157,7 @@ v-card(flat, tile, height="100%")
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { sendMessage } from '@/client/sysmsg'
+import sha256 from 'crypto-js/sha256'
 
 const Account = namespace('Account')
 
@@ -187,9 +189,23 @@ export default class extends Vue {
     requiredRule(v: string) {
         return v.length > 0 || '必填'
     }
+    async sentVerCode() {
+        const email = this.email
+        this.loading = true
+        const {status, data } = await axios.post('/api/account/sentVerCode', { email })
+        this.loading = false
+
+        
+    }
 
     async resetPwd() {
+        const hash = sha256(this.password).toString()
+        const email = this.email
+        
         this.loading = true
+        const { status, data } = await axios.post('/api/account/resetPwd', { email, hash })
+        this.loading = false
+
         switch (this.validState) {
         case 1:
             this.$router.replace('/resetpassword')
