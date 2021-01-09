@@ -34,7 +34,7 @@ router.get('/', auth, async(req, res) => {
             data[f] = account[f]
         }
     } else {
-        Object.assign(data, req.account)
+        Object.assign(data, (<any>req.account)._doc)
     }
 
     delete data.hash
