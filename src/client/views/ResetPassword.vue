@@ -45,6 +45,7 @@ v-card(flat, tile, height="100%")
                             color="primary",
                             type="submit",
                             :disabled="!valid"
+                            @click="resetPwd()"
                         ) 重設
                         v-spacer
 </template>
@@ -52,6 +53,8 @@ v-card(flat, tile, height="100%")
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
+import sha256 from 'crypto-js/sha256'
+import { sendMessage } from '@/client/sysmsg'
 
 const Account = namespace('Account')
 
@@ -62,6 +65,26 @@ export default class extends Vue {
     show1 = false
     show2 = false
     valid = false
+    loading = false
+
+    async resetPwd() {
+        const newHash = sha256(this.newPwd).toString()
+        const email = this.$route.params.email
+        console.log("reserEmail = " + email)
+        
+        this.loading = true
+        const { status, data } = await axios.post('/api/account/resetPwd', { email, newHash })
+        this.loading = false
+
+        switch (status) {
+        case 200:
+            this.$router.replace('/login')
+            sendMessage('更改成功，請重新登入。')
+            break
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
+        }
+    }
 
     requiredRule(v: string) {
         return v.length > 0 || '必填'

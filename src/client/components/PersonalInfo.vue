@@ -47,6 +47,7 @@ v-card(flat, tile)
                 v-text-field(
                     outlined,
                     dense,
+                    type="password", 
                     label="身分證字號",
                     v-model="data.identity"
                 )
