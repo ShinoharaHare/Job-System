@@ -1,9 +1,8 @@
 import { Types } from 'mongoose'
 import { Account } from '@/server/models'
 
-export const sendNots = (users: Types.ObjectId[], title: string, messege: string) => { // type???
-    //                (condition, )
-    Account.updateMany({
+export const sendNots = async(users: Types.ObjectId[], title: string, messege: string) => {
+    const res = await Account.updateMany({
         _id: { $in: users }
     }, {
         $push: {
@@ -12,14 +11,8 @@ export const sendNots = (users: Types.ObjectId[], title: string, messege: string
                 content: messege
             }
         }
-    }, (err, result) => {
-        if (err) {
-            console.error(err);
-        } else {
-            console.log(result);
-            return 'done'; //  test
-        }
     })
+    return res.n;  //n data match
 }
 
 // 未完成!!!!!  // 將使用者特定通知設定為已讀
