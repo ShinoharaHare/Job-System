@@ -83,12 +83,36 @@ export const checkVerCode = async(email: string, code: string) => {
 // 重設密碼
 export const resetPassword = async(email: string, newHash: string) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { email: email },
             { $set: { hash: newHash } })
-
-        console.log('密碼修改成功')
-        return 200
+        if (res) {
+            console.log('密碼修改成功')
+            return 200
+        } else {
+            console.log('Not Exist')
+            return 401
+        }
+    } catch (error) {
+        console.log(`error: ${error}`)
+        return `error: ${error}`;
+    }
+}
+// 新增收藏工作
+export const addFavorite = async(user: Types.ObjectId, job: Types.ObjectId) => {
+    try {
+        const res = await Account.findOneAndUpdate(
+            { _id: user },
+            {
+                $push: {
+                    favorite: job
+                }
+            })
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -96,14 +120,18 @@ export const resetPassword = async(email: string, newHash: string) => {
 // 刪除收藏工作
 export const deleteFavorite = async(user: Types.ObjectId, job: Types.ObjectId) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
                     favorite: job
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -111,14 +139,18 @@ export const deleteFavorite = async(user: Types.ObjectId, job: Types.ObjectId) =
 // 新增黑名單帳號
 export const block = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $push: {
                     blacklist: blockedUser
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -126,14 +158,18 @@ export const block = async(user: Types.ObjectId, blockedUser: Types.ObjectId) =>
 // 刪除黑名單帳號
 export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
                     blacklist: blockedUser
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -141,14 +177,18 @@ export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) 
 // 新增履歷
 export const addResume = async(user: Types.ObjectId, name: string, content: string) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $push: {
                     resumeTemplates: { _id: {}, name: name, content: content }
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -156,14 +196,18 @@ export const addResume = async(user: Types.ObjectId, name: string, content: stri
 // 刪除履歷
 export const deleteResume = async(user: Types.ObjectId, resume: Types.ObjectId) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
                     resumeTemplates: resume
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -171,7 +215,7 @@ export const deleteResume = async(user: Types.ObjectId, resume: Types.ObjectId) 
 
 export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, name: string, content: string) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user, 'resumeTemplates._id': resume },
             {
                 $set: {
@@ -179,12 +223,17 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
                     'resumeTemplates.$.content': content
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
 }
 
 // getVerCode("hungjiewu@gmail.com")
-checkVerCode('hungjiewu@gmail.com', '2BJkDe')
-// resetPassword("hungjiewu@gmail.com","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")
+// checkVerCode('hungjiewu@gmail.com', '2BJkDe')
+// resetPassword("hungjiewu@gmail.cohm","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")
+// addFavorite(Object("5fe3444644aeb23ee87a38d8"),Object("5fda3086503d8f1f9c33f97a"))
