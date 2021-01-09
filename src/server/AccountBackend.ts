@@ -128,7 +128,7 @@ export const addFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) =>
             return 402
         }
     } catch (error) {
-        return `error: ${error}`;
+        return 404;
     }
 }
 // 刪除收藏工作
@@ -148,7 +148,7 @@ export const deleteFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId)
             return 401
         }
     } catch (error) {
-        return `error: ${error}`;
+        return 404;
     }
 }
 // 新增黑名單帳號
@@ -172,7 +172,7 @@ export const block = async(user: Types.ObjectId, blockedUserID: Types.ObjectId) 
             return 401
         }
     } catch (error) {
-        return `error: ${error}`;
+        return 404;
     }
 }
 // 刪除黑名單帳號
@@ -191,7 +191,7 @@ export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) 
             return 401
         }
     } catch (error) {
-        return `error: ${error}`;
+        return 404;
     }
 }
 // 新增履歷
@@ -205,12 +205,13 @@ export const addResume = async(user: Types.ObjectId, name: string, content: stri
                 }
             })
         if (res) {
+            console.log("2ww")
             return 200
         } else {
             return 401
         }
     } catch (error) {
-        return `error: ${error}`;
+        return 404;
     }
 }
 // 刪除履歷
@@ -220,16 +221,17 @@ export const deleteResume = async(user: Types.ObjectId, resume: Types.ObjectId) 
             { _id: user },
             {
                 $pull: {
-                    resumeTemplates: resume
+                    resumeTemplates: {_id: resume}
                 }
             })
         if (res) {
+            console.log("delete Success!")
             return 200
         } else {
             return 401
         }
     } catch (error) {
-        return `error: ${error}`;
+        return 404;
     }
 }
 
@@ -249,10 +251,18 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
             return 401
         }
     } catch (error) {
-        return `error: ${error}`;
+        return 404;
     }
 }
+
+// export const test = async() => {
+//     const jobs = await Job.find()
+//     console.log(jobs)
+// }
+// test()
 
 // getVerCode("hungjiewu@gmail.com")
 // checkVerCode('hungjiewu@gmail.com', '2BJkDe')
 // resetPassword("hungjiewu@gmail.com","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")
+//addResume(Object("5fe3444644aeb23ee87a38d8"),"test12","1234")
+//deleteResume(Object("5fe3444644aeb23ee87a38d8"),Object("5ff968a0e7a40919942051cf"))
