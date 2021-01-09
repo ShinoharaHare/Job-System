@@ -7,7 +7,7 @@ import history from 'connect-history-api-fallback'
 
 import * as path from 'path'
 import './applyment'
-import './AccountBackend'
+// import './AccountBackend'
 
 const app = express()
 
