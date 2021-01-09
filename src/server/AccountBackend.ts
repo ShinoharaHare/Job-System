@@ -187,5 +187,5 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
 }
 
 // getVerCode("hungjiewu@gmail.com")
-//checkVerCode('hungjiewu@gmail.com', '2BJkDe')
+// checkVerCode('hungjiewu@gmail.com', '2BJkDe')
 // resetPassword("hungjiewu@gmail.com","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")
