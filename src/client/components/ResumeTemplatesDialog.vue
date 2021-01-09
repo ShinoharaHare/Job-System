@@ -12,7 +12,10 @@ v-dialog(fullscreen, :value="value")
                 v-expansion-panel-content
                     v-card-actions
                         v-spacer
-                        v-btn(color="error") 移除
+                        v-btn(
+                            color="error"
+                            @click="deleteResume"
+                        ) 移除
                         v-btn(
                             color="success",
                             @click="showEditor = true"
@@ -36,6 +39,7 @@ v-dialog(fullscreen, :value="value")
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import EditResumeDialog from '@/client/components/EditResumeDialog.vue'
+import { sendMessage } from '@/client/sysmsg'
 
 @Component({ components: { EditResumeDialog } })
 export default class extends Vue {
@@ -44,9 +48,27 @@ export default class extends Vue {
 
     list: any[] = []
     showEditor = false
+    loading = false
 
     changeValue(v: boolean) {
         this.$emit('input', v)
+    }
+
+    async deleteResume() {
+        this.loading = true
+        const { status, data } = await axios.delete('/api/account/resumeTemplates/')        //id待寫
+        this.loading = false
+
+        switch (status) {
+        case 200:
+            this.$router.replace('/ResumeTemplatesDialog')
+            sendMessage('刪除成功')
+            break
+
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
+        }
+    
     }
 
     mounted() {
