@@ -1,13 +1,16 @@
 import { auth, findJob, required } from '@/server/middlewares'
-import { Job } from '@/server/models'
+import { Account, Job } from '@/server/models'
+import { findJobsByTags } from '@/server/tags'
 
 import { Router } from 'express'
-import { Types } from 'mongoose'
+
+import 'ts-mongoose/plugin'
+
 
 const router = Router()
 
 // 新建工作
-router.post('/', auth, required('data'), async(req, res) => {
+router.post('/', auth, required('data'), async (req, res) => {
     try {
         const document = await Job.create({
             ...req.body.data,
@@ -20,8 +23,33 @@ router.post('/', auth, required('data'), async(req, res) => {
     }
 })
 
+
+router.get('/favorite', auth, async (req, res) => {
+    let jobs = await Account
+        .findById(req.account!.id, 'favorite')
+        .populateTs('favorite')
+
+    res.status(200).json(jobs!.favorite)
+})
+
+// 搜尋工作
+// router.get('/search', findJob, async(req, res) => {
+router.get('/search', async (req, res) => {
+    // test search by tags
+    let tagNames: string[] = [];
+    if (req.query?.tags) {
+        // res.json(req.query?.tags);
+        if (Array.isArray(req.query?.tags)) {
+            tagNames = req.query?.tags as string[];
+        } else if (typeof req.query?.tags === "string") {
+            tagNames = [req.query?.tags as string];
+        }
+    }
+    res.json(await findJobsByTags(tagNames)).status(200);
+})
+
 // 取得工作詳細資料
-router.get('/:id', findJob, async(req, res) => {
+router.get('/:id', findJob, async (req, res) => {
     try {
         res.status(200).json(req.job)
     } catch (error) {
@@ -30,10 +58,12 @@ router.get('/:id', findJob, async(req, res) => {
     }
 })
 
+
+
 // 更新工作資料
-router.patch('/:id', auth, findJob, async(req, res) => {
+router.patch('/:id', auth, findJob, async (req, res) => {
     try {
-        const doc = await req.job?.update(req.body.data)
+        const doc = await req.job?.updateOne(req.body.data)
         res.status(200).json(doc)
     } catch (error) {
         console.error(error)
@@ -42,7 +72,7 @@ router.patch('/:id', auth, findJob, async(req, res) => {
 })
 
 // 刪除工作
-router.delete('/:id', auth, findJob, async(req, res) => {
+router.delete('/:id', auth, findJob, async (req, res) => {
     try {
         await req.job?.remove()
         res.status(204).json()
@@ -53,7 +83,7 @@ router.delete('/:id', auth, findJob, async(req, res) => {
 })
 
 // 工作清單
-router.get('/', auth, async(req, res) => {
+router.get('/', auth, async (req, res) => {
     const jobs = await Job.find({
         publisher: req.account!.id
     })
@@ -61,18 +91,11 @@ router.get('/', auth, async(req, res) => {
     res.status(200).json(jobs)
 })
 
-// 搜尋工作
-router.get('/search', findJob, async(req, res) => {
-
-})
 
 // 收藏工作
-router.post('/:id/favorite', auth, findJob, async(req, res) => {
+router.post('/:id/favorite', auth, findJob, async (req, res) => {
     try {
-        if (!req.account?.favorite?.includes(req.job?.id)) {
-            req.account?.favorite?.push(req.job?.id)
-            await req.account?.save()
-        }
+        await req.account!.updateOne({ $addToSet: { favorite: req.params.id } })
         res.status(200).json()
     } catch (error) {
         console.error(error)
@@ -81,10 +104,11 @@ router.post('/:id/favorite', auth, findJob, async(req, res) => {
 })
 
 // 取消收藏工作
-router.post('/:id/unfavorite', auth, async(req, res) => {
+router.post('/:id/unfavorite', auth, async (req, res) => {
     try {
-        req.account!.favorite = req.account?.favorite?.filter(x => x !== Types.ObjectId(req.params.id))
-        await req.account?.save()
+        await req.account!.updateOne({
+            $pull: { favorite: req.params.id }
+        })
         res.status(200).json()
     } catch (error) {
         console.error(error)

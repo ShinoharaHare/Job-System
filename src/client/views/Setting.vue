@@ -147,9 +147,7 @@ export default class extends Vue {
     }
 
     mounted() {
-        setInterval(() => {
-            console.log(this.account.personal?.nameZH)
-        }, 1000)
+        
     }
 }
 

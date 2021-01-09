@@ -4,10 +4,12 @@
     "private": true,
     "scripts": {
         "serve:client": "vue-cli-service serve",
-        "serve:server": "nodemon --watch src/server --delay 1 -e ts,tsx --exec \"ts-node --files -r tsconfig-paths/register src/server/main.ts\"",
+        "serve:server": "nodemon --watch src/server --delay 1 -e ts,tsx --exec \"ts-node --files --project tsconfig.server.json -r tsconfig-paths/register src/server/main.ts\"",
         "test:unit": "vue-cli-service test:unit",
         "test:e2e": "vue-cli-service test:e2e",
-        "lint": "vue-cli-service lint"
+        "lint": "vue-cli-service lint",
+        "build": "node scripts/build.js",
+        "start": "node dist/server/main"
     },
     "dependencies": {
         "@fortawesome/fontawesome-free": "^5.15.1",
@@ -74,7 +76,9 @@
         "sass-loader": "^8.0.2",
         "ts-node": "^9.0.0",
         "tsconfig-paths": "^3.9.0",
+        "ttypescript": "^1.5.12",
         "typescript": "~3.9.3",
+        "typescript-transform-paths": "^2.2.0",
         "vue-cli-plugin-pug": "^1.0.7",
         "vue-cli-plugin-vuetify": "~2.0.7",
         "vue-property-decorator": "^8.5.1",

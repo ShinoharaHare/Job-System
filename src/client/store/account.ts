@@ -66,4 +66,24 @@ export default class extends VuexModule {
             this.context.commit('setIsLogin', true)
         }
     }
+
+    @Action
+    async favorite(job: any) {
+        let { status } = await axios.post(`/api/job/${job}/favorite`)
+        if (status === 200) {
+            let temp = this.account
+            temp!.favorite!.push(job)
+            this.context.commit('setAccount', temp)
+        }
+    }
+
+    @Action
+    async unfavorite(job: any) {
+        let { status } = await axios.post(`/api/job/${job}/unfavorite`)
+        if (status === 200) {
+            let temp = this.account
+            temp!.favorite! = temp!.favorite!.filter(x => x != job)
+            this.context.commit('setAccount', temp)
+        }
+    }
 }
