@@ -1,5 +1,5 @@
 <template lang="pug">
-v-list(three-line, :height="height")
+v-list(three-line, :height="height" :width="width")
     span(:key="i", v-for="({ title, location, tags }, i) in items")
         v-list-item(@click="showJob")
             //- v-list-item-avatar
@@ -16,9 +16,12 @@ v-list(three-line, :height="height")
                         :key="i",
                         color="primary"
                     ) {{ tag }}
-
             v-list-item-avatar
-                v-icon mdi-heart-outline
+                v-btn(icon @click.stop="" )
+                    v-icon() mdi-heart-outline
+            //- v-list-item-avatar
+            //-     v-icon mdi-heart-outline
+
         v-divider(v-if="i < count - 1")
 </template>
 
@@ -33,11 +36,14 @@ export default class extends Vue {
     @Prop()
     height = 'auto'
 
-    showJob () {
+    @Prop()
+    width = 'auto'
+
+    showJob() {
         this.$router.push('/job')
     }
 
-    get count () {
+    get count() {
         return this.items.length
     }
 }

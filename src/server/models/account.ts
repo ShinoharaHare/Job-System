@@ -47,7 +47,11 @@ export const SAccount = createSchema({
     notification: Type.array().of(Notification),
     favorite: Type.array().of(Type.ref(Type.objectId()).to('Job', SJob)),
     events: Type.array().of(SEvent),
-    personal: Type.schema().of(SPersonal)
+    personal: Type.schema().of(SPersonal),
+    resetPwd: Type.object().of({
+        code: Type.string({}),
+        expired: Type.number({})
+    })
 })
 
 SAccount.add({

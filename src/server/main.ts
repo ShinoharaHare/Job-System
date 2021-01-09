@@ -1,5 +1,5 @@
 import config from './config'
-import api from './routes/api'
+import routes from './routes'
 
 import express from 'express'
 import cookieParser from 'cookie-parser'
@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
 
-app.use('/api', api)
+app.use('/', routes)
 
 app.use(history())
 app.use(express.static(path.resolve(__dirname, '../../dist/client')))

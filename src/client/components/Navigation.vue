@@ -1,9 +1,9 @@
 <template lang="pug">
-v-bottom-navigation(app, grow, shift, color="primary", v-if="show")
+v-bottom-navigation(app, grow, shift, color="primary", v-if="show&&isLogin")
     v-btn(
         :to="path",
         :key="path",
-        v-for="{ path, text, icon, type } in items",
+        v-for="{ path, text, icon, type} in items",
         v-if="isShowItem(type)"
         height="inherit"
     )
@@ -21,6 +21,8 @@ const Account = namespace('Account')
 export default class extends Vue {
     @Account.State
     isJobSeeker!: boolean
+
+    @Account.State isLogin!: boolean
 
     items = [
         {
@@ -66,9 +68,9 @@ export default class extends Vue {
     isShowItem(type: number) {
         switch (type) {
         case 0:
-            return this.isJobSeeker
+            return this.isLogin && this.isJobSeeker
         case 1:
-            return !this.isJobSeeker
+            return this.isLogin && !this.isJobSeeker
         default:
             return true
         }
