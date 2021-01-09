@@ -9,7 +9,6 @@ v-card(flat, tile, height="100%")
             v-col(cols="12")
                 v-card.mx-auto(
                     color="white",
-                    elevation="12",
                     outlined,
                     rounded,
                     max-width="400"
@@ -140,7 +139,6 @@ v-card(flat, tile, height="100%")
                 v-spacer
                 v-card.mx-auto(
                     color="white",
-                    elevation="12",
                     outlined,
                     rounded,
                     max-width="400"
@@ -148,7 +146,9 @@ v-card(flat, tile, height="100%")
                     .my-2.d-flex.flex-row
                         v-spacer
                         p.py-1.mb-0 還沒有帳號嗎?
-                        router-link.pt-1(to="/register") 註冊
+                        router-link.pt-1(to="/register")
+                            | 
+                            | 註冊
                         v-spacer
 </template>
 

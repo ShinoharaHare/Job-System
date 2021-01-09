@@ -30,6 +30,13 @@ export default class extends VuexModule {
     }
 
     @Action
+    async register({ email, password }: IPayload) {
+        const hash = sha256(password).toString()
+        const { status } = await axios.post('/api/account', { email, hash })
+        return status
+    }
+
+    @Action
     async login({ email, password }: IPayload) {
         const hash = sha256(password).toString()
         const { status, data } = await axios.post('/api/account/login', { email, hash })

@@ -252,8 +252,6 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
     }
 }
 
-
+// getVerCode("hungjiewu@gmail.com")
 // checkVerCode('hungjiewu@gmail.com', '2BJkDe')
-// resetPassword("hungjiewu@gmail.cohm","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")
-//block(Object("5fe3444644aeb23ee87a38d8"),Object("8fda3086503d8f1f9c33f97a"))
-//updateResume(Object("5fe3444644aeb23ee87a38d8"),Object("5ff968a0e7a40919942051cf"),"hello1","test1234")
+// resetPassword("hungjiewu@gmail.com","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")
