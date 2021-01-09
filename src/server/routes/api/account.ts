@@ -6,6 +6,8 @@ import { Router } from 'express'
 import jwt from 'jsonwebtoken'
 import { login, mapSegment2Time } from '@/server/ntou-as'
 
+import * as AccountBackend from '@/server/AccountBackend'
+
 const router = Router()
 
 // 註冊
@@ -111,6 +113,22 @@ router.post('/link-ntou', auth, required('ntouID', 'ntouPW'), async(req, res) =>
             success: false
         })
     }
+})
+
+router.post('/sentMail', async(req, res) =>  {
+    console.log(req.params.resetEmail, req.body.resetEmail)
+    const Res = await AccountBackend.getVerCode(req.body.resetEmail)
+    res.status(200).json()
+})
+
+router.post('/checkVerCode', async(req, res) =>  {
+    const Res = await AccountBackend.checkVerCode(req.body.resetEmail,req.body.validCode)
+    res.status(Res).json()
+})
+
+router.post('/resetPwd', async(req, res) =>  {
+    const Res = await AccountBackend.resetPassword(req.body.resetEmail,req.body.newHash)
+    res.status(200).json()
 })
 
 export default router

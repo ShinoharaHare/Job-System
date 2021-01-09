@@ -19,6 +19,7 @@ function makeid(length: number) {
 // 忘記密碼
 export const getVerCode = async(email: string) => {
     // const email = "00757001@email.ntou.edu.tw"
+    console.log(email)
     const account = await Account.findOne({ email: email })
     if (account == null) {
         console.log('無此帳號')
@@ -66,8 +67,8 @@ export const getVerCode = async(email: string) => {
 
 export const checkVerCode = async(email: string, code: string) => {
     const valid = await Account.distinct('resetPwd', { email: email })
-    console.log(valid[0].code)
-    if (Date.now() < valid[0].expired) { // 10*60*1000 = 十分鐘
+    console.log(email)
+    if (Date.now() < valid[0]?.expired) { // 10*60*1000 = 十分鐘
         if (valid[0].code === code) {
             console.log('驗證碼正確')
             return 200
@@ -186,5 +187,5 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
 }
 
 // getVerCode("hungjiewu@gmail.com")
-checkVerCode('hungjiewu@gmail.com', '2BJkDe')
+//checkVerCode('hungjiewu@gmail.com', '2BJkDe')
 // resetPassword("hungjiewu@gmail.com","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")

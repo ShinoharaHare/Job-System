@@ -112,7 +112,7 @@ v-card(flat, tile, height="100%")
                                                     color="primary",
                                                     :loading="loading",
                                                     :disabled="!valid3"
-                                                    @click="resetPwd()"
+                                                    @click="checkVerCode()"
                                                 ) 驗證
                                                 v-spacer
                                     v-card-actions
@@ -121,7 +121,7 @@ v-card(flat, tile, height="100%")
                                             color="primary",
                                             :loading="loading",
                                             :disabled="!valid2"
-                                            @click="sentVerCode"
+                                            @click="sentMail()"
                                         ) 發送驗證碼
                                         v-spacer
                             v-card-actions
@@ -156,7 +156,6 @@ v-card(flat, tile, height="100%")
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { sendMessage } from '@/client/sysmsg'
-import sha256 from 'crypto-js/sha256'
 
 const Account = namespace('Account')
 
@@ -188,33 +187,46 @@ export default class extends Vue {
     requiredRule(v: string) {
         return v.length > 0 || '必填'
     }
-    async sentVerCode() {
+    async sentMail() {
         this.dialog2 = !this.dialog2
-        const email = this.email
+        const resetEmail = this.resetEmail
+        console.log(resetEmail)
         this.loading = true
-        const {status, data } = await axios.post('/api/account/sentVerCode', { email })
+        const {status } = await axios.post('/api/account/sentMail', { resetEmail: resetEmail})
         this.loading = false
 
-
+        switch (status) {
+        case 200:
+            sendMessage('驗證碼已寄出，請至信箱查看')
+            break
+        case 401:
+            sendMessage('無此帳號', { color: 'error' })
+            break
+        case 404:
+            sendMessage('Error!', { color: 'error' })
+            break
+        default:
+            sendMessage('未知的錯誤', { color: 'error' })
+        }
     }
 
-    async resetPwd() {
-        const hash = sha256(this.password).toString()
-        const email = this.email
+    async checkVerCode() {
+        const resetEmail = this.resetEmail
+        const validCode = this.validCode
         
         this.loading = true
-        const { status, data } = await axios.post('/api/account/resetPwd', { email, hash })
+        const { status, data } = await axios.post('/api/account/checkVerCode', { resetEmail, validCode })
         this.loading = false
 
-        switch (this.validState) {
-        case 1:
-            this.$router.replace('/resetpassword')
+        switch (status) {
+        case 200:
+            this.$router.push({ name: 'ResetPassword', params: { email: resetEmail}})
             sendMessage('驗證成功')
             break
-        case 2:
+        case 401:
             sendMessage('驗證碼錯誤', { color: 'error' })
             break
-        case 3:
+        case 402:
             sendMessage('驗證碼已過期', { color: 'error' })
             break
         default:
