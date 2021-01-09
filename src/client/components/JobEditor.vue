@@ -56,21 +56,21 @@ export default class extends Vue {
         show: false
     }
 
-    title?: string = "請輸入標題"
+    title?: string = '請輸入標題'
 
     mounted() {
         // (window as any).test = this.$refs.QuillEditor;
         ; (this.$refs.QuillEditor as any).loadDefault();
     }
 
-    getJobData(){
+    getJobData() {
         return {
-            "data": {
-                "title": this.title,
-                "content": (this.$refs.QuillEditor as any).getContent(),
-                "vacanies": 0,
-                "time": [],
-                "tags": []
+            data: {
+                title: this.title,
+                content: (this.$refs.QuillEditor as any).getContent(),
+                vacanies: 0,
+                time: [],
+                tags: []
             }
         };
     }
