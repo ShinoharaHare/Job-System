@@ -4,6 +4,8 @@ import { Job } from '@/server/models'
 import { Router } from 'express'
 import { Types } from 'mongoose'
 
+import { findJobsByTags } from '@/server/tags'
+
 const router = Router()
 
 // 新建工作
@@ -13,11 +15,27 @@ router.post('/', auth, required('data'), async(req, res) => {
             ...req.body.data,
             publisher: req.account?.id
         })
-
+        
         res.status(201).json(document)
     } catch (error) {
         console.error(error)
     }
+})
+
+// 搜尋工作
+// router.get('/search', findJob, async(req, res) => {
+router.get('/search', async(req, res) => {
+    // test search by tags
+    let tagNames: string[] = [];
+    if(req.query?.tags){
+        // res.json(req.query?.tags);
+        if(Array.isArray(req.query?.tags)){
+            tagNames = req.query?.tags as string[];
+        }else if(typeof req.query?.tags === "string"){
+             tagNames = [req.query?.tags as string];
+        }
+    }
+    res.json(await findJobsByTags(tagNames)).status(200);
 })
 
 // 取得工作詳細資料
@@ -61,10 +79,6 @@ router.get('/', auth, async(req, res) => {
     res.status(200).json(jobs)
 })
 
-// 搜尋工作
-router.get('/search', findJob, async(req, res) => {
-
-})
 
 // 收藏工作
 router.post('/:id/favorite', auth, findJob, async(req, res) => {

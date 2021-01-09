@@ -24,8 +24,8 @@ import { namespace } from 'vuex-class'
 export default class extends Vue {
     async getList() {
         const { data } = await axios.post('/api/notification/list');
-        console.log('from ts');
-        console.log(data);
+        // console.log('from ts');
+        // console.log(data);
         return data;
     }
 
@@ -37,8 +37,8 @@ export default class extends Vue {
 
     async mounted() {
         this.messages = await this.getList();
-        console.log('from vue');
-        console.log(this.messages);
+        // console.log('from vue');
+        // console.log(this.messages);
     }
 }
 </script>
