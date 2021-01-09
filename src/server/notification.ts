@@ -15,9 +15,10 @@ export const sendNots = (users: Types.ObjectId[], title: string, messege: string
     }, (err, result) => {
         if (err) {
             console.error(err);
+            return false;
         } else {
             console.log(result);
-            return 'done'; //  test
+            return true;
         }
     })
 }
