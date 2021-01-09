@@ -17,13 +17,13 @@ v-card.wrapper(tile, height="100%")
                             hideToolbar,
                             hideStatus,
                             readOnly,
-                            height="calc(100vh - 550px)"
+                            height="calc(100vh - 550px)",
                             ref="editor"
                         )
 
             v-row
                 v-col 
-                    TagPicker(readOnly label="標籤")
+                    TagPicker(readOnly, label="標籤")
 
             v-row
                 v-col
@@ -41,8 +41,12 @@ v-card.wrapper(tile, height="100%")
     v-footer(fixed, padless)
         v-card(tile, width="100%")
             v-card-actions
-                v-btn(icon, large)
+                v-btn(icon, large, @click="unfavorite", v-if="isFavorite")
+                    v-icon(color="pink") mdi-heart
+
+                v-btn(icon, large, @click="favorite", v-else)
                     v-icon mdi-heart-outline
+
                 v-btn.mx-auto(
                     outlined,
                     color="primary",
@@ -53,15 +57,22 @@ v-card.wrapper(tile, height="100%")
 
 <script lang="ts">
 import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
-import { IJob } from '@/server/models'
+import { namespace } from 'vuex-class'
+
+import { IAccount, IJob } from '@/server/models'
 import { sendMessage } from '../sysmsg'
 
 import TagPicker from '@/client/components/TagPicker.vue'
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
 
+const Account = namespace('Account')
 
 @Component({ components: { RichTextEditor, TagPicker } })
 export default class extends Vue {
+    @Account.State account!: IAccount
+    @Account.Mutation('favorite') _favorite!: Function
+    @Account.Mutation('unfavorite') _unfavorite!: Function
+
     @Ref() editor!: RichTextEditor
 
     job: any = {
@@ -76,6 +87,45 @@ export default class extends Vue {
         { text: '開始時間', value: 'start', align: 'center' },
         { text: '結束時間', value: 'end', align: 'center' },
     ]
+
+    get id() {
+        return this.$route.params.id
+    }
+
+    get isFavorite() {
+        console.log(this.account.favorite)
+        return this.account.favorite!.findIndex((x: any) => x == this.id) != -1
+    }
+
+    async favorite() {
+        let { status } = await axios.post(`/api/job/${this.id}/favorite`)
+        if (status == 200) {
+            this._favorite(this.id)
+        }
+    }
+
+    async unfavorite() {
+        let { status } = await axios.post(`/api/job/${this.id}/unfavorite`)
+        if (status == 200) {
+            this._unfavorite(this.id)
+        }
+    }
+
+    async loadData() {
+        const { status, data } = await axios.get(`/api/job/${this.id}`)
+
+        switch (status) {
+            case 200:
+                this.job = data
+                this.editor.setContent(data.content)
+                this.editor.refresh()
+                break
+            case 404:
+                // 導向到404頁面
+                // this.$router.replace('/404')
+                break
+        }
+    }
 
     async apply() {
         let { status } = await axios.post('/api/applyment', {
@@ -94,21 +144,8 @@ export default class extends Vue {
         }
     }
 
-    async mounted() {
-        const id = this.$route.params.id
-        const { status, data } = await axios.get(`/api/job/${id}`)
-
-        switch (status) {
-            case 200:
-                this.job = data
-                this.editor.setContent(data.content)
-                this.editor.refresh()
-                break
-            case 404:
-                // 導向到404頁面
-                // this.$router.replace('/404')
-                break
-        }
+    mounted() {
+        this.loadData()
     }
 }
 </script>

@@ -29,6 +29,16 @@ export default class extends VuexModule {
         this.isJobSeeker = isJobSeeker
     }
 
+    @Mutation
+    favorite(job: any) {
+        this.account!.favorite!.push(job)
+    }
+
+    @Mutation
+    unfavorite(job: any) {
+        this.account!.favorite! = this.account!.favorite!.filter(x => x != job)
+    }
+
     @Action
     async register({ email, password }: IPayload) {
         const hash = sha256(password).toString()
