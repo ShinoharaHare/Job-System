@@ -28,7 +28,7 @@ import { namespace } from 'vuex-class'
 import { sendMessage } from '@/client/sysmsg'
 import { IAccount } from '@/server/models'
 import { IJob } from '@/server/models'
-import mongoose = require('mongoose');
+import mongoose from 'mongoose'
 
 const Account = namespace('Account')
 const Job = namespace('Job')
