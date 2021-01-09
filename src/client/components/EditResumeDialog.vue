@@ -2,10 +2,10 @@
 v-dialog(fullscreen, :value="value")
     v-card(tile)
         v-toolbar(dark, color="primary")
-            v-toolbar-title 編輯履歷
+            v-toolbar-title {{title}}
 
         v-card-text
-            RichTextEditor
+            RichTextEditor(ref="textContent")
             //- v-textarea(
             //-     auto-grow,
             //-     height="550",
@@ -16,7 +16,7 @@ v-dialog(fullscreen, :value="value")
         v-footer(absolute, padless)
             v-card(tile, width="100%")
                 v-card-actions
-                    v-text-field.mx-4
+                    v-text-field.mx-4(v-model="name")
                     v-btn(color="error" @click="changeValue(false)") 取消
                     v-btn(color="success" @click="updateResume()") 確認
 </template>
@@ -33,48 +33,74 @@ export default class extends Vue {
     @Prop()
     value!: boolean
 
+    @Prop({default: null})
+    resume!:any
+
+    @Prop({default: null})
+    userID!:any
+
     loading = false
     name = ''
+    title = '新增履歷'
 
-    content = 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum'
+    content = 'Test1234567890'
 
     changeValue(v: boolean) {
         this.$emit('input', v)
     }
 
-    async getName() {
-        const { status, data } = await axios.get('/api/account', {
-            params: { fields: ['personal'] }
-        })
+    // async getName() {
+    //     const { status, data } = await axios.get('/api/account', {
+    //         params: { fields: ['personal'] }
+    //     })
 
-        switch (status) {
-        case 200:
-            this.name = data.personal.nameZH
-            break
-        }
-    }
+    //     switch (status) {
+    //     case 200:
+    //         this.name = data.personal.nameZH
+    //         break
+    //     }
+    // }
 
     async updateResume() {
         this.loading = true
-        this.getName()
-        const content = this.content
-        const { status, data } = await axios.post('/api/account/resumeTemplates', { name, content })
-        this.loading = false
+        if(this.title == '新增履歷'){
+            const {status} = await axios.post('/api/account/addResume',{userID:this.userID,name:this.name,content:this.content})
+            this.loading = false
 
-        switch (status) {
-        case 200:
-            this.$router.replace('/ResumeTemplatesDialog')
-            sendMessage('修改成功')
-            break
+            switch (status) {
+            case 200:
+                window.location.reload()
+                sendMessage('新增成功')
+                break
 
-        default:
-            sendMessage('未知的錯誤', { color: 'error' })
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
+            }
+        }
+        else if(this.title == '編輯履歷'){
+            const {status} = await axios.post('/api/account/updateResume',{userID:this.userID,resumeID:this.resume._id,name:this.name,content:this.content})
+            this.loading = false
+            switch (status) {
+            case 200:
+                window.location.reload()
+                sendMessage('編輯成功')
+                break
+
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
+            }
         }
     
     }
 
     mounted() {
-
+        this.name = this.resume.name;
+        this.content = this.resume.content;
+        if(this.resume != null){
+            this.title = '編輯履歷'
+        }
+        //console.log(this.state)
+        //this.$refs.textContent.setContent(content)
     }
 }
 </script>
