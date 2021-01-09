@@ -51,40 +51,76 @@ export const bossAcceptApplyment = async(applicant: Types.ObjectId) => {
     const targetApplyment = await Applyment.findOne({ applicant: applicant })
     const targetJob = await Job.findById(targetApplyment?.job)
     if (targetApplyment) {
-        bossAccept(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功被接受 :)')
+        if (targetJob) {
+            bossAccept(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功被接受 :)')
+            console.log('老闆成功接受')
+            return 200
+        } else {
+            console.log('Job Not Exist')
+            return 401
+        }
+    } else {
+        console.log('Applyment Not Exist')
+        return 402
     }
-    console.log('老闆成功接受')
 }
 export const bossRefuseApplyment = async(applicant: Types.ObjectId) => {
     const applicantarray: Types.ObjectId[] = [applicant]
     const targetApplyment = await Applyment.findOne({ applicant: applicant })
     const targetJob = await Job.findById(targetApplyment?.job)
     if (targetApplyment) {
-        bossRefuse(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已被拒絕 :(')
+        if (targetJob) {
+            bossRefuse(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已被拒絕 :(')
+            console.log('老闆成功拒絕')
+            return 200
+        } else {
+            console.log('Job Not Exist')
+            return 401
+        }
+    } else {
+        console.log('Applyment Not Exist')
+        return 402
     }
-    console.log('老闆成功拒絕')
 }
 export const applicantAcceptApplyment = async(applicant: Types.ObjectId) => {
     const applicantarray: Types.ObjectId[] = [applicant]
     const targetApplyment = await Applyment.findOne({ applicant: applicant })
     const targetJob = await Job.findById(targetApplyment?.job)
     if (targetApplyment) {
-        bossRefuse(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功接受 :(')
+        if (targetJob) {
+            applicantAccept(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功接受 :(')
+            console.log('申請人成功接受')
+            return 200
+        } else {
+            console.log('Job Not Exist')
+            return 401
+        }
+    } else {
+        console.log('Applyment Not Exist')
+        return 402
     }
-    console.log('申請人成功接受')
 }
 export const applicantGiveupApplyment = async(applicant: Types.ObjectId) => {
     const applicantarray: Types.ObjectId[] = [applicant]
     const targetApplyment = await Applyment.findOne({ applicant: applicant })
     const targetJob = await Job.findById(targetApplyment?.job)
     if (targetApplyment) {
-        applicantGiveup(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已放棄 :(')
+        if (targetJob) {
+            applicantGiveup(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已放棄 :(')
+            console.log('申請人成功放棄')
+            return 200
+        } else {
+            console.log('Job Not Exist')
+            return 401
+        }
+    } else {
+        console.log('Applyment Not Exist')
+        return 402
     }
-    console.log('申請人成功放棄')
 }
 
 export const applicantRefuseApplyment = async(applicant: Types.ObjectId) => {
@@ -92,8 +128,17 @@ export const applicantRefuseApplyment = async(applicant: Types.ObjectId) => {
     const targetApplyment = await Applyment.findOne({ applicant: applicant })
     const targetJob = await Job.findById(targetApplyment?.job)
     if (targetApplyment) {
-        applicantRefuse(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功拒絕 :(')
+        if (targetJob) {
+            applicantRefuse(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功拒絕 :(')
+            console.log('申請人成功拒絕')
+            return 200
+        } else {
+            console.log('Job Not Exist')
+            return 401
+        }
+    } else {
+        console.log('Applyment Not Exist')
+        return 402
     }
-    console.log('申請人成功拒絕')
 }
