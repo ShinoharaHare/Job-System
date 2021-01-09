@@ -17,12 +17,12 @@ function makeid(length: number) {
 }
 
 // 忘記密碼
-export const findPwd = async(email: string) => {
+export const getVerCode = async(email: string) => {
     // const email = "00757001@email.ntou.edu.tw"
     const account = await Account.findOne({ email: email })
     if (account == null) {
         console.log('無此帳號')
-        return 0
+        return 401
     }
     const validCode = makeid(6)
     const transporter = nodemailer.createTransport({
@@ -64,7 +64,7 @@ export const findPwd = async(email: string) => {
         })
 }
 
-export const checkValidation = async(email: string, code: string) => {
+export const checkVerCode = async(email: string, code: string) => {
     const valid = await Account.distinct('resetPwd', { email: email })
     console.log(valid[0].code)
     if (Date.now() < valid[0].expired) { // 10*60*1000 = 十分鐘
@@ -86,6 +86,8 @@ export const resetPassword = async(email: string, newHash: string) => {
         await Account.updateOne(
             { email: email },
             { $set: { hash: newHash } })
+
+        console.log('密碼修改成功')
         return 200
     } catch (error) {
         return `error: ${error}`;
@@ -183,6 +185,6 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
     }
 }
 
-// findPwd("hungjiewu@gmail.com")
-// checkValidation("hungjiewu@gmail.com","RdKLyL")
+// getVerCode("hungjiewu@gmail.com")
+checkVerCode('hungjiewu@gmail.com', '2BJkDe')
 // resetPassword("hungjiewu@gmail.com","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")

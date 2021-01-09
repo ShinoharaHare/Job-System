@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser'
 import history from 'connect-history-api-fallback'
 
 import * as path from 'path'
-import './account'
+import './AccountBackend'
 
 const app = express()
 
