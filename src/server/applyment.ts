@@ -172,4 +172,4 @@ export const applicantRefuseApplyment = async(applyment: Types.ObjectId) => {
 }
 
 // findDataApplyment(Types.ObjectId('5fde0206359f4c512ce389be'))
-applicantConfirm(Types.ObjectId('5fde0206359f4c512ce389be'), Types.ObjectId('5fd258253ec604545ce35e46'))
+// applicantConfirm(Types.ObjectId('5fde0206359f4c512ce389be'), Types.ObjectId('5fd258253ec604545ce35e46'))
