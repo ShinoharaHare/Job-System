@@ -1,14 +1,14 @@
 <template lang="pug">
-v-list(three-line, :height="height" :width="width")
-    span(:key="i", v-for="({ title, location, tags }, i) in items")
-        v-list-item(@click="showJob")
-            //- v-list-item-avatar
+v-list(two-line, :height="height", :width="width")
+    template(v-for="({ _id, title, tags }, i) in items")
+        v-list-item(@click="toJobPage(_id)", :key="_id")
             v-list-item-avatar
                 v-icon mdi-briefcase-variant
 
             v-list-item-content
-                v-list-item-title {{ title }}
-                v-list-item-subtitle {{ location }}
+                v-list-item-title
+                    h4 {{ title }}
+
                 v-list-item-subtitle
                     v-chip.mr-1(
                         x-small,
@@ -16,35 +16,40 @@ v-list(three-line, :height="height" :width="width")
                         :key="i",
                         color="primary"
                     ) {{ tag }}
-            v-list-item-avatar
-                v-btn(icon @click.stop="" )
-                    v-icon() mdi-heart-outline
-            //- v-list-item-avatar
-            //-     v-icon mdi-heart-outline
 
-        v-divider(v-if="i < count - 1")
+            v-list-item-avatar
+                v-btn(icon, large, @click.stop="unfavorite(_id)", v-if="isFavorite(_id)")
+                    v-icon(color="pink") mdi-heart
+
+                v-btn(icon, large, @click.stop="favorite(_id)", v-else)
+                    v-icon mdi-heart-outline
+
+        v-divider
 </template>
 
 <script lang="ts">
+import { IAccount } from '@/server/models'
 import { Vue, Component, Prop } from 'vue-property-decorator'
+import { namespace } from 'vuex-class'
+
+const Account = namespace('Account')
 
 @Component
 export default class extends Vue {
-    @Prop()
-    items!: any[]
+    @Prop({ default: () => [] }) items!: any[]
+    @Prop() height!: string
+    @Prop() width!: string
 
-    @Prop()
-    height = 'auto'
+    @Account.State account!: IAccount
+    @Account.Action favorite!: Function
+    @Account.Action unfavorite!: Function
 
-    @Prop()
-    width = 'auto'
-
-    showJob() {
-        this.$router.push('/job')
+    isFavorite(id: string) {
+        return this.account.favorite!.findIndex((x: any) => x == id) != -1
     }
 
-    get count() {
-        return this.items.length
+    toJobPage(id: string) {
+        this.$router.push(`/job/${id}`)
     }
 }
 </script>

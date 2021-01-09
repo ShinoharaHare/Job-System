@@ -1,10 +1,11 @@
 import { auth, findJob, required } from '@/server/middlewares'
-import { Job } from '@/server/models'
+import { Account, Job } from '@/server/models'
+import { findJobsByTags } from '@/server/tags'
 
 import { Router } from 'express'
-import { Types } from 'mongoose'
 
-import { findJobsByTags } from '@/server/tags'
+import 'ts-mongoose/plugin'
+
 
 const router = Router()
 
@@ -20,6 +21,15 @@ router.post('/', auth, required('data'), async (req, res) => {
     } catch (error) {
         console.error(error)
     }
+})
+
+
+router.get('/favorite', auth, async (req, res) => {
+    let jobs = await Account
+        .findById(req.account!.id, 'favorite')
+        .populateTs('favorite')
+
+    res.status(200).json(jobs!.favorite)
 })
 
 // 搜尋工作
@@ -48,10 +58,12 @@ router.get('/:id', findJob, async (req, res) => {
     }
 })
 
+
+
 // 更新工作資料
 router.patch('/:id', auth, findJob, async (req, res) => {
     try {
-        const doc = await req.job?.update(req.body.data)
+        const doc = await req.job?.updateOne(req.body.data)
         res.status(200).json(doc)
     } catch (error) {
         console.error(error)

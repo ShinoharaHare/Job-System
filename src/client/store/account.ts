@@ -29,16 +29,6 @@ export default class extends VuexModule {
         this.isJobSeeker = isJobSeeker
     }
 
-    @Mutation
-    favorite(job: any) {
-        this.account!.favorite!.push(job)
-    }
-
-    @Mutation
-    unfavorite(job: any) {
-        this.account!.favorite! = this.account!.favorite!.filter(x => x != job)
-    }
-
     @Action
     async register({ email, password }: IPayload) {
         const hash = sha256(password).toString()
@@ -74,6 +64,26 @@ export default class extends VuexModule {
         if (status === 200) {
             this.context.commit('setAccount', data)
             this.context.commit('setIsLogin', true)
+        }
+    }
+
+    @Action
+    async favorite(job: any) {
+        let { status } = await axios.post(`/api/job/${job}/favorite`)
+        if (status === 200) {
+            let temp = this.account
+            temp!.favorite!.push(job)
+            this.context.commit('setAccount', temp)
+        }
+    }
+
+    @Action
+    async unfavorite(job: any) {
+        let { status } = await axios.post(`/api/job/${job}/unfavorite`)
+        if (status === 200) {
+            let temp = this.account
+            temp!.favorite! = temp!.favorite!.filter(x => x != job)
+            this.context.commit('setAccount', temp)
         }
     }
 }
