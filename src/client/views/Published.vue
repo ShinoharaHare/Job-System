@@ -3,9 +3,9 @@ v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
         v-toolbar-title 刊登管理
 
-    v-expansion-panels.mt-2(tile, accordion, multiple)
-        v-expansion-panel(v-for="({ title }, i) in jobs", :key="i")
-            v-expansion-panel-header {{ title }}
+    v-expansion-panels.mt-8(tile, popout, focusable)
+        v-expansion-panel(v-for="({ name }, i) in jobs", :key="i")
+            v-expansion-panel-header {{ name }}
             v-expansion-panel-content
                 v-card-actions
                     v-spacer
