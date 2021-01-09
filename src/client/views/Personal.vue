@@ -2,10 +2,10 @@
 v-card(height="100%")
     v-toolbar(flat)
         v-btn(icon, @click="$router.back()")
-            v-icon mdi-arrow-left
+            v-icon(color="error") mdi-arrow-left
         v-spacer
         v-btn(icon, @click="save")
-            v-icon mdi-check
+            v-icon(color="green") mdi-check
 
     v-card-text
         PersonalInfo(ref="info")
