@@ -5,7 +5,7 @@ v-dialog(fullscreen, :value="value")
             v-btn(icon, @click="changeValue(false)")
                 v-icon mdi-close
             v-toolbar-title 黑名單
-        
+
         v-list
             v-list-item(v-for="({ name }, i) in list" :key="i")
                 v-list-item-content
@@ -29,11 +29,11 @@ export default class extends Vue {
 
     list: any[] = []
 
-    changeValue (v: boolean) {
+    changeValue(v: boolean) {
         this.$emit('input', v)
     }
 
-    mounted () {
+    mounted() {
         for (let i = 0; i < 5; i++) {
             this.list.push({
                 name: '文子他媽'

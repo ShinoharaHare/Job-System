@@ -1,14 +1,14 @@
 <template lang="pug">
 v-dialog(fullscreen, :value="value")
-    v-card(tile)
+    v-card.px-12(justify="space-around" )
         v-toolbar(dark, color="primary")
             v-btn(icon, @click="changeValue(false)")
                 v-icon mdi-close
             v-toolbar-title 應徵者
 
-        v-expansion-panels.mt-2(tile, accordion, multiple)
+        v-expansion-panels.mt-12(tile, popout, focusable)
             v-expansion-panel(v-for="({ name }, i) in candidates", :key="i")
-                v-expansion-panel-header.pa-0
+                v-expansion-panel-header.pa-5
                     v-list-item
                         v-list-item-avatar
                             v-icon(large) mdi-account-outline
@@ -16,11 +16,12 @@ v-dialog(fullscreen, :value="value")
                             v-list-item-title.text-h6 {{ name }}
 
                 v-expansion-panel-content
+
                     v-card-actions
                         v-spacer
                         v-btn(color="error") 拒絕
                         v-btn(color="success") 接受
-                        v-btn(color="warning", @click="showResume") 詳細
+                        v-btn(color="warning", @click="showResume") 詳細資料
 
         ResumeDialog(v-model="show")
 </template>
@@ -37,15 +38,15 @@ export default class extends Vue {
     candidates: any[] = []
     show = false
 
-    changeValue (v: boolean) {
+    changeValue(v: boolean) {
         this.$emit('input', v)
     }
 
-    showResume () {
+    showResume() {
         this.show = true
     }
 
-    mounted () {
+    mounted() {
         for (let i = 0; i < 5; i++) {
             this.candidates.push({
                 name: '何文子'

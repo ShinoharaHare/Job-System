@@ -20,25 +20,24 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-
 @Component
 export default class extends Vue {
-    async getList () {
-        const { data } =  await axios.post('/api/notification/list');
-        console.log("from ts");
+    async getList() {
+        const { data } = await axios.post('/api/notification/list');
+        console.log('from ts');
         console.log(data);
         return data;
     }
 
     messages: any[] = []
 
-    get count () {
+    get count() {
         return this.messages.length
     }
 
-    async mounted () {
+    async mounted() {
         this.messages = await this.getList();
-        console.log("from vue");
+        console.log('from vue');
         console.log(this.messages);
     }
 }
