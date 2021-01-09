@@ -5,7 +5,7 @@ v-dialog(fullscreen, :value="value")
             v-toolbar-title 編輯履歷
 
         v-card-text
-            QuillEditor()
+            RichTextEditor
             //- v-textarea(
             //-     auto-grow,
             //-     height="550",
@@ -23,9 +23,9 @@ v-dialog(fullscreen, :value="value")
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
-import QuillEditor from '@/client/components/QuillEditor.vue'
+import RichTextEditor from '@/client/components/RichTextEditor.vue'
 
-@Component({ components: { QuillEditor } })
+@Component({ components: { RichTextEditor } })
 export default class extends Vue {
     @Prop()
     value!: boolean

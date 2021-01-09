@@ -5,13 +5,15 @@ v-card(flat, tile, height="100%")
             v-icon mdi-arrow-left
 
     JobEditor(ref="JobEditor")
-    v-card(tile, width="100%")
-        v-card-actions
-            v-spacer
-            v-btn(color="error" @click="$router.back()") 取消
-            v-spacer
-            v-btn(color="success" @click="submit") 確認
-            v-spacer
+
+    v-footer(fixed, padless)
+        v-card.flex(tile)
+            v-card-actions
+                v-spacer
+                v-btn(outlined, color="error", @click="$router.back()") 取消
+                v-spacer
+                v-btn(outlined, color="primary", @click="submit") 新建
+                v-spacer
 </template>
 
 <script lang="ts">
@@ -30,3 +32,6 @@ export default class extends Vue {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+</style>

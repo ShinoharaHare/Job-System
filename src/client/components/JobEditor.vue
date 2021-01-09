@@ -4,75 +4,147 @@ v-card(flat)
         v-container(fluid)
             v-row
                 v-col
-                    v-text-field(solo, dense, label="標題", v-model="title")
+                    v-text-field(label="標題", v-model="title")
             v-row
                 v-col
-                    v-data-table(
-                        disable-sort,
-                        disable-pagination,
-                        hide-default-footer,
-                        :mobile-breakpoint="0",
-                        :headers="timeHeaders",
-                        :items="timeItems"
+                    v-card(outlined)
+                        v-data-table(
+                            disable-sort,
+                            disable-pagination,
+                            hide-default-footer,
+                            :mobile-breakpoint="0",
+                            :headers="timeHeaders",
+                            :items="times"
+                        )
+                            template(#header.action)
+                                v-btn(
+                                    outlined,
+                                    color="primary",
+                                    @click="addTimeDialog.show = true"
+                                ) 新增
+                                    v-icon mdi-plus
+
+                                v-dialog(
+                                    persistent,
+                                    max-width="300",
+                                    v-model="addTimeDialog.show"
+                                )
+                                    v-card
+                                        v-card-title 新增時間
+
+                                        v-card-text
+                                            v-select(
+                                                dense,
+                                                outlined,
+                                                label="星期(幾)",
+                                                :items="addTimeDialog.weekdays",
+                                                v-model="addTimeDialog.weekday"
+                                            )
+                                            TimePicker(
+                                                label="開始時間",
+                                                prepend-icon="mdi-clock-start",
+                                                v-model="addTimeDialog.start"
+                                            )
+
+                                            TimePicker(
+                                                label="結束時間",
+                                                prepend-icon="mdi-clock-end",
+                                                v-model="addTimeDialog.end"
+                                            )
+
+                                        v-card-actions
+                                            v-spacer
+                                            v-btn(
+                                                @click="addTimeDialog.show = false"
+                                            ) 取消
+                                            v-btn(@click="addTime") 新增
+                                            v-spacer
+
+                            template.text-center(#item.action="{ item }")
+                                v-icon(color="red", @click="removeItem(item)") mdi-trash-can
+                                //- v-icon.ml-2(color="blue darken-1", @click="") mdi-pencil
+
+            v-row
+                v-col
+                    v-combobox(
+                        outlined,
+                        multiple,
+                        small-chips,
+                        label="標籤",
+                        :search-input.sync="search",
+                        v-model="tags"
                     )
-                        template(#header.action)
-                            v-icon(@click="addTimeDialog.show = true") mdi-plus
+                        template(#no-data)
+                            v-list-item
+                                v-list-item-content
+                                    v-list-item-title
 
-                            v-dialog(
-                                v-model="addTimeDialog.show",
-                                max-width="300"
-                            )
-                                v-card
-                                    v-card-text
-                                        v-text-field(dense, readonly, outlined)
-                                        v-text-field(dense, readonly, outlined)
-
-                        template(#item.action)
-                            v-icon.mr-2(@click="") mdi-trash-can
-                            v-icon(@click="") mdi-pencil
-        QuillEditor(ref="QuillEditor")
+        RichTextEditor(height="calc(100vh - 600px)")
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import QuillEditor from '@/client/components/QuillEditor.vue'
+import RichTextEditor from '@/client/components/RichTextEditor.vue'
+import TimePicker from '@/client/components/TimePicker.vue'
 
-@Component({ components: { QuillEditor } })
+@Component({ components: { RichTextEditor, TimePicker } })
 export default class extends Vue {
     timeHeaders = [
-        { text: '星期', value: 'weekday' },
-        { text: '開始時間', value: 'start' },
-        { text: '結束時間', value: 'end' },
-        { text: null, value: 'action' }
+        { text: '星期(幾)', value: 'weekday', align: 'center' },
+        { text: '開始時間', value: 'start', align: 'center' },
+        { text: '結束時間', value: 'end', align: 'center' },
+        { value: 'action', align: 'center' }
     ]
 
-    timeItems = [
-        {
-            weekday: 1
-        }
-    ]
+    title = ''
+    times: any[] = []
+    tags: string[] = []
 
     addTimeDialog = {
-        show: false
+        show: false,
+        weekdays: [
+            { text: '星期一', value: 1 },
+            { text: '星期二', value: 2 },
+            { text: '星期三', value: 3 },
+            { text: '星期四', value: 4 },
+            { text: '星期五', value: 5 },
+            { text: '星期六', value: 6 },
+            { text: '星期日', value: 7 },
+        ],
+        weekday: null,
+        start: null,
+        end: null,
+
+        clear() {
+            this.weekday = null
+            this.start = null
+            this.end = null
+        },
+
+        getItem() {
+            return {
+                weekday: this.weekday,
+                start: this.start,
+                end: this.end
+            }
+        }
     }
 
-    title?: string = '請輸入標題'
+    addTime() {
+        this.times.push(this.addTimeDialog.getItem())
+        this.addTimeDialog.clear()
+        this.addTimeDialog.show = false
+
+        console.log(this.times)
+    }
+
+    removeItem(item: any) {
+        let i = this.times.indexOf(item)
+        this.times.splice(i, 1)
+    }
 
     mounted() {
-        // (window as any).test = this.$refs.QuillEditor;
-        ; (this.$refs.QuillEditor as any).loadDefault();
-    }
 
-    getJobData() {
-        return {
-            data: {
-                title: this.title,
-                content: (this.$refs.QuillEditor as any).getContent(),
-                vacanies: 0,
-                time: [],
-                tags: []
-            }
-        };
     }
 }
 </script>
