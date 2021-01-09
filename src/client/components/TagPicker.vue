@@ -73,17 +73,17 @@ export default class extends Vue {
     }
 
     getData() {
-        let tags = this.model.filter(x => x._id)
-        let newTags = this.model.filter(x => !x._id)
+        let tags = this.model.filter(x => !x.create)
+        let newTags = this.model.filter(x => x.create)
 
         return {
-            tags: tags.map((x) => x._id),
+            tags: tags.map(x => x.text),
             newTags: newTags.map(x => x.text)
         }
     }
 
     setData(tags: any[]) {
-
+        
     }
 }
 </script>
