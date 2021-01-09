@@ -9,12 +9,12 @@ router.post('/', auth, required('job', 'resume'), async(req, res) => {
 
 })
 
-router.get('/test', (req, res) => {
-    bossAcceptApplyment(Types.ObjectId('5fd258253ec604545ce35e46'))
-    res.json(
-        'accept success'
-    )
-})
+// router.get('/test', (req, res) => {
+//     bossAcceptApplyment(Types.ObjectId('5fd258253ec604545ce35e46'))
+//     res.json(
+//         'accept success'
+//     )
+// })
 
 router.get('/', auth, async(req, res) => {
 

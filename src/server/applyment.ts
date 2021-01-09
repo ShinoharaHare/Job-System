@@ -1,8 +1,9 @@
-import { DApplyment, Applyment, Job } from './models';
+import { DApplyment, Applyment, Job, Account } from './models';
 
 import { Types } from 'mongoose'
 
 import { sendNots } from '@/server/notification'
+import account from '@/client/store/account';
 
 const bossAccept = (applyment: DApplyment) => {
     applyment.state = 1
@@ -29,71 +30,146 @@ const applicantGiveup = (applyment: DApplyment) => {
     applyment.save()
 }
 
+export const bossConfirm = async(applyment: Types.ObjectId, boss: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
+    const targetJob = await Job.findById(targetApplyment?.job)
+    if (String(targetJob?.publisher) == String(boss)) {
+        console.log('確認為同一人')
+    }
+    else {
+        console.log('無權限')
+        return 403
+    }
+}
+
+export const applicantConfirm = async(applyment: Types.ObjectId, applicant: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
+    if (String(targetApplyment?.applicant) == String(applicant)) {
+        console.log('確認為同一人')
+    }
+    else {
+        console.log('無權限')
+        return 403
+    }
+}
+
 export const createApplyment = async(applicant: Types.ObjectId, job: Types.ObjectId, resume: string) => {
-    await Applyment.create({
-        applicant: applicant,
-        job: job,
-        resume: resume
-    });
-    console.log('Applyment成功創建')
-}
-
-export const findDataApplyment = async(applicant: Types.ObjectId) => {
-    const target = await Applyment.findById(applicant)
-    const data = await Job.findById(target?.job)
-    if (data) {
-        return data.content
+    const targetJob = await Job.findById(job)
+    if (targetJob) {
+        if (applicant == targetJob?.publisher) {
+            console.log('自己應徵自己')
+            return 403
+        }
+        else {
+            await Applyment.create({
+                applicant: applicant,
+                job: job,
+                resume: resume
+            });
+            console.log('Applyment成功創建')
+            return 201
+        }
+    }
+    else {
+        console.log('查無此工作')
+        return 404
     }
 }
 
-export const bossAcceptApplyment = async(applicant: Types.ObjectId) => {
-    const applicantarray: Types.ObjectId[] = [applicant]
-    const targetApplyment = await Applyment.findOne({ applicant: applicant })
+export const findDataApplyment = async(applyment: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
     const targetJob = await Job.findById(targetApplyment?.job)
-    if (targetApplyment) {
-        bossAccept(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功被接受 :)')
+    if (targetJob) {
+        console.log('查詢成功')
+        return targetJob.content
     }
-    console.log('老闆成功接受')
-}
-export const bossRefuseApplyment = async(applicant: Types.ObjectId) => {
-    const applicantarray: Types.ObjectId[] = [applicant]
-    const targetApplyment = await Applyment.findOne({ applicant: applicant })
-    const targetJob = await Job.findById(targetApplyment?.job)
-    if (targetApplyment) {
-        bossRefuse(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已被拒絕 :(')
+    else {
+        console.log('查詢失敗')
+        return 400
     }
-    console.log('老闆成功拒絕')
-}
-export const applicantAcceptApplyment = async(applicant: Types.ObjectId) => {
-    const applicantarray: Types.ObjectId[] = [applicant]
-    const targetApplyment = await Applyment.findOne({ applicant: applicant })
-    const targetJob = await Job.findById(targetApplyment?.job)
-    if (targetApplyment) {
-        bossRefuse(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功接受 :(')
-    }
-    console.log('申請人成功接受')
-}
-export const applicantGiveupApplyment = async(applicant: Types.ObjectId) => {
-    const applicantarray: Types.ObjectId[] = [applicant]
-    const targetApplyment = await Applyment.findOne({ applicant: applicant })
-    const targetJob = await Job.findById(targetApplyment?.job)
-    if (targetApplyment) {
-        applicantGiveup(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已放棄 :(')
-    }
-    console.log('申請人成功放棄')
 }
 
-export const applicantRefuseApplyment = async(applicant: Types.ObjectId) => {
-    const applicantarray: Types.ObjectId[] = [applicant]
-    const targetApplyment = await Applyment.findOne({ applicant: applicant })
+export const bossAcceptApplyment = async(applyment: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
     const targetJob = await Job.findById(targetApplyment?.job)
+    const targetApplicant = await Account.findById(targetApplyment?.applicant)
+    const applicantarray: Types.ObjectId[] = [targetApplicant?._id]
     if (targetApplyment) {
-        applicantRefuse(targetApplyment)
-        sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已成功拒絕 :(')
+            bossAccept(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已被接受 :)')
+            console.log('老闆成功接受')
+            return 200
     }
-    console.log('申請人成功拒絕')
+    else {
+        console.log('無此應徵')
+        return 404
+    }
 }
+export const bossRefuseApplyment = async(applyment: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
+    const targetJob = await Job.findById(targetApplyment?.job)
+    const targetApplicant = await Account.findById(targetApplyment?.applicant)
+    const applicantarray: Types.ObjectId[] = [targetApplicant?._id]
+    if (targetApplyment) {
+            bossRefuse(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已被拒絕 :(')
+            console.log('老闆成功拒絕')
+            return 200
+    }
+    else {
+        console.log('無此應徵')
+        return 404
+    }
+}
+export const applicantAcceptApplyment = async(applyment: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
+    const targetJob = await Job.findById(targetApplyment?.job)
+    const targetApplicant = await Account.findById(targetApplyment?.applicant)
+    const applicantarray: Types.ObjectId[] = [targetApplicant?._id]
+    if (targetApplyment) {
+            applicantAccept(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已接受 :)')
+            console.log('申請人成功接受')
+            return 200
+    }
+    else {
+        console.log('無此應徵')
+        return 404
+    }
+}
+export const applicantGiveupApplyment = async(applyment: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
+    const targetJob = await Job.findById(targetApplyment?.job)
+    const targetApplicant = await Account.findById(targetApplyment?.applicant)
+    const applicantarray: Types.ObjectId[] = [targetApplicant?._id]
+    if (targetApplyment) {
+            applicantGiveup(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已放棄 :(')
+            console.log('申請人成功放棄')
+            return 200
+    }
+    else {
+        console.log('無此應徵')
+        return 404
+    }
+}
+
+export const applicantRefuseApplyment = async(applyment: Types.ObjectId) => {
+    const targetApplyment = await Applyment.findById(applyment)
+    const targetJob = await Job.findById(targetApplyment?.job)
+    const targetApplicant = await Account.findById(targetApplyment?.applicant)
+    const applicantarray: Types.ObjectId[] = [targetApplicant?._id]
+    if (targetApplyment) {
+            applicantRefuse(targetApplyment)
+            sendNots(applicantarray, '工作申請', targetJob?.title + '的工作申請已拒絕 :(')
+            console.log('申請人成功拒絕')
+            return 200
+    }
+    else {
+        console.log('無此應徵')
+        return 404
+    }
+}
+
+// findDataApplyment(Types.ObjectId('5fde0206359f4c512ce389be'))
+applicantConfirm(Types.ObjectId('5fde0206359f4c512ce389be'), Types.ObjectId('5fd258253ec604545ce35e46'))
