@@ -1,12 +1,12 @@
 import { Types, Document } from 'mongoose'
-import { Account, DAccount } from '@/server/models'
+import { Account, DAccount,Job} from '@/server/models'
 import * as nodemailer from 'nodemailer'
 import jwt from 'jsonwebtoken'
 import config from '@/server/config'
 
 import { SubDocumentArray, SubDocument, SubDocumentArrayNoId, SubDocumentNoId } from 'ts-mongoose/types/_shared'
 
-function makeid(length: number) {
+export function makeid(length: number) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
@@ -49,10 +49,10 @@ export const getVerCode = async(email: string) => {
             return 404
         } else {
             console.log(`Message Sent ${info.response}`)
-            return 200
+            //return 401
         }
     });
-    await Account.updateOne(
+    const res = await Account.findOneAndUpdate(
         { email: email },
         {
             $set: {
@@ -61,7 +61,14 @@ export const getVerCode = async(email: string) => {
                     expired: (Date.now() + 10 * 60 * 1000)
                 }
             }
-        })
+    })
+    if(res){
+        return 200
+    }
+    else{
+        console.log('無此帳號')
+        return 401
+    }
 }
 
 export const checkVerCode = async(email: string, code: string) => {
@@ -95,41 +102,48 @@ export const resetPassword = async(email: string, newHash: string) => {
         }
     } catch (error) {
         console.log(`error: ${error}`)
-        return `error: ${error}`;
+        return 404;
     }
 }
 // 新增收藏工作
-export const addFavorite = async(user: Types.ObjectId, job: Types.ObjectId) => {
+export const addFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) => {
     try {
+        const job = await Job.findOne({ _id: jobID })
+        if(job == null){
+            console.log("工作不存在")
+            return 401
+        }
         const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $push: {
-                    favorite: job
+                    favorite: jobID
                 }
             })
         if (res) {
             return 200
         } else {
-            return 401
+            console.log("帳號不存在")
+            return 402
         }
     } catch (error) {
         return `error: ${error}`;
     }
 }
 // 刪除收藏工作
-export const deleteFavorite = async(user: Types.ObjectId, job: Types.ObjectId) => {
-    try {
+export const deleteFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) => {
+    try {        
         const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
-                    favorite: job
+                    favorite: jobID
                 }
             })
         if (res) {
             return 200
         } else {
+            console.log("roor")
             return 401
         }
     } catch (error) {
@@ -137,13 +151,18 @@ export const deleteFavorite = async(user: Types.ObjectId, job: Types.ObjectId) =
     }
 }
 // 新增黑名單帳號
-export const block = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
+export const block = async(user: Types.ObjectId, blockedUserID: Types.ObjectId) => {
     try {
+        const blockUser = await Account.findOne({ _id: blockedUserID })
+        if(blockUser == null){
+            console.log("帳號不存在")
+            return 401
+        }
         const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $push: {
-                    blacklist: blockedUser
+                    blacklist: blockedUserID
                 }
             })
         if (res) {
@@ -181,7 +200,7 @@ export const addResume = async(user: Types.ObjectId, name: string, content: stri
             { _id: user },
             {
                 $push: {
-                    resumeTemplates: { _id: {}, name: name, content: content }
+                    resumeTemplates: {name: name, content: content }
                 }
             })
         if (res) {
@@ -233,7 +252,8 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
     }
 }
 
-// getVerCode("hungjiewu@gmail.com")
+
 // checkVerCode('hungjiewu@gmail.com', '2BJkDe')
 // resetPassword("hungjiewu@gmail.cohm","ee79976c9380d5e337fc1c095ece8c8f22f91f306ceeb161fa51fecede2c4ba1")
-// addFavorite(Object("5fe3444644aeb23ee87a38d8"),Object("5fda3086503d8f1f9c33f97a"))
+//block(Object("5fe3444644aeb23ee87a38d8"),Object("8fda3086503d8f1f9c33f97a"))
+//updateResume(Object("5fe3444644aeb23ee87a38d8"),Object("5ff968a0e7a40919942051cf"),"hello1","test1234")
