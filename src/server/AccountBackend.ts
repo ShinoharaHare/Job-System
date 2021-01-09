@@ -1,12 +1,12 @@
 import { Types, Document } from 'mongoose'
-import { Account, DAccount } from '@/server/models'
+import { Account, DAccount,Job} from '@/server/models'
 import * as nodemailer from 'nodemailer'
 import jwt from 'jsonwebtoken'
 import config from '@/server/config'
 
 import { SubDocumentArray, SubDocument, SubDocumentArrayNoId, SubDocumentNoId } from 'ts-mongoose/types/_shared'
 
-function makeid(length: number) {
+export function makeid(length: number) {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
@@ -50,10 +50,10 @@ export const getVerCode = async(email: string) => {
             return 404
         } else {
             console.log(`Message Sent ${info.response}`)
-            return 200
+            //return 401
         }
     });
-    await Account.updateOne(
+    const res = await Account.findOneAndUpdate(
         { email: email },
         {
             $set: {
@@ -62,7 +62,14 @@ export const getVerCode = async(email: string) => {
                     expired: (Date.now() + 10 * 60 * 1000)
                 }
             }
-        })
+    })
+    if(res){
+        return 200
+    }
+    else{
+        console.log('無此帳號')
+        return 401
+    }
 }
 
 export const checkVerCode = async(email: string, code: string) => {
@@ -84,42 +91,86 @@ export const checkVerCode = async(email: string, code: string) => {
 // 重設密碼
 export const resetPassword = async(email: string, newHash: string) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { email: email },
             { $set: { hash: newHash } })
-
-        console.log('密碼修改成功')
-        return 200
+        if (res) {
+            console.log('密碼修改成功')
+            return 200
+        } else {
+            console.log('Not Exist')
+            return 401
+        }
+    } catch (error) {
+        console.log(`error: ${error}`)
+        return 404;
+    }
+}
+// 新增收藏工作
+export const addFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) => {
+    try {
+        const job = await Job.findOne({ _id: jobID })
+        if(job == null){
+            console.log("工作不存在")
+            return 401
+        }
+        const res = await Account.findOneAndUpdate(
+            { _id: user },
+            {
+                $push: {
+                    favorite: jobID
+                }
+            })
+        if (res) {
+            return 200
+        } else {
+            console.log("帳號不存在")
+            return 402
+        }
     } catch (error) {
         return `error: ${error}`;
     }
 }
 // 刪除收藏工作
-export const deleteFavorite = async(user: Types.ObjectId, job: Types.ObjectId) => {
-    try {
-        await Account.updateOne(
+export const deleteFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) => {
+    try {        
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
-                    favorite: job
+                    favorite: jobID
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            console.log("roor")
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
 }
 // 新增黑名單帳號
-export const block = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
+export const block = async(user: Types.ObjectId, blockedUserID: Types.ObjectId) => {
     try {
-        await Account.updateOne(
+        const blockUser = await Account.findOne({ _id: blockedUserID })
+        if(blockUser == null){
+            console.log("帳號不存在")
+            return 401
+        }
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $push: {
-                    blacklist: blockedUser
+                    blacklist: blockedUserID
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -127,14 +178,18 @@ export const block = async(user: Types.ObjectId, blockedUser: Types.ObjectId) =>
 // 刪除黑名單帳號
 export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
                     blacklist: blockedUser
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -142,14 +197,18 @@ export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) 
 // 新增履歷
 export const addResume = async(user: Types.ObjectId, name: string, content: string) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $push: {
-                    resumeTemplates: { _id: {}, name: name, content: content }
+                    resumeTemplates: {name: name, content: content }
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -157,14 +216,18 @@ export const addResume = async(user: Types.ObjectId, name: string, content: stri
 // 刪除履歷
 export const deleteResume = async(user: Types.ObjectId, resume: Types.ObjectId) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
                     resumeTemplates: resume
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
@@ -172,7 +235,7 @@ export const deleteResume = async(user: Types.ObjectId, resume: Types.ObjectId) 
 
 export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, name: string, content: string) => {
     try {
-        await Account.updateOne(
+        const res = await Account.findOneAndUpdate(
             { _id: user, 'resumeTemplates._id': resume },
             {
                 $set: {
@@ -180,7 +243,11 @@ export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, 
                     'resumeTemplates.$.content': content
                 }
             })
-        return 200
+        if (res) {
+            return 200
+        } else {
+            return 401
+        }
     } catch (error) {
         return `error: ${error}`;
     }
