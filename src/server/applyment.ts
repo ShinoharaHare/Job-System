@@ -77,7 +77,7 @@ export const createApplyment = async(applicant: Types.ObjectId, job: Types.Objec
 }
 
 export const findDataApplyment = async(job: Types.ObjectId) => {
-    const targetApplyment = await Applyment.findone(job)
+    const targetApplyment = await Applyment.find({job: job})
     if (targetApplyment) {
         console.log('查詢成功')
         return targetApplyment
