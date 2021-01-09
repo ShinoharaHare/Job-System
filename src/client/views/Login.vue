@@ -121,7 +121,6 @@ v-card(flat, tile, height="100%")
                                             color="primary",
                                             :loading="loading",
                                             :disabled="!valid2"
-                                            @click="dialog2 = !dialog2"
                                             @click="sentVerCode"
                                         ) 發送驗證碼
                                         v-spacer
@@ -190,12 +189,13 @@ export default class extends Vue {
         return v.length > 0 || '必填'
     }
     async sentVerCode() {
+        this.dialog2 = !this.dialog2
         const email = this.email
         this.loading = true
         const {status, data } = await axios.post('/api/account/sentVerCode', { email })
         this.loading = false
 
-        
+
     }
 
     async resetPwd() {
