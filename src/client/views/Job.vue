@@ -23,19 +23,7 @@ v-card.wrapper(tile, height="100%")
 
             v-row
                 v-col 
-                    v-combobox(
-                        readonly,
-                        outlined,
-                        multiple,
-                        small-chips,
-                        label="標籤",
-                        :search-input.sync="search",
-                        :value="job.tags"
-                    )
-                    template(#no-data)
-                        v-list-item
-                            v-list-item-content
-                                v-list-item-title
+                    TagPicker(readOnly label="標籤")
 
             v-row
                 v-col
@@ -65,11 +53,14 @@ v-card.wrapper(tile, height="100%")
 
 <script lang="ts">
 import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
-import RichTextEditor from '@/client/components/RichTextEditor.vue'
 import { IJob } from '@/server/models'
 import { sendMessage } from '../sysmsg'
 
-@Component({ components: { RichTextEditor } })
+import TagPicker from '@/client/components/TagPicker.vue'
+import RichTextEditor from '@/client/components/RichTextEditor.vue'
+
+
+@Component({ components: { RichTextEditor, TagPicker } })
 export default class extends Vue {
     @Ref() editor!: RichTextEditor
 
@@ -110,12 +101,12 @@ export default class extends Vue {
         switch (status) {
             case 200:
                 this.job = data
-                this.editor.setContent('# heeeee')
+                this.editor.setContent(data.content)
                 this.editor.refresh()
                 break
             case 404:
                 // 導向到404頁面
-                // this.$router.push('/404')
+                // this.$router.replace('/404')
                 break
         }
     }

@@ -23,7 +23,10 @@ v-dialog(fullscreen, :value="value")
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
+import { sendMessage } from '../sysmsg'
+
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
+
 
 @Component({ components: { RichTextEditor } })
 export default class extends Vue {

@@ -3,8 +3,9 @@ import { SAccount } from './account'
 import { createSchema, Type, typedModel, ExtractDoc, ExtractProps } from 'ts-mongoose'
 
 const Time = createSchema({
-    startTime: Type.string({ required: true }),
-    endTime: Type.string({ required: true })
+    weekday: Type.number({ required: true }),
+    start: Type.string({ required: true }),
+    end: Type.string({ required: true })
 })
 
 export const SJob = createSchema({

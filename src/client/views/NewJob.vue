@@ -4,7 +4,7 @@ v-card(flat, tile, height="100%")
         v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
 
-    JobEditor(ref="JobEditor")
+    JobEditor(ref="editor")
 
     v-footer(fixed, padless)
         v-card.flex(tile)
@@ -17,18 +17,34 @@ v-card(flat, tile, height="100%")
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Ref } from 'vue-property-decorator'
 
 import JobEditor from '@/client/components/JobEditor.vue'
 
 @Component({ components: { JobEditor } })
 export default class extends Vue {
+    @Ref()
+    editor!: JobEditor
+
     async submit() {
-        const newData = (this.$refs.JobEditor as any).getJobData();
-        // console.log(newData);
-        const result = await axios.post('/api/job', newData);
-        console.log(result);
-        this.$router.back();
+        console.log(this.editor.getData())
+        // const { status, data } = await axios.post('/api/job', {
+        //     data: this.editor.getData()
+        // })
+
+        // switch (status) {
+        //     case 201:
+
+        //         break
+
+        //     case 401:
+        //     case 403:
+        // }
+
+        // this.$router.back()
+    }
+
+    mounted() {
     }
 }
 </script>

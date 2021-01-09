@@ -55,9 +55,15 @@ v-card(flat)
                                         v-card-actions
                                             v-spacer
                                             v-btn(
+                                                outlined,
+                                                color="red",
                                                 @click="addTimeDialog.show = false"
                                             ) 取消
-                                            v-btn(@click="addTime") 新增
+                                            v-btn(
+                                                outlined,
+                                                color="blue darken-1",
+                                                @click="addTime"
+                                            ) 新增
                                             v-spacer
 
                             template.text-center(#item.action="{ item }")
@@ -66,29 +72,23 @@ v-card(flat)
 
             v-row
                 v-col
-                    v-combobox(
-                        outlined,
-                        multiple,
-                        small-chips,
-                        label="標籤",
-                        :search-input.sync="search",
-                        v-model="tags"
-                    )
-                        template(#no-data)
-                            v-list-item
-                                v-list-item-content
-                                    v-list-item-title
+                    TagPicker(ref="tagPicker" label="搜尋標籤")
 
         RichTextEditor(height="calc(100vh - 600px)")
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Ref } from 'vue-property-decorator'
+
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
 import TimePicker from '@/client/components/TimePicker.vue'
+import TagPicker from '@/client/components/TagPicker.vue'
 
-@Component({ components: { RichTextEditor, TimePicker } })
+
+@Component({ components: { RichTextEditor, TimePicker, TagPicker } })
 export default class extends Vue {
+    @Ref() tagPicker!: TagPicker
+
     timeHeaders = [
         { text: '星期(幾)', value: 'weekday', align: 'center' },
         { text: '開始時間', value: 'start', align: 'center' },
@@ -98,7 +98,6 @@ export default class extends Vue {
 
     title = ''
     times: any[] = []
-    tags: string[] = []
 
     addTimeDialog = {
         show: false,
@@ -141,6 +140,14 @@ export default class extends Vue {
     removeItem(item: any) {
         let i = this.times.indexOf(item)
         this.times.splice(i, 1)
+    }
+
+    getData() {
+        return {
+            title: this.title,
+            times: this.times,
+            ...this.tagPicker.getData()
+        }
     }
 
     mounted() {
