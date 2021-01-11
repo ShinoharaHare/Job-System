@@ -32,6 +32,7 @@
         "simplemde": "^1.11.2",
         "superagent": "^6.1.0",
         "ts-mongoose": "0.0.21",
+        "tslib": "^2.1.0",
         "vue": "^2.6.11",
         "vue-class-component": "^7.2.3",
         "vue-router": "^3.2.0",
