@@ -22,14 +22,17 @@ v-dialog(fullscreen, :value="value")
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop,Ref,Watch } from 'vue-property-decorator'
 import { sendMessage } from '../sysmsg'
 
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
+import { watch } from 'fs';
 
 
 @Component({ components: { RichTextEditor } })
 export default class extends Vue {
+    @Ref('textContent') readonly textContent!: RichTextEditor;
+
     @Prop()
     value!: boolean
 
@@ -43,7 +46,7 @@ export default class extends Vue {
     name = ''
     title = '新增履歷'
 
-    content = 'Test1234567890'
+    content = ''
 
     changeValue(v: boolean) {
         this.$emit('input', v)
@@ -78,7 +81,8 @@ export default class extends Vue {
             }
         }
         else if(this.title == '編輯履歷'){
-            const {status} = await axios.post('/api/account/updateResume',{userID:this.userID,resumeID:this.resume._id,name:this.name,content:this.content})
+            this.textContent.getContent()
+            const {status} = await axios.post('/api/account/updateResume',{userID:this.userID,resumeID:this.resume._id,name:this.name,content: this.textContent.getContent()})
             this.loading = false
             switch (status) {
             case 200:
@@ -92,18 +96,28 @@ export default class extends Vue {
         }
     
     }
-
-    mounted() {
-        this.name = this.resume.name;
-        this.content = this.resume.content;
+    
+    async mounted() {
         if(this.resume != null){
             this.title = '編輯履歷'
+            this.name = this.resume.name
+            this.content = this.resume.content
+            setTimeout(() => {
+                this.textContent.setContent(this.content)
+            }, 1000)
+            
         }
+        // console.log(this.resume.content)
+        // this.name = this.resume.name;
+        //this.textContent.setContent(this.name)
         //console.log(this.state)
         //this.$refs.textContent.setContent(content)
+        
     }
+   
 }
 </script>
 
 <style lang="scss" scoped>
+
 </style>
