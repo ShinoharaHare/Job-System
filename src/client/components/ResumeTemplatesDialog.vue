@@ -18,9 +18,9 @@ v-dialog(fullscreen, :value="value")
                         ) 移除
                         v-btn(
                             color="success",
-                            @click="showEditor = true"
+                            @click="selectedItem(resume)"
                         ) 修改
-                        EditResumeDialog(v-model="showEditor" :resume="resume" :userID="userID")
+                        EditResumeDialog(v-model="showEditor" :resume="selectedResume" :userID="userID" )
 
         v-btn(
             fixed,
@@ -29,11 +29,11 @@ v-dialog(fullscreen, :value="value")
             fab,
             dark,
             color="primary",
-            @click="showEditor = true"
+            @click="selectedItem(newResume)"
         )
             v-icon mdi-plus
 
-        EditResumeDialog(v-model="showEditor" :userID="userID")
+        EditResumeDialog(v-model="showEditor" v-bind:resume="selectedResume" :userID="userID" )
 </template>
 
 <script lang="ts">
@@ -49,11 +49,17 @@ export default class extends Vue {
     list: any[] = []
     showEditor = false
     loading = false
+    newResume = null
+    selectedResume = null
 
     changeValue(v: boolean) {
         this.$emit('input', v)
     }
-
+    selectedItem(resume:any){
+        console.log(resume)
+        this.selectedResume = resume
+        this.showEditor = true
+    }
     async deleteResume(i: number) {
         this.loading = true
         console.log(this.list[i]._id)

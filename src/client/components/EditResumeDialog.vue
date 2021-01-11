@@ -48,7 +48,7 @@ export default class extends Vue {
 
     content = ''
 
-    changeValue(v: boolean) {
+    async changeValue(v: boolean) {
         this.$emit('input', v)
     }
 
@@ -67,7 +67,7 @@ export default class extends Vue {
     async updateResume() {
         this.loading = true
         if(this.title == '新增履歷'){
-            const {status} = await axios.post('/api/account/addResume',{userID:this.userID,name:this.name,content:this.content})
+            const {status} = await axios.post('/api/account/addResume',{userID:this.userID,name:this.name,content:this.textContent.getContent()})
             this.loading = false
 
             switch (status) {
@@ -96,17 +96,30 @@ export default class extends Vue {
         }
     
     }
-    
-    async mounted() {
+    @Watch('resume',{immediate:true})
+    resumeChanged(oldValue: any, newValue: any){
+        console.log(this.resume)
         if(this.resume != null){
             this.title = '編輯履歷'
             this.name = this.resume.name
             this.content = this.resume.content
             setTimeout(() => {
                 this.textContent.setContent(this.content)
-            }, 1000)
+            }, 500)
             
         }
+        else{
+            this.title = '新增履歷'
+            this.name = ''
+            this.content = ''
+            setTimeout(() => {
+                this.textContent.setContent(this.content)
+            }, 500)
+        }
+    }
+    mounted() {
+        
+        
         // console.log(this.resume.content)
         // this.name = this.resume.name;
         //this.textContent.setContent(this.name)

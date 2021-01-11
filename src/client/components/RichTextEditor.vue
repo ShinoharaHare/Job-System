@@ -37,6 +37,7 @@ export default class extends Vue {
         this.togglePreview()
     }
 
+    
     mounted() {
         this.simplemde = new SimpleMDE({
             element: this.textarea,
