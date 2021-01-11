@@ -5,6 +5,7 @@ v-dialog(fullscreen, :value="value")
             v-toolbar-title {{title}}
 
         v-card-text
+            v-text-field.mx-4(v-model="name" label="履歷標題")
             RichTextEditor(ref="textContent")
             //- v-textarea(
             //-     auto-grow,
@@ -16,9 +17,9 @@ v-dialog(fullscreen, :value="value")
         v-footer(absolute, padless)
             v-card(tile, width="100%")
                 v-card-actions
-                    v-text-field.mx-4(v-model="name")
-                    v-btn(color="error" @click="changeValue(false)") 取消
-                    v-btn(color="success" @click="updateResume()") 確認
+                    v-spacer
+                    v-btn(width="30%" color="error" @click="changeValue(false)") 取消
+                    v-btn(width="50%" color="success" @click="updateResume()") 確認
 </template>
 
 <script lang="ts">
@@ -111,21 +112,42 @@ export default class extends Vue {
         else{
             this.title = '新增履歷'
             this.name = ''
-            this.content = ''
+            this.content = `# **中文名(ex:何文子)**
+<br>
+
+#### 英文名(ex:Wayne)
+#### 年紀(ex:21)
+#### 電話(ex:0912345678)
+#### 信箱(ex:123@gmail.com)
+#### 駕照(ex:汽、機車)
+<br>
+
+## 教育程度
+<br>
+
+* ### 國立台灣海洋大學 資訊工程學系 2018-2022
+<br>
+
+## 語言能力
+<br>
+
+* ### 英文-- 聽 /需加強、說 /尚可、讀 /精通、寫 /尚可
+* ### 台語-- 聽 /尚可、說 /尚可
+<br>
+
+## 其他技能
+<br>
+
+* ### 能搬重物
+*  ### 精通Microsoft Office
+`
             setTimeout(() => {
                 this.textContent.setContent(this.content)
-            }, 500)
+            }, 2500)
         }
     }
+    
     mounted() {
-        
-        
-        // console.log(this.resume.content)
-        // this.name = this.resume.name;
-        //this.textContent.setContent(this.name)
-        //console.log(this.state)
-        //this.$refs.textContent.setContent(content)
-        
     }
    
 }
