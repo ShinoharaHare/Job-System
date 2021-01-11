@@ -32,7 +32,7 @@ import { watch } from 'fs';
 
 @Component({ components: { RichTextEditor } })
 export default class extends Vue {
-    @Ref('textContent') readonly textContent!: RichTextEditor;
+    @Ref('textContent') textContent!: RichTextEditor;
 
     @Prop()
     value!: boolean
