@@ -72,9 +72,9 @@ v-card(flat)
 
             v-row
                 v-col
-                    TagPicker(ref="tagPicker" label="搜尋標籤")
+                    TagPicker(ref="tags" label="搜尋標籤")
 
-        RichTextEditor(height="calc(100vh - 600px)" ref="textContent")
+        RichTextEditor(height="calc(100vh - 600px)" ref="content")
 </template>
 
 <script lang="ts">
@@ -83,12 +83,14 @@ import { Vue, Component, Ref } from 'vue-property-decorator'
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
 import TimePicker from '@/client/components/TimePicker.vue'
 import TagPicker from '@/client/components/TagPicker.vue'
+import { IJob } from '@/server/models'
 
 
 @Component({ components: { RichTextEditor, TimePicker, TagPicker } })
 export default class extends Vue {
-    @Ref() tagPicker!: TagPicker
-    @Ref('textContent') textContent!: RichTextEditor
+    @Ref() tags!: TagPicker
+    @Ref() content!: RichTextEditor
+
     timeHeaders = [
         { text: '星期(幾)', value: 'weekday', align: 'center' },
         { text: '開始時間', value: 'start', align: 'center' },
@@ -145,31 +147,20 @@ export default class extends Vue {
     getData() {
         return {
             title: this.title,
-            times: this.times,
-            ...this.tagPicker.getData()
+            time: this.times,
+            content: this.content.getContent(),
+            ...this.tags.getData()
         }
     }
 
+    setData(job: IJob) {
+        this.title = job.title
+        this.content.setContent(job.content!)
+        this.tags.setData(job.tags)
+        this.times = job.time
+    }
+
     mounted() {
-        const newContent = `### 公司名稱
-和蚊子便利商店
-
-### 工作內容
-* #### 打包作業
-* #### 接待客人
-* #### 整理清潔環境
-* #### 外送服務
-<br> 
-
-### 待遇
-時薪 $160 
-
-### 需求人數
-1人
-
-### 工作地點
-基隆市中正區北寧路2號`
-        this.textContent.setContent(newContent)
     }
 }
 </script>

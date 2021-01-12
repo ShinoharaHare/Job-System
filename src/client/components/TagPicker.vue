@@ -4,6 +4,7 @@ v-combobox(
     chips,
     outlined,
     hide-selected,
+    :loading="loading",
     :filter="filter",
     :hide-no-data="!search",
     :items="items",
@@ -15,7 +16,7 @@ v-combobox(
     template(#no-data)
         v-list-item
             span.subheading 新建
-            v-chip.ml-1(color="secondary") {{ search }}
+            v-chip.ml-1(outlined, color="secondary") {{ search }}
 
     template(#selection="{ attrs, item, parent, selected }")
         v-chip(
@@ -35,6 +36,7 @@ v-combobox(
 
 
 <script lang="ts">
+import { ITag } from '@/server/models'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
 @Component
@@ -45,14 +47,13 @@ export default class extends Vue {
     items: any[] = [{ header: '選擇或新建標籤' }]
     search = ''
     model: any[] = []
+    loading = false
 
     filter(item: any, queryText: string, itemText: string) {
         if (item.header) return false
 
-        const hasValue = (val: any) => val != null ? val : ''
-
-        const text = hasValue(itemText)
-        const query = hasValue(queryText)
+        const text = itemText || ''
+        const query = queryText || ''
 
         return text.toString()
             .toLowerCase()
@@ -65,7 +66,7 @@ export default class extends Vue {
 
         this.model = val.map((v: any) => {
             if (typeof v === 'string') {
-                v = { text: v, create: true }
+                v = { text: v, new: true }
                 this.items.push(v)
             }
             return v
@@ -73,8 +74,8 @@ export default class extends Vue {
     }
 
     getData() {
-        let tags = this.model.filter(x => !x.create)
-        let newTags = this.model.filter(x => x.create)
+        let tags = this.model.filter(x => !x.new)
+        let newTags = this.model.filter(x => x.new)
 
         return {
             tags: tags.map(x => x.text),
@@ -82,8 +83,22 @@ export default class extends Vue {
         }
     }
 
-    setData(tags: any[]) {
-        
+    setData(tags: string[]) {
+        this.model = tags.map(x => ({ text: x }))
+    }
+
+    async loadTags() {
+        this.loading = true
+        let { status, data } = await axios.get('/api/job/tags')
+        this.loading = false
+
+        if (status == 200) {
+            this.items.push(...data.map((x: any) => ({ text: x.name })))
+        }
+    }
+
+    mounted() {
+        this.loadTags()
     }
 }
 </script>
