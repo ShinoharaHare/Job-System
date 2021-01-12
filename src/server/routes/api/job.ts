@@ -1,6 +1,6 @@
 import { auth, findJob, required } from '@/server/middlewares'
-import { Account, DJob, Job } from '@/server/models'
-import { findJobsByTags } from '@/server/tags'
+import { Account, Job } from '@/server/models'
+import { findJobsByTags, getAllTags } from '@/server/tags'
 
 import { Router } from 'express'
 
@@ -16,7 +16,6 @@ router.post('/', auth, required('data'), async (req, res) => {
             ...req.body.data,
             publisher: req.account?.id
         })
-
         res.status(201).json(document)
     } catch (error) {
         console.error(error)
@@ -33,7 +32,6 @@ router.get('/favorite', auth, async (req, res) => {
 })
 
 // 搜尋工作
-// router.get('/search', findJob, async(req, res) => {
 router.get('/search', async (req, res) => {
     // test search by tags
     let tagNames: string[] = [];
@@ -46,6 +44,11 @@ router.get('/search', async (req, res) => {
         }
     }
     res.json(await findJobsByTags(tagNames)).status(200);
+})
+
+router.get('/tags', async (req, res) => {
+    let tags = await getAllTags()
+    res.status(200).json(tags)
 })
 
 // 取得工作詳細資料
@@ -61,7 +64,7 @@ router.get('/:id', findJob, async (req, res) => {
 // 更新工作資料
 router.patch('/:id', auth, findJob, async (req, res) => {
     try {
-        const doc = await req.job?.updateOne(req.body.data)
+        const doc = await req.job!.updateOne(req.body.data)
         res.status(200).json(doc)
     } catch (error) {
         console.error(error)
@@ -82,7 +85,7 @@ router.delete('/:id', auth, findJob, async (req, res) => {
 
 // 工作清單
 router.get('/', auth, async (req, res) => {
-    let jobs: DJob[] = []
+    let jobs: any[] = []
 
     switch (req.query.type) {
         case 'published':

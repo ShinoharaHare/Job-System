@@ -29,12 +29,9 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { sendMessage } from '@/client/sysmsg'
-import { IAccount, IApplyment } from '@/server/models'
-import { IJob } from '@/server/models'
-import mongoose from 'mongoose'
+import { IAccount, IApplyment, IJob } from '@/server/models'
 
 const Account = namespace('Account')
-const Job = namespace('Job')
 
 enum State {
     Pending = 0, // 初始狀態，等待刊登者回應
@@ -48,7 +45,6 @@ enum State {
 @Component
 export default class extends Vue {
     @Account.State account!: IAccount
-    @Job.State job!: IJob
 
     applyments: IApplyment[] = []
 

@@ -59,6 +59,10 @@ export default class extends Vue {
     showCandidates = false
     showEditor = false
 
+    toEditJob(id: string) {
+        this.$router.push(`/job/${id}/edit`)
+    }
+
     async loadJobs() {
         let { status, data } = await axios.get('api/job', { params: { type: 'published' } })
         if (status === 200) {
