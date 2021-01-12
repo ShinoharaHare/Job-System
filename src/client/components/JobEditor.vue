@@ -14,7 +14,7 @@ v-card(flat)
                             hide-default-footer,
                             :mobile-breakpoint="0",
                             :headers="timeHeaders",
-                            :items="times"
+                            :items="time"
                         )
                             template(#header.action)
                                 v-btn(
@@ -99,7 +99,7 @@ export default class extends Vue {
     ]
 
     title = ''
-    times: any[] = []
+    time: any[] = []
 
     addTimeDialog = {
         show: false,
@@ -132,24 +132,22 @@ export default class extends Vue {
     }
 
     addTime() {
-        this.times.push(this.addTimeDialog.getItem())
+        this.time.push(this.addTimeDialog.getItem())
         this.addTimeDialog.clear()
         this.addTimeDialog.show = false
-
-        console.log(this.times)
     }
 
     removeItem(item: any) {
-        let i = this.times.indexOf(item)
-        this.times.splice(i, 1)
+        let i = this.time.indexOf(item)
+        this.time.splice(i, 1)
     }
 
     getData() {
         return {
             title: this.title,
-            time: this.times,
+            time: this.time,
             content: this.content.getContent(),
-            ...this.tags.getData()
+            tags: this.tags.getData()
         }
     }
 
@@ -157,7 +155,7 @@ export default class extends Vue {
         this.title = job.title
         this.content.setContent(job.content!)
         this.tags.setData(job.tags)
-        this.times = job.time
+        this.time = job.time
     }
 
     mounted() {

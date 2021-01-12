@@ -50,9 +50,9 @@ v-card(tile, height="100%")
                                 | ({{ typeValue.length }})
 
             v-row
-                v-col
+                v-col.pa-0
                     v-card
-                        JobList(:items="jobs", height="calc(100vh - 400px)")
+                        JobList(:items="jobs", height="calc(100vh - 350px)")
 </template>
 
 <script lang="ts">

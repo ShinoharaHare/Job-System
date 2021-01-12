@@ -66,7 +66,7 @@ export default class extends Vue {
 
         this.model = val.map((v: any) => {
             if (typeof v === 'string') {
-                v = { text: v, new: true }
+                v = { text: v }
                 this.items.push(v)
             }
             return v
@@ -74,13 +74,7 @@ export default class extends Vue {
     }
 
     getData() {
-        let tags = this.model.filter(x => !x.new)
-        let newTags = this.model.filter(x => x.new)
-
-        return {
-            tags: tags.map(x => x.text),
-            newTags: newTags.map(x => x.text)
-        }
+        return this.model.map(x => x.text)
     }
 
     setData(tags: string[]) {

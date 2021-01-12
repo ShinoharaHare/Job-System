@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card(tile, height="100%")
+v-card(tile, height="calc(100vh - 56px)")
     v-toolbar(dark, color="primary")
         v-toolbar-title 刊登管理
 
