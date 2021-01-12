@@ -37,6 +37,7 @@ export default class extends Vue {
         this.togglePreview()
     }
 
+    
     mounted() {
         this.simplemde = new SimpleMDE({
             element: this.textarea,
@@ -54,10 +55,11 @@ export default class extends Vue {
         }
         // ; (window as any).temp = this.simplemde
 
-        // setInterval(() => {
-        //     this.codeMirror.style = this.style
-        //     console.log(this.st)
-        // }, 500)
+        setInterval(() => {
+            // this.codeMirror.style = this.style
+            // console.log(this.st)
+            //console.log(this.getContent())
+        }, 500)
     }
 }
 </script>
