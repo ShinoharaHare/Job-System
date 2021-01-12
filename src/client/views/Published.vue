@@ -4,8 +4,8 @@ v-card(tile, height="100%")
         v-toolbar-title 刊登管理
 
     v-list(two-line, outlined)
-        v-list-group(v-for="({ title, content }, i) in jobs", :key="i")
-            template(v-slot:activator)
+        v-list-group(v-for="({ title, _id }, i) in jobs", :key="i")
+            template(#activator)
                 v-list-item-content.mx-5
                     v-list-item-title
                         h3 {{ title }}
@@ -20,15 +20,16 @@ v-card(tile, height="100%")
             v-divider
 
             v-list-item
-                v-list-item-content
-                    v-list-item-title {{ content }}
-
-            v-list-item
-                v-list-item-content(align="right ")
+                v-list-item-content(align="right")
                     span
-                        v-btn.mr-1(color="error") 移除
-                        v-btn.mr-1(color="success") 修改
+                        v-btn.mr-1(outlined, color="error") 移除
                         v-btn.mr-1(
+                            outlined,
+                            color="success",
+                            :to="`/job/${id}/edit`"
+                        ) 修改
+                        v-btn.mr-1(
+                            outlined,
                             color="warning",
                             @click="showCandidates = true"
                         ) 應徵者
@@ -58,10 +59,6 @@ export default class extends Vue {
     jobs: any[] = []
     showCandidates = false
     showEditor = false
-
-    toEditJob(id: string) {
-        this.$router.push(`/job/${id}/edit`)
-    }
 
     async loadJobs() {
         let { status, data } = await axios.get('api/job', { params: { type: 'published' } })
