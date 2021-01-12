@@ -1,6 +1,6 @@
 import { auth, findJob, required } from '@/server/middlewares'
 import { Account, Job } from '@/server/models'
-import { findJobsByTags, getAllTags } from '@/server/tags'
+import * as tags from '@/server/tags'
 
 import { Router } from 'express'
 
@@ -16,6 +16,7 @@ router.post('/', auth, required('data'), async (req, res) => {
             ...req.body.data,
             publisher: req.account?.id
         })
+        tags.newJobUpdateTags(req.body.tags, document.id)
         res.status(201).json(document)
     } catch (error) {
         console.error(error)
@@ -43,12 +44,12 @@ router.get('/search', async (req, res) => {
             tagNames = [req.query?.tags as string];
         }
     }
-    res.json(await findJobsByTags(tagNames)).status(200);
+    res.json(await tags.findJobsByTags(tagNames)).status(200);
 })
 
 router.get('/tags', async (req, res) => {
-    let tags = await getAllTags()
-    res.status(200).json(tags)
+    let allTags = await tags.getAllTags()
+    res.status(200).json(allTags)
 })
 
 // 取得工作詳細資料
