@@ -26,7 +26,7 @@ v-card(tile, height="100%")
                         v-btn.mr-1(
                             outlined,
                             color="success",
-                            :to="`/job/${id}/edit`"
+                            :to="`/job/${_id}/edit`"
                         ) 修改
                         v-btn.mr-1(
                             outlined,
