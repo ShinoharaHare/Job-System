@@ -1,11 +1,11 @@
 <template lang="pug">
-v-card.link-ntou(tile, height="100%")
+v-card.link-ntou(tile, height="100vh")
     v-toolbar(flat)
         v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
 
     v-expand-transition(mode="out-in")
-        v-container(v-if="!browsing", fill-height, fluid)
+        v-container(fluid, style="margin-top: 10vh", v-if="!browsing")
             v-row(align="center", justify="center")
                 v-col
                     v-img.mx-auto(conatain, max-width="400", :src="ntouLogo")
@@ -40,10 +40,9 @@ v-card.link-ntou(tile, height="100%")
                                 @click="link"
                             ) 連結
                             v-spacer
-            v-row
 
     v-expand-transition(mode="out-in")
-        v-card(height="100%", v-show="browsing")
+        v-card(flat, v-show="browsing")
             v-card-text
                 v-stepper.pb-0(v-model="step", alt-labels)
                     v-stepper-header
@@ -82,9 +81,6 @@ v-card.link-ntou(tile, height="100%")
                             v-divider
                             .content-wrapper
                                 Timetable(ref="timetable")
-
-    //- v-dialog(v-model="dialog.show" fullscreen hide-overlay)
-    //-     TimeTable
 </template>
 
 <script lang="ts">
@@ -119,25 +115,25 @@ export default class extends Vue {
         this.loading = false
 
         switch (status) {
-        case 200:
-            if (data.success) {
-                this.browsing = true
-                this.timetable.setData(data.courses)
-                this.personalInfo.setData(data.personal)
-            } else {
-                sendMessage('無法登入海洋大學校務系統，請確認輸入的資料正確', {
-                    color: 'error',
-                    timeout: 3000
-                })
-            }
-            break
+            case 200:
+                if (data.success) {
+                    this.browsing = true
+                    this.timetable.setData(data.courses)
+                    this.personalInfo.setData(data.personal)
+                } else {
+                    sendMessage('無法登入海洋大學校務系統，請確認輸入的資料正確', {
+                        color: 'error',
+                        timeout: 3000
+                    })
+                }
+                break
 
-        case 401:
-            sendMessage('尚未登入', { color: 'error' })
-            break
+            case 401:
+                sendMessage('尚未登入', { color: 'error' })
+                break
 
-        default:
-            sendMessage('未知的錯誤', { color: 'error' })
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 
@@ -152,17 +148,17 @@ export default class extends Vue {
         this.importing = false
 
         switch (status) {
-        case 200:
-            this.$router.back()
-            sendMessage('成功匯入資料')
-            break
+            case 200:
+                this.$router.back()
+                sendMessage('成功匯入資料')
+                break
 
-        case 401:
-            sendMessage('尚未登入', { color: 'error' })
-            break
+            case 401:
+                sendMessage('尚未登入', { color: 'error' })
+                break
 
-        default:
-            sendMessage('未知的錯誤', { color: 'error' })
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
         }
     }
 
@@ -175,7 +171,7 @@ export default class extends Vue {
 
 <style lang="scss" scoped>
 .content-wrapper {
-    max-height: 490px;
+    max-height: calc(100vh - 250px);
     overflow: scroll;
 }
 </style>
