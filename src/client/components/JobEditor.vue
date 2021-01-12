@@ -74,7 +74,7 @@ v-card(flat)
                 v-col
                     TagPicker(ref="tagPicker" label="搜尋標籤")
 
-        RichTextEditor(height="calc(100vh - 600px)")
+        RichTextEditor(height="calc(100vh - 600px)" ref="textContent")
 </template>
 
 <script lang="ts">
@@ -88,7 +88,7 @@ import TagPicker from '@/client/components/TagPicker.vue'
 @Component({ components: { RichTextEditor, TimePicker, TagPicker } })
 export default class extends Vue {
     @Ref() tagPicker!: TagPicker
-
+    @Ref('textContent') textContent!: RichTextEditor
     timeHeaders = [
         { text: '星期(幾)', value: 'weekday', align: 'center' },
         { text: '開始時間', value: 'start', align: 'center' },
@@ -151,7 +151,25 @@ export default class extends Vue {
     }
 
     mounted() {
+        const newContent = `### 公司名稱
+和蚊子便利商店
 
+### 工作內容
+* #### 打包作業
+* #### 接待客人
+* #### 整理清潔環境
+* #### 外送服務
+<br> 
+
+### 待遇
+時薪 $160 
+
+### 需求人數
+1人
+
+### 工作地點
+基隆市中正區北寧路2號`
+        this.textContent.setContent(newContent)
     }
 }
 </script>

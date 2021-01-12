@@ -116,7 +116,7 @@ router.post('/link-ntou', auth, required('ntouID', 'ntouPW'), async(req, res) =>
 })
 
 router.post('/sentMail', async(req, res) =>  {
-    console.log(req.params.resetEmail, req.body.resetEmail)
+    //console.log(req.params.resetEmail, req.body.resetEmail)
     const Res = await AccountBackend.getVerCode(req.body.resetEmail)
     res.status(200).json()
 })
@@ -128,7 +128,23 @@ router.post('/checkVerCode', async(req, res) =>  {
 
 router.post('/resetPwd', async(req, res) =>  {
     const Res = await AccountBackend.resetPassword(req.body.resetEmail,req.body.newHash)
-    res.status(200).json()
+    res.status(Res).json()
+})
+
+router.post('/addResume',async(req, res) =>{
+    const Res = await AccountBackend.addResume(Object(req.body.userID),req.body.name,req.body.content)
+    res.status(Res).json()
+})
+
+router.post('/updateResume',async(req, res) =>{
+    const Res = await AccountBackend.updateResume(Object(req.body.userID),Object(req.body.resumeID),req.body.name,req.body.content)
+    res.status(Res).json()
+})
+
+
+router.post('/deleteResume',async(req, res) =>{
+    const Res = await AccountBackend.deleteResume(Object(req.body.userID),Object(req.body.resumeID))
+    res.status(Res).json()
 })
 
 export default router
