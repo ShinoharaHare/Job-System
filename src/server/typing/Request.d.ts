@@ -5,7 +5,6 @@ declare global {
         interface Request {
             account?: DAccount | null;
             job?: DJob | null;
-            jobs?: DJob[] | null;
         }
     }
 }

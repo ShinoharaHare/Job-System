@@ -16,23 +16,24 @@ v-card(tile, height="100%")
                             :key="i",
                             v-for="(tag, i) in jobs.tags"
                         ) {{ tag }}
-                
+
             v-divider
 
             v-list-item
                 v-list-item-content
                     v-list-item-title {{ content }}
-            
+
             v-list-item
                 v-list-item-content(align="right ")
                     span
                         v-btn.mr-1(color="error") 移除
                         v-btn.mr-1(color="success") 修改
-                        v-btn.mr-1(color="warning", @click="showCandidates = true") 應徵者
+                        v-btn.mr-1(
+                            color="warning",
+                            @click="showCandidates = true"
+                        ) 應徵者
 
             v-divider
-
-            
 
     v-btn(fixed, bottom, right, fab, dark, color="primary", to="/job/new")
         v-icon mdi-plus
@@ -45,6 +46,7 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { IAccount } from '@/server/models'
+
 import CandidatesDialog from '@/client/components/CandidatesDialog.vue'
 import EditJobDialog from '@/client/components/EditJobDialog.vue'
 
@@ -57,10 +59,15 @@ export default class extends Vue {
     showCandidates = false
     showEditor = false
 
-    async mounted() {
-        // console.log(69, await axios.get('api/job'));
-        const { data } = await axios.get('api/job', { params: this.account._id });
-        this.jobs = data;
+    async loadJobs() {
+        let { status, data } = await axios.get('api/job', { params: { type: 'published' } })
+        if (status === 200) {
+            this.jobs = data
+        }
+    }
+
+    mounted() {
+        this.loadJobs()
     }
 }
 </script>

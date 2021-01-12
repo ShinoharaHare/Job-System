@@ -6,7 +6,7 @@ v-card(tile, height="100%")
 
     v-list(two-line)
         template(v-for="({ job, state }, i) in applyments")
-            v-list-item(@click="$router.push(`/job/${job._id}`)", :key="i")
+            v-list-item(@click="toJob(job._id)", :key="i")
                 v-list-item-content.mx-5
                     v-list-item-title
                         h3 {{ job.title }}
@@ -29,7 +29,7 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { sendMessage } from '@/client/sysmsg'
-import { IAccount } from '@/server/models'
+import { IAccount, IApplyment } from '@/server/models'
 import { IJob } from '@/server/models'
 import mongoose from 'mongoose'
 
@@ -50,13 +50,7 @@ export default class extends Vue {
     @Account.State account!: IAccount
     @Job.State job!: IJob
 
-    applyments: any = {
-        job: '',
-        state: Number
-    }
-    jobInfos: any[] = []
-    testApplyments: any[] = []
-    i!: number
+    applyments: IApplyment[] = []
 
     getColor(state: State) {
         switch (state) {
@@ -94,33 +88,12 @@ export default class extends Vue {
         this.applyments = data
     }
 
-    // 拿 job 裡的 title 和 publisher
-    async getJobInfo() {
-        for(this.i = 0; this.i<this.applyments.length; this.i++){
-            const { status, data } = await axios.get(`/api/job/${ mongoose.Types.ObjectId(this.applyments[this.i].job) }`)
-            switch (status) {
-                case 200:
-                    this.jobInfos = data
-                    break
-                case 404:
-                    // 導向到404頁面
-                    // this.$router.replace('/404')
-                    break
-            }
-        }
-    }
-
-    get count() {
-        return this.applyments.length
-    }
-
-    showJob() {
-        this.$router.push('/job')
+    toJob(id: string) {
+        this.$router.push(`/job/${id}`)
     }
 
     mounted() {
         this.getApplyment()
-        this.getJobInfo()
     }
 }
 </script>

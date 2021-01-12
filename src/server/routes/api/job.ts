@@ -1,5 +1,5 @@
-import { auth, findJob, findAllJob, required } from '@/server/middlewares'
-import { Account, Job } from '@/server/models'
+import { auth, findJob, required } from '@/server/middlewares'
+import { Account, DJob, Job } from '@/server/models'
 import { findJobsByTags } from '@/server/tags'
 
 import { Router } from 'express'
@@ -58,18 +58,6 @@ router.get('/:id', findJob, async (req, res) => {
     }
 })
 
-// 取得全部工作(主頁)
-router.get('/', findAllJob, async (req, res) => {
-    try {
-        res.status(200).json(req.jobs)
-    } catch (error) {
-        console.error(error)
-        res.status(500).json()
-    }
-})
-
-
-
 // 更新工作資料
 router.patch('/:id', auth, findJob, async (req, res) => {
     try {
@@ -94,9 +82,20 @@ router.delete('/:id', auth, findJob, async (req, res) => {
 
 // 工作清單
 router.get('/', auth, async (req, res) => {
-    const jobs = await Job.find({
-        publisher: req.account!.id
-    })
+    let jobs: DJob[] = []
+
+    switch (req.query.type) {
+        case 'published':
+            jobs = await Job.find({
+                publisher: req.account!.id
+            })
+            break
+
+        case 'all':
+        default:
+            jobs = await Job.find()
+            break
+    }
 
     res.status(200).json(jobs)
 })

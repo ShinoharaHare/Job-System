@@ -16,19 +16,6 @@ export const findJob: Middleware = async(req, res, next) => {
     }
 }
 
-export const findAllJob: Middleware = async(req, res, next) => {
-    try {
-        req.jobs = await Job.find()
-        if (req.jobs) {
-            next()
-        } else [
-            res.status(404).json({ error: '無工作' })
-        ]
-    } catch (error) {
-        res.status(404).json({ error: '無工作' })
-    }
-}
-
 async function chain(req: Request, res: Response, ...middlewares: Middleware[]) {
     for (const m of middlewares) {
         await new Promise((resolve, reject) => {
