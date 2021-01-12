@@ -4,14 +4,18 @@ v-card(tile, height="100%")
         v-toolbar-title 刊登管理
 
     v-expansion-panels.mt-8(tile, popout, focusable)
-        v-expansion-panel(v-for="({ name }, i) in jobs", :key="i")
-            v-expansion-panel-header {{ name }}
+        v-expansion-panel(v-for="({ _id, title }, i) in jobs", :key="i")
+            v-expansion-panel-header {{ title }}
             v-expansion-panel-content
                 v-card-actions
                     v-spacer
-                    v-btn(color="error") 移除
-                    v-btn(color="success") 修改
-                    v-btn(color="warning", @click="showCandidates = true") 應徵者
+                    v-btn(outlined, color="error") 移除
+                    v-btn(outlined, color="success", @click="toEditJob(_id)") 修改
+                    v-btn(
+                        outlined,
+                        color="warning",
+                        @click="showCandidates = true"
+                    ) 應徵者
 
     v-btn(fixed, bottom, right, fab, dark, color="primary", to="/job/new")
         v-icon mdi-plus
@@ -30,6 +34,10 @@ export default class extends Vue {
     jobs: any[] = []
     showCandidates = false
     showEditor = false
+
+    toEditJob(id: string) {
+        this.$router.push(`/job/${id}/edit`)
+    }
 
     async mounted() {
         // console.log(69, await axios.get('api/job'));

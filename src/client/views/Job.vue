@@ -96,7 +96,7 @@ export default class extends Vue {
         return this.account.favorite!.findIndex((x: any) => x == this.id) != -1
     }
 
-    async loadData() {
+    async loadJob() {
         const { status, data } = await axios.get(`/api/job/${this.id}`)
 
         switch (status) {
@@ -130,7 +130,7 @@ export default class extends Vue {
     }
 
     mounted() {
-        this.loadData()
+        this.loadJob()
     }
 }
 </script>
