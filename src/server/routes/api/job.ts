@@ -61,7 +61,7 @@ router.get('/search', async (req, res) => {
     }
 
     // all
-    let intersection = []
+    let intersection: any[] = []
     if (titleToSearch && tagNames) {
         let jobsWithTags = await tags.findJobsByTags(tagNames)
         let result = await Job.find({
@@ -95,10 +95,6 @@ router.get('/search', async (req, res) => {
         })
         console.log("jobsWithTags: ", jobsWithTags)
         intersection = result//.map((x)=>x._id)
-    } else {
-        // query error
-        res.status(404).json({});
-        return;
     }
 
     res.status(200).json(intersection);
