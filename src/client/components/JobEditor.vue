@@ -146,8 +146,16 @@ export default class extends Vue {
         return {
             title: this.title,
             times: this.times,
-            ...this.tagPicker.getData()
+            ...this.tagPicker.getData(),
+            content:this.textContent.getContent()
         }
+    }
+    //if modify 才呼叫
+    setData(data:any){
+        this.title = data.title
+        this.times = data.times
+        this.textContent.setContent(data.content)
+        //缺tag
     }
 
     mounted() {

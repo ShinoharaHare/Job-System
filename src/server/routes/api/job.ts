@@ -82,12 +82,23 @@ router.delete('/:id', auth, findJob, async (req, res) => {
     }
 })
 
+//所有工作
+router.get('/all',auth, async (req, res) => {
+    try{
+        const jobs = await Job.find()
+        console.log(jobs)
+        res.send(jobs)
+    }catch(error){
+        //console.log(error)
+    }
+})
+
+
 // 工作清單
 router.get('/', auth, async (req, res) => {
     const jobs = await Job.find({
         publisher: req.account!.id
     })
-
     res.status(200).json(jobs)
 })
 
