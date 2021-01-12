@@ -132,7 +132,7 @@ router.put('/:id', auth, findJob, required('data'), async (req, res) => {
 // 刪除工作
 router.delete('/:id', auth, findJob, async (req, res) => {
     try {
-        await req.job?.remove()
+        await req.job!.remove()
         res.status(204).json()
     } catch (error) {
         console.error(error)

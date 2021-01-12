@@ -10,7 +10,8 @@ v-combobox(
     :items="items",
     :search-input.sync="search",
     :label="label",
-    :readonly="readOnly",
+    :disabled="readonly",
+    :readonly="readonly",
     v-model="model"
 )
     template(#no-data)
@@ -27,7 +28,7 @@ v-combobox(
             v-bind="attrs"
         )
             span.pr-2 {{ item.text }}
-            v-icon(small, @click="parent.selectItem(item)") mdi-close
+            v-icon(small, @click="parent.selectItem(item)", v-if="readOnly") mdi-close
 
     template(#item="{ index, item }")
         v-chip(outlined, color="secondary")
@@ -48,6 +49,10 @@ export default class extends Vue {
     search = ''
     model: any[] = []
     loading = false
+
+    get readonly() {
+        return this.readOnly !== undefined ? this.readOnly : false
+    }
 
     filter(item: any, queryText: string, itemText: string) {
         if (item.header) return false
