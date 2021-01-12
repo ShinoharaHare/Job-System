@@ -91,7 +91,7 @@ export default class extends Vue {
     }
 
     async loadJobs() {
-        let { status, data } = await axios.get('api/job', { params: { type: 'published' } })
+        let { status, data } = await axios.get('api/job/published')
         if (status === 200) {
             this.jobs = data
         }

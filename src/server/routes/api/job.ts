@@ -1,10 +1,8 @@
 import { auth, findJob, required } from '@/server/middlewares'
 import { Account, Job } from '@/server/models'
 import * as tags from '@/server/tags'
-import { resolveSoa } from 'dns'
 
 import { Router } from 'express'
-import { Types } from 'mongoose'
 
 import 'ts-mongoose/plugin'
 
@@ -43,7 +41,7 @@ router.get('/search', async (req, res) => {
             titleToSearch = req.query?.title[0] as string;
         } else if (typeof req.query?.title === "string") {
             titleToSearch = req.query?.title as string;
-        }else{
+        } else {
             // title error
             titleToSearch = undefined
         }
@@ -56,7 +54,7 @@ router.get('/search', async (req, res) => {
             tagNames = req.query?.tags as string[];
         } else if (typeof req.query?.tags === "string") {
             tagNames = [req.query?.tags as string];
-        }else{
+        } else {
             // tags error
             tagNames = undefined
         }
@@ -64,7 +62,7 @@ router.get('/search', async (req, res) => {
 
     // all
     let intersection = []
-    if(titleToSearch && tagNames){
+    if (titleToSearch && tagNames) {
         let jobsWithTags = await tags.findJobsByTags(tagNames)
         let result = await Job.find({
             _id: {
@@ -72,31 +70,35 @@ router.get('/search', async (req, res) => {
             },
             title: {
                 $regex: `${titleToSearch}`, $options: "$i"
-            }})
+            }
+        })
         intersection = result//.map((x)=>x._id)
         let result2 = await Job.find({
             _id: {
                 $in: jobsWithTags
-            }})
-            intersection = intersection.concat(result2.filter((x)=>!result.includes(x)))
-    }else if(titleToSearch){
+            }
+        })
+        intersection = intersection.concat(result2.filter((x) => !result.includes(x)))
+    } else if (titleToSearch) {
         let result = await Job.find({
             title: {
                 $regex: `${titleToSearch}`, $options: "$i"
-            }})
+            }
+        })
         intersection = result//.map((x)=>x._id)
-    }else if(tagNames){
+    } else if (tagNames) {
         let jobsWithTags = await tags.findJobsByTags(tagNames)
         let result = await Job.find({
             _id: {
                 $in: jobsWithTags
-            }})
+            }
+        })
         console.log("jobsWithTags: ", jobsWithTags)
         intersection = result//.map((x)=>x._id)
-    }else{
+    } else {
         // query error
         res.status(404).json({});
-        return ;
+        return;
     }
 
     res.status(200).json(intersection);
@@ -105,6 +107,17 @@ router.get('/search', async (req, res) => {
 router.get('/tags', async (req, res) => {
     let allTags = await tags.getAllTags()
     res.status(200).json(allTags)
+})
+
+// 工作清單
+router.get('/all', async (req, res) => {
+    let jobs = await Job.find()
+    res.status(200).json(jobs)
+})
+
+router.get('/published', auth, async (req, res) => {
+    let jobs = await Job.find({ publisher: req.account!.id })
+    res.status(200).json(jobs)
 })
 
 // 取得工作詳細資料
@@ -139,27 +152,6 @@ router.delete('/:id', auth, findJob, async (req, res) => {
         res.status(500).json()
     }
 })
-
-// 工作清單
-router.get('/', auth, async (req, res) => {
-    let jobs: any[] = []
-
-    switch (req.query.type) {
-        case 'published':
-            jobs = await Job.find({
-                publisher: req.account!.id
-            })
-            break
-
-        case 'all':
-        default:
-            jobs = await Job.find()
-            break
-    }
-
-    res.status(200).json(jobs)
-})
-
 
 // 收藏工作
 router.post('/:id/favorite', auth, findJob, async (req, res) => {

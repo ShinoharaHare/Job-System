@@ -1,16 +1,20 @@
 <template lang="pug">
 v-card(tile, height="100%")
-    v-toolbar(color="white")
-        v-img.mx-0(contain, max-height="55", max-width="200", :src="logo")
+    v-toolbar(dark)
+        v-avatar.ma-1(tile)
+            v-img(
+                contain,
+                transition="fab-transition",
+                :src="require('@/client/assets/hen.svg')"
+            )
+
+        span.text-h5 小雞雞上工
+
         v-spacer
         v-toolbar-items
-            v-btn(
-                text,
-                color="primary",
-                to="/login",
-                width="100",
-                v-if="!isLogin"
-            ) 登入
+            v-btn(icon, text, to="/login", width="100", v-if="!isLogin") 
+                v-icon mdi-login-variant
+                span.ml-1 登入
 
     v-card-text
         v-container
@@ -21,8 +25,8 @@ v-card(tile, height="100%")
                         solo,
                         clearable
                     )
-                        template(v-slot:append="")
-                            v-btn.ma-0(color="primary") 搜尋
+                        template(#append)
+                            v-btn(color="primary") 搜尋
             v-row
                 v-col.d-flex.px-0.py-0
                     v-select(
@@ -52,21 +56,20 @@ v-card(tile, height="100%")
             v-row
                 v-col.pa-0
                     v-card
-                        JobList(:items="jobs", height="calc(100vh - 350px)")
+                        JobList(:items="jobs", :height="jobListHeight")
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
-import JobList from '@/client/components/JobList.vue'
 import { namespace } from 'vuex-class'
+
+import JobList from '@/client/components/JobList.vue'
 
 const Account = namespace('Account')
 
 @Component({ components: { JobList } })
 export default class extends Vue {
     @Account.State isLogin!: boolean
-    logo = require('@/client/assets/logo/logo_homepage.png')
-    drawer = false
 
     district = ['中正區', '信義區']
     value = ['foo', 'bar', 'fizz', 'buzz']
@@ -76,8 +79,13 @@ export default class extends Vue {
 
     jobs: any[] = []
 
+    get jobListHeight() {
+        let h = this.isLogin ? 350 : 300
+        return `calc(100vh - ${h}px)`
+    }
+
     async loadJobs() {
-        let { status, data } = await axios.get('/api/job', { params: { type: 'all' } })
+        let { status, data } = await axios.get('/api/job/all')
         if (status === 200)
             this.jobs = data
     }
@@ -89,10 +97,6 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-#job-list-container {
-    max-height: 0px;
-    overflow-y: scroll;
-}
 ::v-deep .v-toolbar__content {
     padding: 0px !important;
 }
