@@ -5,19 +5,19 @@ v-card(tile, height="100%")
             h3.ma-5 已應徵之工作
 
     v-list(two-line)
-        template(v-for="({ state }, i) in applyments")
+        template(v-for="({ job, state }, i) in applyments")
             v-list-item(@click="$router.push(`/job/${job._id}`)", :key="i")
                 v-list-item-content.mx-5
                     v-list-item-title
-                        h3 {{ jobInfos[index].title }}
+                        h3 {{ job.title }}
 
                     v-list-item-subtitle
                         v-chip.mr-1(
                             x-small,
                             color="primary",
                             :key="i",
-                            v-for="(tag, i) in jobInfos[i].tags"
-                        ) \{{ tag }}
+                            v-for="(tag, i) in job.tags"
+                        ) {{ tag }}
 
                 v-avatar(tile, width="100")
                     v-chip(small, :color="getColor(state)") {{ getText(state) }}
