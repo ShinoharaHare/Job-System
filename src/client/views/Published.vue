@@ -40,7 +40,6 @@ v-card(tile, height="100%")
         v-icon mdi-plus
 
     CandidatesDialog(v-model="showCandidates")
-    EditJobDialog(v-model="showEditor")
 </template>
 
 <script lang="ts">
@@ -49,11 +48,10 @@ import { namespace } from 'vuex-class'
 import { IAccount } from '@/server/models'
 
 import CandidatesDialog from '@/client/components/CandidatesDialog.vue'
-import EditJobDialog from '@/client/components/EditJobDialog.vue'
 
 const Account = namespace('Account')
 
-@Component({ components: { CandidatesDialog, EditJobDialog } })
+@Component({ components: { CandidatesDialog } })
 export default class extends Vue {
     @Account.State account!: IAccount
     jobs: any[] = []

@@ -39,14 +39,13 @@ v-card(tile, height="100%")
             v-list-item-content
                 v-list-item-title 切換模式
 
-        v-list-item(@click="showResumeTemplate = true", v-if="isJobSeeker")
+        v-list-item(to="/resume", v-if="isJobSeeker")
             v-list-item-icon
                 v-icon mdi-text-box-outline
             v-list-item-content
                 v-list-item-title 履歷範本
             v-list-item-icon
                 v-icon mdi-chevron-right
-            ResumeTemplatesDialog(v-model="showResumeTemplate")
 
         v-list-item(@click="showBlacklist = true")
             v-list-item-icon
@@ -95,13 +94,12 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import BlacklistDialog from '@/client/components/BlacklistDialog.vue'
-import ResumeTemplatesDialog from '@/client/components/ResumeTemplatesDialog.vue'
 import { sendMessage } from '../sysmsg'
 import { IAccount } from '@/server/models'
 
 const Account = namespace('Account')
 
-@Component({ components: { BlacklistDialog, ResumeTemplatesDialog } })
+@Component({ components: { BlacklistDialog } })
 export default class extends Vue {
     @Account.State account!: IAccount
     @Account.State isJobSeeker!: boolean
@@ -110,7 +108,6 @@ export default class extends Vue {
     @Account.Action('switchUserState') _switchUserState!: Function
 
     showBlacklist = false
-    showResumeTemplate = false
 
     logoutDialog = {
         show: false,

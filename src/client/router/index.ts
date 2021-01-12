@@ -59,6 +59,26 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/Statistics.vue')
     },
     {
+        path: '/resume',
+        name: 'Resume',
+        component: () => import('@/client/views/Resume.vue')
+    },
+    {
+        path: '/resume/new',
+        name: 'NewResume',
+        component: () => import('@/client/views/NewResume.vue')
+    },
+    {
+        path: '/resume/:id',
+        // name: 'EditResume',
+        // component: () => import('@/client/views/EditResume.vue')
+    },
+    {
+        path: '/resume/:id/edit',
+        name: 'EditResume',
+        component: () => import('@/client/views/EditResume.vue')
+    },
+    {
         path: '/link-ntou',
         name: 'LinkNTOU',
         component: () => import('@/client/views/LinkNTOU.vue')
