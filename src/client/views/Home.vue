@@ -21,7 +21,7 @@ v-card(tile, height="100%")
             solo,
             clearable,
             prepend-inner-icon="mdi-magnify",
-            append-outer-icon="mdi-chevron-down",
+            :append-outer-icon="showTags ? 'mdi-chevron-up' : 'mdi-chevron-down'",
             @click:append-outer="showTags = !showTags",
             v-model="searchText"
         )
