@@ -6,6 +6,9 @@ const Time = createSchema({
     weekday: Type.number({ required: true }),
     start: Type.string({ required: true }),
     end: Type.string({ required: true })
+},
+{
+    _id: false
 })
 
 export const SJob = createSchema({
