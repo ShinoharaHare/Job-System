@@ -10,14 +10,14 @@ v-card(tile, height="100%")
                 v-card-actions
                     v-spacer
                     v-btn(color="error") 移除
-                    v-btn(color="success" @click="toJobPage(_id)",) 修改
-                    v-btn(color="warning", @click="showCandidates = true") 應徵者
+                    v-btn(color="success" @click="toJobPage(_id)") 修改
+                    v-btn(color="warning", @click="selectedItem(_id)") 應徵者
 
     v-btn(fixed, bottom, right, fab, dark, color="primary", to="/job/new")
         v-icon mdi-plus
 
-    CandidatesDialog(v-model="showCandidates")
-    EditJobDialog(v-model="showEditor")
+    CandidatesDialog(v-model="showCandidates"  :applyment="applyments")
+    //-EditJobDialog(v-model="showEditor")
 </template>
 
 <script lang="ts">
@@ -30,7 +30,15 @@ export default class extends Vue {
     jobs: any[] = []
     showCandidates = false
     showEditor = false
+    applyments = null
 
+    async selectedItem(jobID:any){
+        this.applyments = await axios.get('/api/applyment', { params: { job: jobID }})
+        if(this.applyments != null){
+            this.showCandidates = true
+        }
+    }
+    
     toJobPage(id: string) {
         this.$router.push(`/job/modify/${id}`)
     }
