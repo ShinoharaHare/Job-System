@@ -41,11 +41,12 @@ v-card.wrapper(tile, height="100%")
     v-footer(fixed, padless)
         v-card(tile, width="100%")
             v-card-actions
-                v-btn(icon, large, @click="unfavorite(id)", v-if="isFavorite")
-                    v-icon(color="pink") mdi-heart
+                span(v-if="isLogin")
+                    v-btn(icon, large, @click="unfavorite(id)", v-if="isFavorite")
+                        v-icon(color="pink") mdi-heart
 
-                v-btn(icon, large, @click="favorite(id)", v-else)
-                    v-icon mdi-heart-outline
+                    v-btn(icon, large, @click="favorite(id)", v-else)
+                        v-icon mdi-heart-outline
 
                 v-btn.mx-auto(
                     outlined,
@@ -70,6 +71,7 @@ const Account = namespace('Account')
 @Component({ components: { RichTextEditor, TagPicker } })
 export default class extends Vue {
     @Account.State account!: IAccount
+    @Account.State isLogin!: boolean
     @Account.Action favorite!: Function
     @Account.Action unfavorite!: Function
 

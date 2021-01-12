@@ -76,8 +76,14 @@ export default class extends Vue {
 
     jobs: any[] = []
 
+    async loadJobs() {
+        let { status, data } = await axios.get('/api/job', { params: { type: 'all' } })
+        if (status === 200)
+            this.jobs = data
+    }
+
     mounted() {
-        
+        this.loadJobs()
     }
 }
 </script>

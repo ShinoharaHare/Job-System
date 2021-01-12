@@ -85,9 +85,20 @@ router.delete('/:id', auth, findJob, async (req, res) => {
 
 // 工作清單
 router.get('/', auth, async (req, res) => {
-    const jobs = await Job.find({
-        publisher: req.account!.id
-    })
+    let jobs: any[] = []
+
+    switch (req.query.type) {
+        case 'published':
+            jobs = await Job.find({
+                publisher: req.account!.id
+            })
+            break
+
+        case 'all':
+        default:
+            jobs = await Job.find()
+            break
+    }
 
     res.status(200).json(jobs)
 })
