@@ -1,6 +1,17 @@
 <template lang="pug">
-v-card(:outlined="outlined", :loading="loading", :disabled="loading")
-    v-list.py-0(two-line, :height="height", :width="width")
+v-card(
+    :outlined="outlined",
+    :loading="loading",
+    :disabled="loading",
+    :height="height",
+    :width="width"
+)
+    v-list.py-0(
+        two-line,
+        :height="`calc(${height} - 5px)`",
+        :width="width",
+        v-if="items.length > 0"
+    )
         template(v-for="({ _id, title, tags }, i) in items")
             v-list-item(@click="toJobPage(_id)", :key="_id")
                 v-list-item-avatar
@@ -31,6 +42,8 @@ v-card(:outlined="outlined", :loading="loading", :disabled="loading")
                         v-icon mdi-heart-outline
 
             v-divider(v-if="i < items.length - 1")
+
+    v-card-text.text-center(v-else) 沒有資料
 </template>
 
 <script lang="ts">
