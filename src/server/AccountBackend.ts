@@ -1,5 +1,5 @@
 import { Types, Document } from 'mongoose'
-import { Account, DAccount,Job} from '@/server/models'
+import { Account, DAccount, Job } from '@/server/models'
 import * as nodemailer from 'nodemailer'
 import jwt from 'jsonwebtoken'
 import config from '@/server/config'
@@ -17,7 +17,7 @@ export function makeid(length: number) {
 }
 
 // 忘記密碼
-export const getVerCode = async(email: string) => {
+export const getVerCode = async (email: string) => {
     // const email = "00757001@email.ntou.edu.tw"
     console.log(email)
     const account = await Account.findOne({ email: email })
@@ -62,17 +62,17 @@ export const getVerCode = async(email: string) => {
                     expired: (Date.now() + 10 * 60 * 1000)
                 }
             }
-    })
-    if(res){
+        })
+    if (res) {
         return 200
     }
-    else{
+    else {
         console.log('無此帳號')
         return 401
     }
 }
 
-export const checkVerCode = async(email: string, code: string) => {
+export const checkVerCode = async (email: string, code: string) => {
     const valid = await Account.distinct('resetPwd', { email: email })
     console.log(email)
     if (Date.now() < valid[0]?.expired) { // 10*60*1000 = 十分鐘
@@ -89,7 +89,7 @@ export const checkVerCode = async(email: string, code: string) => {
     }
 }
 // 重設密碼
-export const resetPassword = async(email: string, newHash: string) => {
+export const resetPassword = async (email: string, newHash: string) => {
     try {
         const res = await Account.findOneAndUpdate(
             { email: email },
@@ -107,10 +107,10 @@ export const resetPassword = async(email: string, newHash: string) => {
     }
 }
 // 新增收藏工作
-export const addFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) => {
+export const addFavorite = async (user: Types.ObjectId, jobID: Types.ObjectId) => {
     try {
         const job = await Job.findOne({ _id: jobID })
-        if(job == null){
+        if (job == null) {
             console.log("工作不存在")
             return 401
         }
@@ -132,8 +132,8 @@ export const addFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) =>
     }
 }
 // 刪除收藏工作
-export const deleteFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId) => {
-    try {        
+export const deleteFavorite = async (user: Types.ObjectId, jobID: Types.ObjectId) => {
+    try {
         const res = await Account.findOneAndUpdate(
             { _id: user },
             {
@@ -152,10 +152,10 @@ export const deleteFavorite = async(user: Types.ObjectId, jobID: Types.ObjectId)
     }
 }
 // 新增黑名單帳號
-export const block = async(user: Types.ObjectId, blockedUserID: Types.ObjectId) => {
+export const block = async (user: Types.ObjectId, blockedUserID: Types.ObjectId) => {
     try {
         const blockUser = await Account.findOne({ _id: blockedUserID })
-        if(blockUser == null){
+        if (blockUser == null) {
             console.log("帳號不存在")
             return 401
         }
@@ -176,7 +176,7 @@ export const block = async(user: Types.ObjectId, blockedUserID: Types.ObjectId) 
     }
 }
 // 刪除黑名單帳號
-export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) => {
+export const unblock = async (user: Types.ObjectId, blockedUser: Types.ObjectId) => {
     try {
         const res = await Account.findOneAndUpdate(
             { _id: user },
@@ -195,18 +195,17 @@ export const unblock = async(user: Types.ObjectId, blockedUser: Types.ObjectId) 
     }
 }
 // 新增履歷
-export const addResume = async(user: Types.ObjectId, name: string, content: string) => {
+export const addResume = async (user: Types.ObjectId, name: string, content: string) => {
     try {
         const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $push: {
-                    resumeTemplates: {name: name, content: content }
+                    resumeTemplates: { name: name, content: content }
                 }
             })
         if (res) {
-            console.log("2ww")
-            return 200
+            return 201
         } else {
             return 401
         }
@@ -215,27 +214,27 @@ export const addResume = async(user: Types.ObjectId, name: string, content: stri
     }
 }
 // 刪除履歷
-export const deleteResume = async(user: Types.ObjectId, resume: Types.ObjectId) => {
+export const deleteResume = async (user: Types.ObjectId, resume: string) => {
     try {
         const res = await Account.findOneAndUpdate(
             { _id: user },
             {
                 $pull: {
-                    resumeTemplates: {_id: resume}
+                    resumeTemplates: { _id: resume }
                 }
             })
         if (res) {
             console.log("delete Success!")
-            return 200
+            return 204
         } else {
             return 401
         }
     } catch (error) {
-        return 404;
+        return 404
     }
 }
 
-export const updateResume = async(user: Types.ObjectId, resume: Types.ObjectId, name: string, content: string) => {
+export const updateResume = async (user: Types.ObjectId, resume: string, name: string, content: string) => {
     try {
         const res = await Account.findOneAndUpdate(
             { _id: user, 'resumeTemplates._id': resume },

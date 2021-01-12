@@ -6,12 +6,15 @@ const Time = createSchema({
     weekday: Type.number({ required: true }),
     start: Type.string({ required: true }),
     end: Type.string({ required: true })
+},
+{
+    _id: false
 })
 
 export const SJob = createSchema({
     title: Type.string({ required: true }),
     content: Type.string({ default: '' }),
-    vacanies: Type.number({ required: true }),
+    // vacanies: Type.number({ required: true }),
     time: Type.array({ required: true }).of(Time),
     tags: Type.array({ required: true }).of(Type.string()),
     publisher: Type.objectId({ required: true })

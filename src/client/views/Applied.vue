@@ -6,10 +6,10 @@ v-card(tile, height="100%")
 
     v-list(two-line)
         template(v-for="({ job, state }, i) in applyments")
-            v-list-item(@click="$router.push(`/job/${job._id}`)", :key="i")
+            v-list-item(@click="toJob(job._id)", :key="i")
                 v-list-item-content.mx-5
                     v-list-item-title
-                        h4 {{ job.title }}
+                        h3 {{ job.title }}
 
                     v-list-item-subtitle
                         v-chip.mr-1(
@@ -29,7 +29,7 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { sendMessage } from '@/client/sysmsg'
-import { IAccount } from '@/server/models'
+import { IAccount, IApplyment, IJob } from '@/server/models'
 
 const Account = namespace('Account')
 
@@ -46,9 +46,7 @@ enum State {
 export default class extends Vue {
     @Account.State account!: IAccount
 
-    applyments: any[] = []
-    jobInfos: any[] = []
-    testApplyments: any[] = []
+    applyments: IApplyment[] = []
 
     getColor(state: State) {
         switch (state) {
@@ -86,40 +84,12 @@ export default class extends Vue {
         this.applyments = data
     }
 
-    // 拿 job 裡的 title 和 publisher
-    async getJobInfo() {
-        const { data } = await axios.get('/api/job/:id')
-        this.jobInfos = data
-    }
-
-    get count() {
-        return this.testApplyments.length
-    }
-
-    showJob() {
-        this.$router.push('/job')
+    toJob(id: string) {
+        this.$router.push(`/job/${id}`)
     }
 
     mounted() {
         this.getApplyment()
-        // this.getJobInfo()
-
-        /*
-        for (let i = 0; i < 6; i++) {
-            this.testApplyments.push({
-                title: '工讀生',
-                publisher: 'WJ股份有限公司',
-                state: i
-                            0: (雇主尚未回應)
-                            1: (雇主接受，求職者尚未回應)
-                            2: (雇主接受，求職者接受)
-                            3: (雇主接受，求職者拒絕)
-                            4: (雇主拒絕)
-                            5: (求職者放棄)
-
-            })
-        }
-        */
     }
 }
 </script>

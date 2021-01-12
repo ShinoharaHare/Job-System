@@ -7,7 +7,7 @@ v-card.wrapper(tile, height="100%")
         | {{ job.title }}
         v-spacer
 
-    v-card.pa-4(flat)
+    v-card.pa-4.pt-0(flat)
         v-container(fluid)
             v-row
                 v-col
@@ -23,7 +23,7 @@ v-card.wrapper(tile, height="100%")
 
             v-row
                 v-col 
-                    TagPicker(readOnly, label="標籤")
+                    TagPicker(readOnly, ref="tagPicker" label="標籤")
 
             v-row
                 v-col
@@ -35,17 +35,23 @@ v-card.wrapper(tile, height="100%")
                             hide-default-footer,
                             :mobile-breakpoint="0",
                             :headers="headers",
-                            :items="job.times"
+                            :items="job.time"
                         )
 
     v-footer(fixed, padless)
         v-card(tile, width="100%")
             v-card-actions
-                v-btn(icon, large, @click="unfavorite(id)", v-if="isFavorite")
-                    v-icon(color="pink") mdi-heart
+                span(v-if="isLogin")
+                    v-btn(
+                        icon,
+                        large,
+                        @click="unfavorite(id)",
+                        v-if="isFavorite"
+                    )
+                        v-icon(color="pink") mdi-heart
 
-                v-btn(icon, large, @click="favorite(id)", v-else)
-                    v-icon mdi-heart-outline
+                    v-btn(icon, large, @click="favorite(id)", v-else)
+                        v-icon mdi-heart-outline
 
                 v-btn.mx-auto(
                     outlined,
@@ -70,10 +76,12 @@ const Account = namespace('Account')
 @Component({ components: { RichTextEditor, TagPicker } })
 export default class extends Vue {
     @Account.State account!: IAccount
+    @Account.State isLogin!: boolean
     @Account.Action favorite!: Function
     @Account.Action unfavorite!: Function
 
     @Ref() editor!: RichTextEditor
+    @Ref() tagPicker!: TagPicker
 
     job: any = {
         title: '',
@@ -96,14 +104,19 @@ export default class extends Vue {
         return this.account.favorite!.findIndex((x: any) => x == this.id) != -1
     }
 
-    async loadData() {
+    setData(job: IJob) {
+        this.job = job
+        this.tagPicker.setData(job.tags)
+        this.editor.setContent(job.content!)
+        this.editor.refresh()
+    }
+
+    async loadJob() {
         const { status, data } = await axios.get(`/api/job/${this.id}`)
 
         switch (status) {
             case 200:
-                this.job = data
-                this.editor.setContent(data.content)
-                this.editor.refresh()
+                this.setData(data)
                 break
             case 404:
                 // 導向到404頁面
@@ -130,7 +143,7 @@ export default class extends Vue {
     }
 
     mounted() {
-        this.loadData()
+        this.loadJob()
     }
 }
 </script>
@@ -142,6 +155,15 @@ export default class extends Vue {
 }
 
 .wrapper {
+    padding-top: 56px;
     padding-bottom: 60px;
+}
+
+.v-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    z-index: 1;
 }
 </style>

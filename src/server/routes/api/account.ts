@@ -11,7 +11,7 @@ import * as AccountBackend from '@/server/AccountBackend'
 const router = Router()
 
 // 註冊
-router.post('/', required('email', 'hash'), async(req, res) => {
+router.post('/', required('email', 'hash'), async (req, res) => {
     try {
         const account = await Account.create({
             email: req.body.email,
@@ -27,7 +27,7 @@ router.post('/', required('email', 'hash'), async(req, res) => {
     }
 })
 
-router.get('/', auth, async(req, res) => {
+router.get('/', auth, async (req, res) => {
     const data: any = {}
     if (req.query.fields) {
         const fields = req.query.fields as string[]
@@ -44,7 +44,7 @@ router.get('/', auth, async(req, res) => {
     res.status(200).json(data)
 })
 
-router.patch('/', auth, required('data'), async(req, res) => {
+router.patch('/', auth, required('data'), async (req, res) => {
     // console.log({ ...req.body.data })
     await req.account!.updateOne({
         ...req.body.data
@@ -56,7 +56,7 @@ router.patch('/', auth, required('data'), async(req, res) => {
 })
 
 // 登入
-router.post('/login', required('email', 'hash'), async(req, res) => {
+router.post('/login', required('email', 'hash'), async (req, res) => {
     const account = await Account.findOne({
         email: req.body.email,
         hash: req.body.hash
@@ -73,17 +73,17 @@ router.post('/login', required('email', 'hash'), async(req, res) => {
     }
 })
 
-router.post('/logout', auth, async(req, res) => {
+router.post('/logout', auth, async (req, res) => {
     res.status(204).clearCookie('token').json()
 })
 
-router.post('/add-events', auth, required('events'), async(req, res) => {
+router.post('/add-events', auth, required('events'), async (req, res) => {
     req.account!.events!.push(...req.body.events)
     const doc = await req.account!.save()
     res.status(200).json(doc)
 })
 
-router.post('/link-ntou', auth, required('ntouID', 'ntouPW'), async(req, res) => {
+router.post('/link-ntou', auth, required('ntouID', 'ntouPW'), async (req, res) => {
     try {
         const account = await login(req.body.ntouID, req.body.ntouPW)
         const personal = await account.personal.read()
@@ -115,35 +115,47 @@ router.post('/link-ntou', auth, required('ntouID', 'ntouPW'), async(req, res) =>
     }
 })
 
-router.post('/sentMail', async(req, res) =>  {
+router.post('/sentMail', async (req, res) => {
     //console.log(req.params.resetEmail, req.body.resetEmail)
     const Res = await AccountBackend.getVerCode(req.body.resetEmail)
     res.status(200).json()
 })
 
-router.post('/checkVerCode', async(req, res) =>  {
-    const Res = await AccountBackend.checkVerCode(req.body.resetEmail,req.body.validCode)
+router.post('/checkVerCode', async (req, res) => {
+    const Res = await AccountBackend.checkVerCode(req.body.resetEmail, req.body.validCode)
     res.status(Res).json()
 })
 
-router.post('/resetPwd', async(req, res) =>  {
-    const Res = await AccountBackend.resetPassword(req.body.resetEmail,req.body.newHash)
+router.post('/resetPwd', async (req, res) => {
+    const Res = await AccountBackend.resetPassword(req.body.resetEmail, req.body.newHash)
     res.status(Res).json()
 })
 
-router.post('/addResume',async(req, res) =>{
-    const Res = await AccountBackend.addResume(Object(req.body.userID),req.body.name,req.body.content)
+router.post('/resume', auth, async (req, res) => {
+    let result = await AccountBackend.addResume(req.account!.id, req.body.name, req.body.content)
+    res.status(result).json()
+})
+
+router.get('/resume', auth, async (req, res) => {
+    res.status(200).json(req.account!.resumeTemplates)
+})
+
+router.get('/resume/:id', auth, async (req, res) => {
+    let resume = req.account!.resumeTemplates!.find(x => x.id == req.params.id)
+    if (resume) {
+        res.status(200).json(resume)
+    } else {
+        res.status(404).json()
+    }
+})
+
+router.put('/resume/:id', auth, async (req, res) => {
+    const Res = await AccountBackend.updateResume(req.account!.id, req.params.id, req.body.name, req.body.content)
     res.status(Res).json()
 })
 
-router.post('/updateResume',async(req, res) =>{
-    const Res = await AccountBackend.updateResume(Object(req.body.userID),Object(req.body.resumeID),req.body.name,req.body.content)
-    res.status(Res).json()
-})
-
-
-router.post('/deleteResume',async(req, res) =>{
-    const Res = await AccountBackend.deleteResume(Object(req.body.userID),Object(req.body.resumeID))
+router.delete('/resume/:id', auth, async (req, res) => {
+    const Res = await AccountBackend.deleteResume(req.account!.id, req.params.id)
     res.status(Res).json()
 })
 

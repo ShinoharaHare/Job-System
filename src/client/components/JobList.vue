@@ -17,7 +17,7 @@ v-list(two-line, :height="height", :width="width")
                         color="primary"
                     ) {{ tag }}
 
-            v-list-item-avatar
+            v-list-item-avatar(v-if="isLogin")
                 v-btn(icon, large, @click.stop="unfavorite(_id)", v-if="isFavorite(_id)")
                     v-icon(color="pink") mdi-heart
 
@@ -41,11 +41,13 @@ export default class extends Vue {
     @Prop() width!: string
 
     @Account.State account!: IAccount
+    @Account.State isLogin!: boolean
     @Account.Action favorite!: Function
     @Account.Action unfavorite!: Function
 
     isFavorite(id: string) {
-        return this.account.favorite!.findIndex((x: any) => x == id) != -1
+        if(this.isLogin)
+            return this.account.favorite!.findIndex((x: any) => x == id) != -1
     }
 
     toJobPage(id: string) {
