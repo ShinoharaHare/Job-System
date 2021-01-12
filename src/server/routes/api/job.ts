@@ -62,7 +62,7 @@ router.get('/:id', findJob, async (req, res) => {
 })
 
 // 更新工作資料
-router.patch('/:id', auth, findJob, async (req, res) => {
+router.put('/:id', auth, findJob, async (req, res) => {
     try {
         const doc = await req.job!.updateOne(req.body.data)
         res.status(200).json(doc)
@@ -75,7 +75,7 @@ router.patch('/:id', auth, findJob, async (req, res) => {
 // 刪除工作
 router.delete('/:id', auth, findJob, async (req, res) => {
     try {
-        await req.job?.remove()
+        await req.job!.remove()
         res.status(204).json()
     } catch (error) {
         console.error(error)
