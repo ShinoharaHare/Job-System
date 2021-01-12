@@ -41,3 +41,19 @@ export const createTag = async(name: string, jobID?: Types.ObjectId) => {
         jobs: jobID? [jobID] : []
     });
 }
+
+export const newJobUpdateTags = async(tags: string[], jobID: Types.ObjectId) => {
+    tags.forEach(async(tagName) => {
+        let result = await Tag.findOne({name: tagName})
+        if(result){  // 標籤存在
+            if(!result.jobs?.includes(jobID)){  // 標籤裡面沒有該工作
+                result.jobs?.push(jobID)  // 加入工作
+                result.save()
+            }
+            // 重複的工作
+        }else{  // 標籤不存在
+            await createTag(tagName, jobID)  // 建立新標籤
+        }
+        // console.log(result)
+    })
+}

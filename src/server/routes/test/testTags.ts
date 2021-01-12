@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { Types } from 'mongoose'
-import { findJobsByTag, findJobsByTags, getAllTags, createTag } from '@/server/tags'
+import { findJobsByTag, findJobsByTags, getAllTags, createTag, newJobUpdateTags } from '@/server/tags'
 import { stringify } from 'querystring';
 
 const router = Router()
@@ -30,5 +30,11 @@ router.get('/createTag', async(req, res) => {
     }
     res.json(await createTag(tagName));
 });
+
+router.get('/newJobUpdateTags', async(req, res) => {
+    await newJobUpdateTags(["長期", "87"], Types.ObjectId("5fda4ad8251b020e2a3381df"))
+    res.json({})
+});
+
 
 export default router
