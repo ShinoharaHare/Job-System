@@ -2,10 +2,18 @@ import { Router } from 'express'
 import { Types } from 'mongoose'
 import { findJobsByTag, findJobsByTags, getAllTags, createTag, newJobUpdateTags } from '@/server/tags'
 import { stringify } from 'querystring';
+import { Job } from '@/server/models';
 
 const router = Router()
 
 router.get('/', async(req, res) => {
+    console.log(req.query.title)
+    let result = await Job.find({
+        title: {
+            $regex: `${req.query.title}`, $options: "$i"
+        }}, "id")
+    res.json(result)
+    return ;
     // console.log(await findJobs("好工作"));
     const jobs = await findJobsByTag("好工作");
     res.json(jobs);
