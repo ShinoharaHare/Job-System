@@ -20,15 +20,16 @@ v-dialog(fullscreen, :value="value")
             v-card(tile, width="100%")
                 v-card-actions
                     v-spacer
-                    v-btn(color="error", width="100") 拒絕
+                    v-btn(color="error", width="100" v-if="candidate.state == 0" @click="reject(candidate.id)") 拒絕
                     v-spacer
-                    v-btn(color="success", width="100") 接受
+                    v-btn(color="success", width="100" v-if="candidate.state == 0" @click="accept(candidate.id)") 接受
                     v-spacer
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Ref, Watch } from 'vue-property-decorator'
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
+import { sendMessage } from '@/client/sysmsg'
 
 @Component({ components: { RichTextEditor} })
 export default class extends Vue {
@@ -36,7 +37,8 @@ export default class extends Vue {
     value!: boolean
 
     @Prop({default: null})
-    content!:any
+    candidate!:any
+
 
     @Ref('textContent') textContent!:RichTextEditor
 
@@ -46,12 +48,34 @@ export default class extends Vue {
         this.$emit('input', v)
     }
 
-    @Watch('content',{immediate:true})
+    async reject(id:any){
+        const{status} = await axios.post(`/api/applyment/${id}/reject`)
+         switch (status) {
+            case 200:
+                sendMessage('拒絕成功')
+                break
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
+        }
+    }
+
+    async accept(id:any){
+        const{status} = await axios.post(`/api/applyment/${id}/accept`)
+         switch (status) {
+            case 200:
+                sendMessage('接受成功')
+                break
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
+        }
+    }
+
+    @Watch('candidate',{immediate:true})
     contentChanged(oldValue: any, newValue: any){
-        if(this.content != null){
-            console.log(this.content)
+        if(this.candidate != null){
+            console.log(this.candidate)
             setTimeout(() => {
-                this.textContent.setContent(this.content)
+                this.textContent.setContent(this.candidate.resume)
                 this.textContent.refresh()
             }, 300)
         }
