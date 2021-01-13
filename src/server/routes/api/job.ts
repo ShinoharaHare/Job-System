@@ -98,8 +98,14 @@ router.get('/search', async (req, res) => {
             },
             finish: false
         })
-        console.log("jobsWithTags: ", jobsWithTags)
+        // console.log("jobsWithTags: ", jobsWithTags)
         intersection = result//.map((x)=>x._id)
+    }else{
+        // console.log("search => all")
+        let allJobs = await Job.find({
+            finish: false
+        })
+        intersection = allJobs
     }
 
     res.status(200).json(intersection);
