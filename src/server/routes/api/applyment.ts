@@ -74,7 +74,7 @@ router.post('/:id/abandon', auth, async (req, res) => {
 router.get('/name', auth, async (req, res) => {
     const account = await Account.findOne({
         _id: Object(req.query.candidateID),
-    },{personal:1, _id:0})
+    },{email:1, personal:1, _id:0})
 
     res.status(200).json(account)
 })

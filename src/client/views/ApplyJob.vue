@@ -16,7 +16,11 @@ v-card(height="100vh")
         v-card(tile, width="100%")
             v-card-actions
                 v-spacer
-                v-btn(outlined, color="secondary") 取消
+                v-btn(
+                    outlined,
+                    color="secondary",
+                    @click="$router.replace(`/job/${id}`)"
+                ) 取消
                 v-btn(
                     outlined,
                     color="primary",

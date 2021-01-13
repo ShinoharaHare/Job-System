@@ -15,7 +15,7 @@ v-card.wrapper(tile, height="100%")
                         hideToolbar,
                         hideStatus,
                         readOnly,
-                        height="calc(100vh - 550px)",
+                        max-height="calc(100vh - 112px)",
                         ref="editor"
                     )
 
@@ -55,7 +55,7 @@ v-card.wrapper(tile, height="100%")
                     outlined,
                     color="primary",
                     width="70%",
-                    @click="apply"
+                    :to="`/job/${id}/apply`"
                 ) 我要應徵
 </template>
 
@@ -68,6 +68,7 @@ import { sendMessage } from '../sysmsg'
 
 import TagPicker from '@/client/components/TagPicker.vue'
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
+import router from '@/server/routes/api/applyment'
 
 const Account = namespace('Account')
 
@@ -124,20 +125,27 @@ export default class extends Vue {
     }
 
     async apply() {
-        let { status } = await axios.post('/api/applyment', {
+        if(!this.isLogin){
+            sendMessage('請先登入')
+            this.$router.replace('/login')
+        }
+
+        else{
+            let { status } = await axios.post('/api/applyment', {
             job: this.$route.params.id,
             resume: '履歷...'
-        })
+            })
 
-        switch (status) {
-            case 201:
-                // this.$router.push('')
-                sendMessage('應徵成功')
-                break
+            switch (status) {
+                case 201:
+                    // this.$router.push('')
+                    sendMessage('應徵成功')
+                    break
 
-            default:
+                default:
 
-        }
+            }
+        } 
     }
 
     mounted() {
@@ -162,6 +170,6 @@ export default class extends Vue {
     top: 0;
     left: 0;
     width: 100vw;
-    z-index: 1;
+    z-index: 10;
 }
 </style>
