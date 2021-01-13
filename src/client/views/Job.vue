@@ -15,7 +15,7 @@ v-card.wrapper(tile, height="100%")
                         hideToolbar,
                         hideStatus,
                         readOnly,
-                        height="calc(100vh - 550px)",
+                        max-height="calc(100vh - 112px)",
                         ref="editor"
                     )
 
@@ -55,7 +55,7 @@ v-card.wrapper(tile, height="100%")
                     outlined,
                     color="primary",
                     width="70%",
-                    @click="apply"
+                    :to="`/job/${id}/apply`"
                 ) 我要應徵
 </template>
 
@@ -170,6 +170,6 @@ export default class extends Vue {
     top: 0;
     left: 0;
     width: 100vw;
-    z-index: 1;
+    z-index: 10;
 }
 </style>

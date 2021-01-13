@@ -55,21 +55,19 @@ export default class extends Vue {
 
     async save() {
         this.loading = true
-        const { status, data } = await axios.put('/api/job', {
+        const { status, data } = await axios.put(`/api/job/${this.id}`, {
             data: this.editor.getData()
         })
         this.loading = false
 
         switch (status) {
-            case 201:
+            case 200:
                 sendMessage('修改成功')
                 break
 
             case 401:
             case 403:
         }
-
-        this.$router.back()
     }
 
     mounted() {
