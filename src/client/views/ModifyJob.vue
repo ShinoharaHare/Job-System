@@ -12,13 +12,7 @@ v-card(flat, tile, height="100%")
                     width="40%",
                     @click="$router.back()"
                 ) 取消
-                v-btn(
-                    outlined,
-                    color="primary",
-                    width="40%",
-                    :loading="loading",
-                    @click="save"
-                ) 儲存
+                v-btn(outlined, color="primary", width="40%", @click="submit") 修改
                 v-spacer
 </template>
 
@@ -26,52 +20,61 @@ v-card(flat, tile, height="100%")
 import { Vue, Component, Ref } from 'vue-property-decorator'
 
 import JobEditor from '@/client/components/JobEditor.vue'
-import { sendMessage } from '../sysmsg'
-import { IJob } from '@/server/models'
+import { sendMessage } from '@/client/sysmsg'
+
 
 @Component({ components: { JobEditor } })
 export default class extends Vue {
-    @Ref() editor!: JobEditor
+    @Ref()
+    editor!: JobEditor
 
-    job: IJob | null = null
-
-    loading = false
+    job: any = {
+        title: '',
+        content: '',
+        tags: [],
+        time: []
+    }
 
     get id() {
         return this.$route.params.id
     }
 
-    async loadJob() {
+    async loadData() {
+        
         const { status, data } = await axios.get(`/api/job/${this.id}`)
 
         switch (status) {
             case 200:
                 this.job = data
+                console.log(this.job)
+                this.editor.setData(this.job)
+                // this.editor.refresh()
+                break
+            case 404:
+                // 導向到404頁面
+                // this.$router.replace('/404')
                 break
         }
-
-        this.editor.setData(this.job!)
     }
 
-    async save() {
-        this.loading = true
-        const { status, data } = await axios.put(`/api/job/${this.id}`, {
-            data: this.editor.getData()
-        })
-        this.loading = false
-
+    async submit(){
+        const {status} = await axios.patch(`/api/job/${this.id}`,{data:this.editor.getData()})
         switch (status) {
             case 200:
-                sendMessage('修改成功', { timeout: 500 })
+                sendMessage('修改成功')
+                this.$router.replace('/published')
                 break
-
-            case 401:
-            case 403:
+            case 404:
+                sendMessage('未知的錯誤', { color: 'error' })
+                break
         }
     }
 
     mounted() {
-        this.loadJob()
+        this.loadData()
     }
 }
 </script>
+
+<style lang="scss" scoped>
+</style>

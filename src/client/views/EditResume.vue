@@ -24,7 +24,7 @@ v-card(tile, height="100vh")
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, Ref, Watch } from 'vue-property-decorator'
+import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
 import { sendMessage } from '../sysmsg'
 
 import ResumeEditor from '@/client/components/ResumeEditor.vue'

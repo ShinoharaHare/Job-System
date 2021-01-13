@@ -1,80 +1,74 @@
 <template lang="pug">
-v-card(flat)
+v-card(flat style="padding-bottom: 56px")
     v-card-text
-        v-container(fluid)
-            v-row
-                v-col
-                    v-text-field(label="標題", v-model="title")
-            v-row
-                v-col
-                    v-card(outlined)
-                        v-data-table(
-                            disable-sort,
-                            disable-pagination,
-                            hide-default-footer,
-                            :mobile-breakpoint="0",
-                            :headers="timeHeaders",
-                            :items="time"
-                        )
-                            template(#header.action)
+        v-text-field(label="標題", v-model="title")
+
+        RichTextEditor(height="calc(100vh - 250px)", ref="content")
+
+        TagPicker.mt-2(ref="tags", label="搜尋標籤")
+
+        v-card(outlined, flat)
+            v-data-table(
+                disable-sort,
+                disable-pagination,
+                hide-default-footer,
+                :mobile-breakpoint="0",
+                :headers="timeHeaders",
+                :items="time"
+            )
+                template(#header.action)
+                    v-btn(
+                        outlined,
+                        color="primary",
+                        @click="addTimeDialog.show = true"
+                    ) 新增
+                        v-icon mdi-plus
+
+                    v-dialog(
+                        persistent,
+                        max-width="300",
+                        v-model="addTimeDialog.show"
+                    )
+                        v-card
+                            v-card-title 新增時間
+
+                            v-card-text
+                                v-select(
+                                    dense,
+                                    outlined,
+                                    label="星期(幾)",
+                                    :items="addTimeDialog.weekdays",
+                                    v-model="addTimeDialog.weekday"
+                                )
+                                TimePicker(
+                                    label="開始時間",
+                                    prepend-icon="mdi-clock-start",
+                                    v-model="addTimeDialog.start"
+                                )
+
+                                TimePicker(
+                                    label="結束時間",
+                                    prepend-icon="mdi-clock-end",
+                                    v-model="addTimeDialog.end"
+                                )
+
+                            v-card-actions
+                                v-spacer
                                 v-btn(
                                     outlined,
-                                    color="primary",
-                                    @click="addTimeDialog.show = true"
+                                    color="red",
+                                    @click="addTimeDialog.show = false"
+                                ) 取消
+                                v-btn(
+                                    outlined,
+                                    color="blue darken-1",
+                                    @click="addTime"
                                 ) 新增
-                                    v-icon mdi-plus
+                                v-spacer
 
-                                v-dialog(
-                                    persistent,
-                                    max-width="300",
-                                    v-model="addTimeDialog.show"
-                                )
-                                    v-card
-                                        v-card-title 新增時間
-
-                                        v-card-text
-                                            v-select(
-                                                dense,
-                                                outlined,
-                                                label="星期(幾)",
-                                                :items="addTimeDialog.weekdays",
-                                                v-model="addTimeDialog.weekday"
-                                            )
-                                            TimePicker(
-                                                label="開始時間",
-                                                prepend-icon="mdi-clock-start",
-                                                v-model="addTimeDialog.start"
-                                            )
-
-                                            TimePicker(
-                                                label="結束時間",
-                                                prepend-icon="mdi-clock-end",
-                                                v-model="addTimeDialog.end"
-                                            )
-
-                                        v-card-actions
-                                            v-spacer
-                                            v-btn(
-                                                outlined,
-                                                color="red",
-                                                @click="addTimeDialog.show = false"
-                                            ) 取消
-                                            v-btn(
-                                                outlined,
-                                                color="blue darken-1",
-                                                @click="addTime"
-                                            ) 新增
-                                            v-spacer
-
-                            template.text-center(#item.action="{ item }")
-                                v-icon(color="red", @click="removeItem(item)") mdi-trash-can
-                                //- v-icon.ml-2(color="blue darken-1", @click="") mdi-pencil
-
-            v-row
-                v-col
-                    TagPicker(ref="tags" label="搜尋標籤")
-
-        RichTextEditor(height="calc(100vh - 600px)" ref="content")
+                template.text-center(#item.action="{ item }")
+                    v-icon(color="red", @click="removeItem(item)") mdi-trash-can
+                    //- v-icon.ml-2(color="blue darken-1", @click="") mdi-pencil
 </template>
 
 <script lang="ts">
@@ -150,6 +144,13 @@ export default class extends Vue {
             tags: this.tags.getData()
         }
     }
+    //if modify 才呼叫
+    // setData(data:any){
+    //     this.title = data.title
+    //     this.times = data.time
+    //     this.textContent.setContent(data.content)
+    //     //缺tag
+    // }
 
     setData(job: IJob) {
         this.title = job.title
