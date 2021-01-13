@@ -95,6 +95,7 @@ export default class extends Vue {
     }
 
     conflict(event1: any, event2: any): boolean {
+        // console.log(event1, "vs.", event2);
         if (this.compareTime(event1.start, event2.start) <= 0) {
             if (this.compareTime(event1.end, event2.start) > 0) {
                 return true;
@@ -112,7 +113,9 @@ export default class extends Vue {
 
     checkTime() {
         for (let jobTime of this.job.time) {
+            // console.log("jobTime:", jobTime);
             for (let event of this.account.events!) {
+                // console.log("event:", event);
                 if (event.weekday == jobTime.weekday) {
                     if (this.conflict(event, jobTime)) {
                         this.warning = true
