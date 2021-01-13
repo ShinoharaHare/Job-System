@@ -44,6 +44,11 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/EditJob.vue')
     },
     {
+        path: '/job/:id/apply',
+        name: 'ApplyJob',
+        component: () => import('@/client/views/ApplyJob.vue')
+    },
+    {
         path: '/published',
         name: 'Published',
         component: () => import('@/client/views/Published.vue')

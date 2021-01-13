@@ -91,7 +91,7 @@ export default class extends Vue {
     }
 
     async loadJobs() {
-        let { status, data } = await axios.get('api/job/published')
+        let { status, data } = await axios.get('/api/job/published')
         if (status === 200) {
             this.jobs = data
         }
@@ -101,7 +101,7 @@ export default class extends Vue {
         let id = this.deleteDialog.id
 
         this.deleteDialog.loading = true
-        let { status } = await axios.delete(`api/job/${id}`)
+        let { status } = await axios.delete(`/api/job/${id}`)
         this.deleteDialog.loading = false
 
         if (status === 204) {

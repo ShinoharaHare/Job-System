@@ -11,6 +11,7 @@ import SimpleMDE from 'simplemde'
 @Component
 export default class extends Vue {
     @Prop() height!: string | number
+    @Prop() maxHeight!: string | number
     @Prop() readOnly!: boolean
     @Prop() hideToolbar!: boolean
     @Prop() hideStatus!: boolean
@@ -46,6 +47,7 @@ export default class extends Vue {
         })
         this.codeMirror = document.querySelector('.CodeMirror')
         this.codeMirror.style.height = this.height
+        this.codeMirror.style.maxHeight = this.maxHeight
 
         if (this.readOnly != undefined) {
             this.togglePreview()
@@ -53,13 +55,6 @@ export default class extends Vue {
             let el = document.querySelector('.CodeMirror-code') as HTMLDivElement
             el.contentEditable = 'false'
         }
-        // ; (window as any).temp = this.simplemde
-
-        setInterval(() => {
-            // this.codeMirror.style = this.style
-            // console.log(this.st)
-            //console.log(this.getContent())
-        }, 500)
     }
 }
 </script>
