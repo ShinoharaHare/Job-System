@@ -15,6 +15,7 @@ export const findJobsByTag = async(tagName: string) => {
 
 export const findJobsByTags = async(tagNames: string[]) => {
     let intersection: any[] = [];
+    let union: Set<Types.ObjectId> = new Set<Types.ObjectId>();
     let first: boolean = true;
     for(let tagName of tagNames){
         let jobs = await Tag.findOne({
@@ -23,15 +24,20 @@ export const findJobsByTags = async(tagNames: string[]) => {
         if(jobs){
             if(first){
                 // intersection
-                console.log("intersection = ", jobs.jobs!);
+                // console.log("init intersection = ", jobs.jobs!);
                 intersection = jobs.jobs!
                 first = false;
             }else{
-                console.log("origin: ", intersection);
                 intersection = intersection.filter((x) => jobs!.jobs!.includes(x));
+                // console.log("after and: ", intersection);
             }
+            jobs!.jobs!.forEach((x)=>union.add(x as Types.ObjectId))
+            // console.log("union: ", union);
         }
     }
+    // console.log("===========================================");
+    // console.log(Array.from(union.values()).filter((x)=>!intersection.includes(x)));
+    intersection = intersection.concat(Array.from(union.values()).filter((x)=>!intersection.includes(x)));
     return intersection;
 }
 
@@ -40,4 +46,21 @@ export const createTag = async(name: string, jobID?: Types.ObjectId) => {
         name: name,
         jobs: jobID? [jobID] : []
     });
+}
+
+export const newJobUpdateTags = async(tags: string[], jobID: Types.ObjectId) => {
+    console.log(tags)
+       tags?.forEach(async(tagName) => {
+        let result = await Tag.findOne({name: tagName})
+        if(result){  // 標籤存在
+            if(!result.jobs?.includes(jobID)){  // 標籤裡面沒有該工作
+                result.jobs?.push(jobID)  // 加入工作
+                result.save()
+            }
+            // 重複的工作
+        }else{  // 標籤不存在
+            await createTag(tagName, jobID)  // 建立新標籤
+        }
+        // console.log(result)
+    })
 }

@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card(tile, height="100%")
+v-card(tile, height="calc(100vh - 56px)")
     v-toolbar(dark, color="primary")
         v-toolbar-title 刊登管理
 
@@ -22,7 +22,11 @@ v-card(tile, height="100%")
             v-list-item
                 v-list-item-content(align="right")
                     span
-                        v-btn.mr-1(outlined, color="error") 移除
+                        v-btn.mr-1(
+                            outlined,
+                            color="error",
+                            @click="showDeleteDialog(_id)"
+                        ) 刪除
                         v-btn.mr-1(
                             outlined,
                             color="success",
@@ -33,6 +37,22 @@ v-card(tile, height="100%")
                             color="warning",
                             @click="selectedItem(_id)"
                         ) 應徵者
+
+                        v-dialog(v-model="deleteDialog.show")
+                            v-card
+                                v-card-title 確定要刪除此工作嗎?
+                                v-card-actions
+                                    v-spacer
+                                    v-btn(
+                                        outlined,
+                                        color="error",
+                                        :loading="deleteDialog.loading",
+                                        @click="deleteJob"
+                                    ) 刪除
+                                    v-btn(
+                                        outlined,
+                                        @click="deleteDialog.show = false"
+                                    ) 取消
 
             v-divider
 
@@ -48,6 +68,7 @@ import { namespace } from 'vuex-class'
 import { IAccount } from '@/server/models'
 
 import CandidatesDialog from '@/client/components/CandidatesDialog.vue'
+import { sendMessage } from '../sysmsg'
 
 const Account = namespace('Account')
 
@@ -55,6 +76,13 @@ const Account = namespace('Account')
 export default class extends Vue {
     @Account.State account!: IAccount
     jobs: any[] = []
+
+    deleteDialog = {
+        show: false,
+        id: '',
+        loading: false
+    }
+
     showCandidates = false
     showEditor = false
     applyments = null
@@ -72,10 +100,29 @@ export default class extends Vue {
     }
 
 
+    showDeleteDialog(id: string) {
+        this.deleteDialog.show = true
+        this.deleteDialog.id = id
+    }
+
     async loadJobs() {
-        let { status, data } = await axios.get('api/job', { params: { type: 'published' } })
+        let { status, data } = await axios.get('api/job/published')
         if (status === 200) {
             this.jobs = data
+        }
+    }
+
+    async deleteJob() {
+        let id = this.deleteDialog.id
+
+        this.deleteDialog.loading = true
+        let { status } = await axios.delete(`api/job/${id}`)
+        this.deleteDialog.loading = false
+
+        if (status === 204) {
+            this.jobs = this.jobs.filter(x => x._id != id)
+            this.deleteDialog.show = false
+            sendMessage('刪除成功')
         }
     }
 

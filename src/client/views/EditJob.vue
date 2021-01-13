@@ -55,7 +55,7 @@ export default class extends Vue {
 
     async save() {
         this.loading = true
-        const { status, data } = await axios.patch('/api/job', {
+        const { status, data } = await axios.put('/api/job', {
             data: this.editor.getData()
         })
         this.loading = false

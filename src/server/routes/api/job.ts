@@ -1,6 +1,6 @@
 import { auth, findJob, required } from '@/server/middlewares'
 import { Account, Job } from '@/server/models'
-import { findJobsByTags, getAllTags } from '@/server/tags'
+import * as tags from '@/server/tags'
 
 import { Router } from 'express'
 
@@ -16,6 +16,7 @@ router.post('/', auth, required('data'), async (req, res) => {
             ...req.body.data,
             publisher: req.account?.id
         })
+        tags.newJobUpdateTags(req.body.data.tags, document.id)
         res.status(201).json(document)
     } catch (error) {
         console.error(error)
@@ -33,22 +34,86 @@ router.get('/favorite', auth, async (req, res) => {
 
 // 搜尋工作
 router.get('/search', async (req, res) => {
-    // test search by tags
-    let tagNames: string[] = [];
+    // search by title
+    let titleToSearch: string | undefined = undefined
+    if (req.query?.title) {
+        if (Array.isArray(req.query?.title)) {
+            titleToSearch = req.query?.title[0] as string;
+        } else if (typeof req.query?.title === "string") {
+            titleToSearch = req.query?.title as string;
+        } else {
+            // title error
+            titleToSearch = undefined
+        }
+    }
+    // search by tags
+    let tagNames: string[] | undefined = undefined
     if (req.query?.tags) {
         // res.json(req.query?.tags);
         if (Array.isArray(req.query?.tags)) {
             tagNames = req.query?.tags as string[];
         } else if (typeof req.query?.tags === "string") {
             tagNames = [req.query?.tags as string];
+        } else {
+            // tags error
+            tagNames = undefined
         }
     }
-    res.json(await findJobsByTags(tagNames)).status(200);
+
+    // all
+    let intersection: any[] = []
+    if (titleToSearch && tagNames) {
+        let jobsWithTags = await tags.findJobsByTags(tagNames)
+        let result = await Job.find({
+            _id: {
+                $in: jobsWithTags
+            },
+            title: {
+                $regex: `${titleToSearch}`, $options: "$i"
+            }
+        })
+        intersection = result//.map((x)=>x._id)
+        let result2 = await Job.find({
+            _id: {
+                $in: jobsWithTags
+            }
+        })
+        intersection = intersection.concat(result2.filter((x) => !result.includes(x)))
+    } else if (titleToSearch) {
+        let result = await Job.find({
+            title: {
+                $regex: `${titleToSearch}`, $options: "$i"
+            }
+        })
+        intersection = result//.map((x)=>x._id)
+    } else if (tagNames) {
+        let jobsWithTags = await tags.findJobsByTags(tagNames)
+        let result = await Job.find({
+            _id: {
+                $in: jobsWithTags
+            }
+        })
+        console.log("jobsWithTags: ", jobsWithTags)
+        intersection = result//.map((x)=>x._id)
+    }
+
+    res.status(200).json(intersection);
 })
 
 router.get('/tags', async (req, res) => {
-    let tags = await getAllTags()
-    res.status(200).json(tags)
+    let allTags = await tags.getAllTags()
+    res.status(200).json(allTags)
+})
+
+// 工作清單
+router.get('/all', async (req, res) => {
+    let jobs = await Job.find()
+    res.status(200).json(jobs)
+})
+
+router.get('/published', auth, async (req, res) => {
+    let jobs = await Job.find({ publisher: req.account!.id })
+    res.status(200).json(jobs)
 })
 
 // 取得工作詳細資料
@@ -62,9 +127,10 @@ router.get('/:id', findJob, async (req, res) => {
 })
 
 // 更新工作資料
-router.patch('/:id', auth, findJob, async (req, res) => {
+router.put('/:id', auth, findJob, required('data'), async (req, res) => {
     try {
         const doc = await req.job!.updateOne(req.body.data)
+        await tags.newJobUpdateTags(req.body.data.tags, req.job?.id)
         res.status(200).json(doc)
     } catch (error) {
         console.error(error)
@@ -75,46 +141,13 @@ router.patch('/:id', auth, findJob, async (req, res) => {
 // 刪除工作
 router.delete('/:id', auth, findJob, async (req, res) => {
     try {
-        await req.job?.remove()
+        await req.job!.remove()
         res.status(204).json()
     } catch (error) {
         console.error(error)
         res.status(500).json()
     }
 })
-
-//所有工作
-router.get('/all',auth, async (req, res) => {
-    try{
-        const jobs = await Job.find()
-        console.log(jobs)
-        res.send(jobs)
-    }catch(error){
-        //console.log(error)
-    }
-})
-
-
-// 工作清單
-router.get('/', auth, async (req, res) => {
-    let jobs: any[] = []
-
-    switch (req.query.type) {
-        case 'published':
-            jobs = await Job.find({
-                publisher: req.account!.id
-            })
-            break
-
-        case 'all':
-        default:
-            jobs = await Job.find()
-            break
-    }
-
-    res.status(200).json(jobs)
-})
-
 
 // 收藏工作
 router.post('/:id/favorite', auth, findJob, async (req, res) => {

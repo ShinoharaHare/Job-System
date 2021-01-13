@@ -11,19 +11,17 @@ v-card.wrapper(tile, height="100%")
         v-container(fluid)
             v-row
                 v-col
-                    v-card(flat)
-                        v-card-title 工作內容
-                        RichTextEditor(
-                            hideToolbar,
-                            hideStatus,
-                            readOnly,
-                            height="calc(100vh - 550px)",
-                            ref="editor"
-                        )
+                    RichTextEditor(
+                        hideToolbar,
+                        hideStatus,
+                        readOnly,
+                        height="calc(100vh - 550px)",
+                        ref="editor"
+                    )
 
             v-row
                 v-col 
-                    TagPicker(readOnly, ref="tagPicker" label="標籤")
+                    TagPicker(readOnly, ref="tagPicker", label="標籤")
 
             v-row
                 v-col

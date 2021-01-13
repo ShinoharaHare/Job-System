@@ -10,7 +10,8 @@ v-combobox(
     :items="items",
     :search-input.sync="search",
     :label="label",
-    :readonly="readOnly",
+    :disabled="readonly",
+    :readonly="readonly",
     v-model="model"
 )
     template(#no-data)
@@ -27,7 +28,7 @@ v-combobox(
             v-bind="attrs"
         )
             span.pr-2 {{ item.text }}
-            v-icon(small, @click="parent.selectItem(item)") mdi-close
+            v-icon(small, @click="parent.selectItem(item)", v-if="readOnly") mdi-close
 
     template(#item="{ index, item }")
         v-chip(outlined, color="secondary")
@@ -49,6 +50,10 @@ export default class extends Vue {
     model: any[] = []
     loading = false
 
+    get readonly() {
+        return this.readOnly !== undefined ? this.readOnly : false
+    }
+
     filter(item: any, queryText: string, itemText: string) {
         if (item.header) return false
 
@@ -66,7 +71,7 @@ export default class extends Vue {
 
         this.model = val.map((v: any) => {
             if (typeof v === 'string') {
-                v = { text: v, new: true }
+                v = { text: v }
                 this.items.push(v)
             }
             return v
@@ -74,13 +79,7 @@ export default class extends Vue {
     }
 
     getData() {
-        let tags = this.model.filter(x => !x.new)
-        let newTags = this.model.filter(x => x.new)
-
-        return {
-            tags: tags.map(x => x.text),
-            newTags: newTags.map(x => x.text)
-        }
+        return this.model.map(x => x.text)
     }
 
     setData(tags: string[]) {
