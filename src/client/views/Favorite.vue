@@ -22,7 +22,7 @@ export default class extends Vue {
     jobs: IJob[] = []
 
     async loadData() {
-        let { status, data } = await axios.get('/api/job/favorite')
+        let { status, data } = await axios.get('/api/account/favorite')
         if (status == 200) {
             this.jobs = data
         }

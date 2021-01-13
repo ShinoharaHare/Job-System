@@ -1,6 +1,6 @@
 import { auth, required } from '@/server/middlewares'
 import config from '@/server/config'
-import { Account } from '@/server/models'
+import { Account, Job } from '@/server/models'
 
 import { Router } from 'express'
 import jwt from 'jsonwebtoken'
@@ -42,6 +42,11 @@ router.get('/', auth, async (req, res) => {
     delete data.hash
 
     res.status(200).json(data)
+})
+
+router.get('/favorite', auth, async (req, res) => {
+    let jobs = await Job.find({ _id: { $in: req.account!.favorite } })
+    res.status(200).json(jobs)
 })
 
 router.patch('/', auth, required('data'), async (req, res) => {

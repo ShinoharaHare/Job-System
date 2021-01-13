@@ -24,15 +24,6 @@ router.post('/', auth, required('data'), async (req, res) => {
     }
 })
 
-
-router.get('/favorite', auth, async (req, res) => {
-    let jobs = await Account
-        .findById(req.account!.id, 'favorite')
-        .populateTs('favorite')
-
-    res.status(200).json(jobs!.favorite)
-})
-
 // 搜尋工作
 router.get('/search', async (req, res) => {
     // search by title
