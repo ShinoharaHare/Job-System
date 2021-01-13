@@ -100,7 +100,13 @@ export default class extends Vue {
     async getNames(candidates:any){
         for(let i=0;i<candidates.length;i++){
             const { data } = await axios.get('/api/applyment/name', { params: { candidateID: candidates[i].applicant } })
-            this.candidates[i].name = data.personal.nameZH
+            if(data.personal.nameZH == null){
+                this.candidates[i].name = data.email
+            }
+            else{
+                this.candidates[i].name = data.personal.nameZH
+            }
+            
             
         }
         this.loading = false
