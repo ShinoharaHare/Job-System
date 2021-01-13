@@ -1,98 +1,113 @@
 <template lang="pug">
 v-card(tile, height="100%")
-    v-toolbar(color="white")
-        v-img.mx-0(contain, max-height="55", max-width="200", :src="logo")
+    v-toolbar(dark)
+        v-avatar.ma-1(tile)
+            v-img(
+                contain,
+                transition="fab-transition",
+                :src="require('@/client/assets/hen.svg')"
+            )
+
+        span.text-h5 小雞雞上工
+
         v-spacer
         v-toolbar-items
-            v-btn(
-                text,
-                color="primary",
-                to="/login",
-                width="100",
-                v-if="!isLogin"
-            ) 登入
+            v-btn(icon, text, to="/login", width="100", v-if="!isLogin") 
+                v-icon mdi-login-variant
+                span.ml-1 登入
 
     v-card-text
-        v-container
-            v-row
-                v-col.pb-0
-                    v-text-field(
-                        prepend-inner-icon="mdi-magnify",
-                        solo,
-                        clearable
-                    )
-                        template(v-slot:append="")
-                            v-btn.ma-0(color="primary") 搜尋
-            v-row
-                v-col.d-flex.px-0.py-0
-                    v-select(
-                        :items="district",
-                        label="地區",
-                        single,
-                        outlined,
-                        clearable,
-                        @changed=""
-                    )
-                v-col.d-flex.px-0.py-0
-                    v-select(
-                        v-model="typeValue",
-                        :items="type",
-                        label="類型",
-                        multiple,
-                        outlined,
-                        clearable,
-                        @changed=""
-                    )
-                        template(v-slot:selection="{ item, index }")
-                            v-chip(v-if="index === 0")
-                                span {{ item }}
-                            span.grey--text.caption(v-if="index === 1")
-                                | ({{ typeValue.length }})
+        v-text-field(
+            solo,
+            clearable,
+            prepend-inner-icon="mdi-magnify",
+            :append-outer-icon="showTags ? 'mdi-chevron-up' : 'mdi-chevron-down'",
+            @click:append-outer="showTags = !showTags",
+            v-model="searchText"
+        )
+            template(#append)
+                v-btn(color="primary", @click="search") 搜尋
 
-            v-row
-                v-col.pa-0
-                    v-card
-                        JobList(:items="jobs", height="calc(100vh - 350px)")
+        v-expand-transition
+            div(v-if="showTags")
+                v-autocomplete(
+                    outlined,
+                    clearable,
+                    multiple,
+                    chips,
+                    deletable-chips,
+                    label="標籤過濾",
+                    :items="allTags",
+                    v-model="tags"
+                )
+
+        JobList(
+            :items="jobs",
+            :height="jobListHeight",
+            outlined,
+            :loading="loading",
+            :disabled="loading"
+        )
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
-import JobList from '@/client/components/JobList.vue'
+import { Vue, Component, Ref } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
+
+import JobList from '@/client/components/JobList.vue'
+import TagPicker from '@/client/components/TagPicker.vue'
 
 const Account = namespace('Account')
 
-@Component({ components: { JobList } })
+@Component({ components: { JobList, TagPicker } })
 export default class extends Vue {
     @Account.State isLogin!: boolean
-    logo = require('@/client/assets/logo/logo_homepage.png')
-    drawer = false
 
-    district = ['中正區', '信義區']
-    value = ['foo', 'bar', 'fizz', 'buzz']
-    type = ['短期', '長期', '假日', '平日']
-
-    typeValue = []
-
+    searchText = ''
+    showTags = false
+    allTags = []
+    loading = false
+    tags: string[] = []
     jobs: any[] = []
 
+    get jobListHeight() {
+        let h = 230
+        h -= this.isLogin ? 0 : 56
+        return `calc(100vh - ${h}px)`
+    }
+
     async loadJobs() {
-        let { status, data } = await axios.get('/api/job', { params: { type: 'all' } })
+        let { status, data } = await axios.get('/api/job/all')
         if (status === 200)
             this.jobs = data
     }
 
+    async loadTags() {
+        let { status, data } = await axios.get('/api/job/tags')
+        if (status === 200)
+            this.allTags = data.map((x: any) => x.name)
+    }
+
+    async search() {
+        this.loading = true
+        let { status, data } = await axios.get('/api/job/search', {
+            params: {
+                title: this.searchText,
+                tags: this.tags
+            }
+        })
+        this.loading = false
+        this.jobs = data
+    }
+
     mounted() {
         this.loadJobs()
+        this.loadTags()
     }
 }
 </script>
 
 <style lang="scss" scoped>
-#job-list-container {
-    max-height: 0px;
-    overflow-y: scroll;
-}
 ::v-deep .v-toolbar__content {
     padding: 0px !important;
 }

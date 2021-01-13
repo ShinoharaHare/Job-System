@@ -1,9 +1,9 @@
 <template lang="pug">
 v-card(tile, height="100%")
-    v-toolbar(dark, color="primary")
+    v-toolbar(dark, color="primary" style="z-index: 1")
         v-toolbar-title 收藏
 
-    JobList(:items="jobs")
+    JobList(:items="jobs" height="calc(100vh - 112px)" )
 </template>
 
 <script lang="ts">
