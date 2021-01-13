@@ -34,6 +34,11 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/NewJob.vue')
     },
     {
+        path: '/job/modify/:id',
+        name: 'ModifyJob',
+        component: () => import('@/client/views/ModifyJob.vue')
+    },
+    {
         path: '/job/:id',
         name: 'Job',
         component: () => import('@/client/views/Job.vue')
@@ -113,6 +118,7 @@ const routes: Array<RouteConfig> = [
         name: 'ResetPassword',
         component: () => import('@/client/views/ResetPassword.vue')
     }
+    
 ]
 
 const router = new VueRouter({
