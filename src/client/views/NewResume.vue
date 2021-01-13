@@ -51,6 +51,37 @@ export default class extends Vue {
                 sendMessage('未知的錯誤', { color: 'error' })
         }
     }
+    mounted(){
+        const content = `# **中文名(ex:林孟翰)**
+<br>
 
+#### 英文名(ex:Wayne)
+#### 年紀(ex:21)
+#### 電話(ex:0912345678)
+#### 信箱(ex:123@gmail.com)
+#### 駕照(ex:汽、機車)
+<br>
+
+## 教育程度
+<br>
+
+* ### 國立台灣海洋大學 資訊工程學系 2018-2022
+<br>
+
+## 語言能力
+<br>
+
+* ### 英文-- 聽 /需加強、說 /尚可、讀 /精通、寫 /尚可
+* ### 台語-- 聽 /尚可、說 /尚可
+<br>
+
+## 其他技能
+<br>
+
+* ### 能搬重物
+*  ### 精通Microsoft Office
+`
+        this.editor.setText(content)
+    }
 }
 </script>
