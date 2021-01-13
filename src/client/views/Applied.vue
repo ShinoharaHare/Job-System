@@ -30,7 +30,6 @@ v-card(tile, height="100%")
                             color="secondary",
                             :to="`/job/${job._id}`"
                         ) 查看
-
                         v-btn(
                             outlined,
                             color="error",

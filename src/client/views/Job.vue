@@ -54,25 +54,24 @@ v-card.wrapper(tile, height="100%")
                     outlined,
                     color="primary",
                     width="70%",
-                    @click="apply",
-                    v-if="!isApplied"
-                    :to="`/job/${id}/apply`"
+                    :to="`/job/${id}/apply`",
+                    :disabled="!canApply"
                 ) 我要應徵
-                
-                span(v-else)
-                    v-btn(
-                        outlined,
-                        color="red",
-                        @click="abandon",
-                        v-if="isApplied.state == 0 || isApplied.state == 1"
-                    ) 放棄
 
-                    v-btn(
-                        outlined,
-                        color="primary",
-                        @click="confirm",
-                        v-if="isApplied.state == 1"
-                    ) 確認
+                //- span(v-else)
+                //-     v-btn(
+                //-         outlined,
+                //-         color="red",
+                //-         @click="abandon",
+                //-         v-if="isApplied.state == 0 || isApplied.state == 1"
+                //-     ) 放棄
+
+                //-     v-btn(
+                //-         outlined,
+                //-         color="primary",
+                //-         @click="confirm",
+                //-         v-if="isApplied.state == 1"
+                //-     ) 確認
 </template>
 
 <script lang="ts">
@@ -105,11 +104,7 @@ export default class extends Vue {
         time: []
     }
 
-    isApplied: any = {
-        state: Number
-    }
-
-    applymentsByJob: IApplyment[] = []
+    isApplied = true
 
     headers = [
         { text: '星期(幾)', value: 'weekday', align: 'center' },
@@ -123,6 +118,14 @@ export default class extends Vue {
 
     get isFavorite() {
         return this.account.favorite!.findIndex((x: any) => x == this.id) != -1
+    }
+
+    get canApply() {
+        let x = true
+        x = x && this.account?._id != this.job.publisher
+        x = x && !this.job.finish
+        x = x && !this.isApplied
+        return x
     }
 
     setData(job: IJob) {
@@ -146,61 +149,16 @@ export default class extends Vue {
         }
     }
 
-    async getApplyments(){
-        const { data } = await axios.get('/api/applyment', { params: { job: this.id }})
-        this.applymentsByJob = data
-        this.isApplied = this.applymentsByJob.find(i => i.applicant === this.account._id)
-    }
-
-    async apply() {
-        if(!this.isLogin){
-            sendMessage('請先登入')
-            this.$router.replace('/login')
-        }
-
-        else{
-            let { status } = await axios.post('/api/applyment', {
-            job: this.$route.params.id,
-            resume: '履歷...'
-            })
-
-            switch (status) {
-                case 201:
-                    // this.$router.push('')
-                    sendMessage('應徵成功')
-                    break
-
-                default:
-
-            }
-        } 
-    }
-
-    async abandon() {
-        let { status } = await axios.post(`/api/applyment/${this.isApplied._id}/abandon`)
-        switch (status) {
-            case 200:
-                sendMessage('放棄成功')
-                break
-            default:
-                sendMessage('未知的錯誤', { color: 'error' })
-        }
-    }
-
-    async confirm() {
-        let { status } = await axios.post(`/api/applyment/${this.isApplied._id}/confirm`)
-        switch (status) {
-            case 200:
-                sendMessage('確認成功')
-                break
-            default:
-                sendMessage('未知的錯誤', { color: 'error' })
+    async checkIsApplied() {
+        const { status, data } = await axios.get('/api/applyment', { params: { job: this.id } })
+        if (status == 200) {
+            this.isApplied = !!data.find((i: any) => i.applicant._id === this.account._id)
         }
     }
 
     mounted() {
         this.loadJob()
-        this.getApplyments()
+        this.checkIsApplied()
     }
 }
 </script>

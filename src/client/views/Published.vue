@@ -17,6 +17,7 @@ v-card(tile, height="100%")
                                 :key="i",
                                 v-for="(tag, i) in jobs.tags"
                             ) {{ tag }}
+
                     v-list-item-avatar(width="70")
                         v-chip(:color="finish ? 'error' : 'success'") {{ finish ? '已結束' : '招募中' }}
 
