@@ -70,7 +70,7 @@ v-card.wrapper(tile, height="100%")
 
                     v-btn(
                         outlined,
-                        color="green",
+                        color="primary",
                         @click="confirm",
                         v-if="isApplied.state == 1"
                     ) 確認
@@ -190,7 +190,6 @@ export default class extends Vue {
 
     async confirm() {
         let { status } = await axios.post(`/api/applyment/${this.isApplied._id}/confirm`)
-        console.log(status)
         switch (status) {
             case 200:
                 sendMessage('確認成功')
