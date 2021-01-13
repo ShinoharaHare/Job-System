@@ -110,20 +110,34 @@ export default class extends Vue {
         return state === State.Accepted
     }
 
-    refresh() {
-        location.reload()
-    }
-
     async abandon(id: string) {
         let { status } = await axios.post(`/api/applyment/${id}/abandon`)
-        if (status === 200)
-            this.refresh()
+        switch (status) {
+            case 200:
+                let x = this.applyments.find((x: any) => x._id == id)
+                if (x) {
+                    x.state = State.Abandoned
+                }
+                break
+
+            default:
+                break
+        }
     }
 
     async confirm(id: string) {
         let { status } = await axios.post(`/api/applyment/${id}/confirm`)
-        if (status === 200)
-            this.refresh()
+        switch (status) {
+            case 200:
+                let x = this.applyments.find((x: any) => x._id == id)
+                if (x) {
+                    x.state = State.Confirmed
+                }
+                break
+
+            default:
+                break
+        }
     }
 
     async loadApplyments() {
