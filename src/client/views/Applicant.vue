@@ -26,7 +26,7 @@ v-card(tile)
                             v-icon mdi-account
                         v-list-item-content
                             v-list-item-title
-                                h3 {{ x.applicant.personal.nameZH }}
+                                h3 {{ x.applicant.personal.nameZH || x.applicant.email }}
 
                         v-list-item-avatar(width="80")
                             v-chip(dark, small, :color="getColor(x.state)") 
