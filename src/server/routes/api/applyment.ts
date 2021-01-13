@@ -2,7 +2,7 @@ import { auth, required } from '@/server/middlewares'
 import { abandon, accept, apply, reject, findByApplicant, findByJob } from '@/server/applyment'
 
 import { Router } from 'express'
-
+import { Account } from '@/server/models'
 const router = Router()
 
 router.post('/', auth, required('job', 'resume'), async (req, res) => {
@@ -69,5 +69,16 @@ router.post('/:id/abandon', auth, async (req, res) => {
         res.status(200).json(result)
     }
 })
+
+
+router.get('/name', auth, async (req, res) => {
+    const account = await Account.findOne({
+        _id: Object(req.query.candidateID),
+    },{personal:1, _id:0})
+
+    res.status(200).json(account)
+})
+
+
 
 export default router

@@ -34,6 +34,11 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/NewJob.vue')
     },
     {
+        path: '/job/modify/:id',
+        name: 'ModifyJob',
+        component: () => import('@/client/views/ModifyJob.vue')
+    },
+    {
         path: '/job/:id',
         name: 'Job',
         component: () => import('@/client/views/Job.vue')
@@ -42,6 +47,11 @@ const routes: Array<RouteConfig> = [
         path: '/job/:id/edit',
         name: 'EditJob',
         component: () => import('@/client/views/EditJob.vue')
+    },
+    {
+        path: '/job/:id/apply',
+        name: 'ApplyJob',
+        component: () => import('@/client/views/ApplyJob.vue')
     },
     {
         path: '/published',
@@ -108,6 +118,7 @@ const routes: Array<RouteConfig> = [
         name: 'ResetPassword',
         component: () => import('@/client/views/ResetPassword.vue')
     }
+    
 ]
 
 const router = new VueRouter({

@@ -150,6 +150,13 @@ export default class extends Vue {
             tags: this.tags.getData()
         }
     }
+    //if modify 才呼叫
+    // setData(data:any){
+    //     this.title = data.title
+    //     this.times = data.time
+    //     this.textContent.setContent(data.content)
+    //     //缺tag
+    // }
 
     setData(job: IJob) {
         this.title = job.title

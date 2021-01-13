@@ -35,7 +35,7 @@ v-card(tile, height="calc(100vh - 56px)")
                         v-btn.mr-1(
                             outlined,
                             color="warning",
-                            @click="showCandidates = true"
+                            @click="selectedItem(_id)"
                         ) 應徵者
 
                         v-dialog(v-model="deleteDialog.show")
@@ -59,7 +59,7 @@ v-card(tile, height="calc(100vh - 56px)")
     v-btn(fixed, bottom, right, fab, dark, color="primary", to="/job/new")
         v-icon mdi-plus
 
-    CandidatesDialog(v-model="showCandidates")
+    CandidatesDialog(v-model="showCandidates" :applyment="applyments")
 </template>
 
 <script lang="ts">
@@ -84,6 +84,21 @@ export default class extends Vue {
     }
 
     showCandidates = false
+    showEditor = false
+    applyments = null
+
+    async selectedItem(jobID:any){
+        this.applyments = await axios.get('/api/applyment', { params: { job: jobID }})
+        console.log(this.applyments)
+        if(this.applyments != null){
+            this.showCandidates = true
+        }
+    }
+    
+    toJobPage(id: string) {
+        this.$router.push(`/job/modify/${id}`)
+    }
+
 
     showDeleteDialog(id: string) {
         this.deleteDialog.show = true
@@ -91,7 +106,7 @@ export default class extends Vue {
     }
 
     async loadJobs() {
-        let { status, data } = await axios.get('api/job/published')
+        let { status, data } = await axios.get('/api/job/published')
         if (status === 200) {
             this.jobs = data
         }
@@ -101,7 +116,7 @@ export default class extends Vue {
         let id = this.deleteDialog.id
 
         this.deleteDialog.loading = true
-        let { status } = await axios.delete(`api/job/${id}`)
+        let { status } = await axios.delete(`/api/job/${id}`)
         this.deleteDialog.loading = false
 
         if (status === 204) {
@@ -114,6 +129,8 @@ export default class extends Vue {
     mounted() {
         this.loadJobs()
     }
+
+    
 }
 </script>
 

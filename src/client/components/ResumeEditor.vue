@@ -26,6 +26,10 @@ export default class extends Vue {
         this.name = data.name
         this.editor.setContent(data.content)
     }
+
+    setText(text:any) {
+        this.editor.setContent(text)
+    }
 }
 
 </script>
