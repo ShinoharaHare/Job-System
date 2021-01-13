@@ -1,3 +1,4 @@
+import { deleteByJob } from '@/server/applyment'
 import { auth, findJob, required } from '@/server/middlewares'
 import { Account, Job } from '@/server/models'
 import * as tags from '@/server/tags'
@@ -148,6 +149,7 @@ router.put('/:id', auth, findJob, required('data'), async (req, res) => {
 router.delete('/:id', auth, findJob, async (req, res) => {
     try {
         await req.job!.remove()
+        await deleteByJob(req.params.id)
         res.status(204).json()
     } catch (error) {
         console.error(error)
