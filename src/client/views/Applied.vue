@@ -69,11 +69,11 @@ export default class extends Vue {
             case State.Accepted:
                 return 'light-blue'
             case State.Rejected:
-                return 'green'
-            case State.Confirmed:
                 return 'red'
             case State.Abandoned:
                 return 'red'
+            case State.Confirmed:
+                return 'green'
         }
     }
 
@@ -85,10 +85,10 @@ export default class extends Vue {
                 return '雇主已接受'
             case State.Rejected:
                 return '雇主已拒絕'
-            case State.Confirmed:
-                return '已確認'
             case State.Abandoned:
                 return '已放棄'
+            case State.Confirmed:
+                return '已確認'
         }
     }
 
