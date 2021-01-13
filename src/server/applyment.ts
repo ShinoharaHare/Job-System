@@ -1,20 +1,84 @@
-import { Applyment, Job } from './models'
+import { Applyment, DApplyment, Job } from './models'
 import { sendNots } from '@/server/notification'
 
 import { Types } from 'mongoose'
 import 'ts-mongoose/plugin'
 
-export enum State {
+enum State {
     Pending = 0, // 初始狀態，等待刊登者回應
     Accepted, // 刊登者接受
-    Rejected, // 刊登者拒絕
-    Abandoned, // 申請人放棄
     Confirmed, // 申請人確認,
+
+    // 結束狀態
+    Abandoned, // 申請人放棄
+    Rejected, // 刊登者拒絕
     Finished // 完成
+}
+
+export enum ErrorCode {
+    
 }
 
 function notify(id: any, title: string, text: string) {
     sendNots([Types.ObjectId(id)], title, text)
+}
+
+export default class ApplymentHelper {
+    private document!: DApplyment
+
+    async accept() {
+        await this.document.updateOne({
+            state: State.Accepted
+        })
+    }
+
+    async reject() {
+        await this.document.updateOne({
+            state: State.Rejected
+        })
+    }
+
+    async confirm() {
+        await this.document.updateOne({
+            state: State.Confirmed
+        })
+    }
+
+    async abandon() {
+        await this.document.updateOne({
+            state: State.Abandoned
+        })
+    }
+
+    async finish() {
+        await this.document.updateOne({
+            state: State.Finished
+        })
+    }
+
+    static async apply({ applicant, job, resume }: {
+        applicant: string,
+        job: string,
+        resume: string
+    }) {
+
+    }
+
+    static async load(id: string) {
+        let doc = await Applyment.findById(id)
+        if (!doc) {
+            return null
+        }
+
+        let obj = new ApplymentHelper
+        obj.document = doc
+
+        return obj
+    }
+
+    static async find() {
+
+    }
 }
 
 export async function apply({ applicant, job, resume }: {
@@ -105,5 +169,18 @@ export async function abandon(id: string) {
     }
 
     applyment.state = State.Abandoned
+    await applyment.save()
+}
+
+export async function finish(id: string) {
+    let applyment = await Applyment.findById(id)
+        .populateTs('job')
+        .populateTs('applicant')
+
+    if (!applyment) {
+        return 404
+    }
+
+    applyment.state = State.Finished
     await applyment.save()
 }
