@@ -70,20 +70,23 @@ router.get('/search', async (req, res) => {
             },
             title: {
                 $regex: `${titleToSearch}`, $options: "$i"
-            }
+            },
+            finish: false
         })
         intersection = result//.map((x)=>x._id)
         let result2 = await Job.find({
             _id: {
                 $in: jobsWithTags
-            }
+            },
+            finish: false
         })
         intersection = intersection.concat(result2.filter((x) => !result.includes(x)))
     } else if (titleToSearch) {
         let result = await Job.find({
             title: {
                 $regex: `${titleToSearch}`, $options: "$i"
-            }
+            },
+            finish: false
         })
         intersection = result//.map((x)=>x._id)
     } else if (tagNames) {
@@ -91,7 +94,8 @@ router.get('/search', async (req, res) => {
         let result = await Job.find({
             _id: {
                 $in: jobsWithTags
-            }
+            },
+            finish: false
         })
         console.log("jobsWithTags: ", jobsWithTags)
         intersection = result//.map((x)=>x._id)
@@ -107,7 +111,9 @@ router.get('/tags', async (req, res) => {
 
 // 工作清單
 router.get('/all', async (req, res) => {
-    let jobs = await Job.find()
+    let jobs = await Job.find({
+        finish: false
+    })
     res.status(200).json(jobs)
 })
 
@@ -171,6 +177,19 @@ router.post('/:id/unfavorite', auth, async (req, res) => {
         console.error(error)
         res.json(500).json()
     }
+})
+
+router.get('/:id/finish', auth, findJob, async (req, res) => {
+    try {
+        await req.job!.updateOne({
+            finish: true
+        })
+        res.status(200).json()
+    } catch (error) {
+        console.error(error)
+        res.status(500).json()
+    }
+
 })
 
 export default router
