@@ -6,6 +6,7 @@ import { sendNots } from '@/server/notification'
 
 
 export const enum State {
+    Pending = 0, // 初始狀態，等待刊登者回應
     Accepted, // 刊登者接受
     Rejected, // 刊登者拒絕
     Abandoned, // 申請人放棄
@@ -90,7 +91,7 @@ export async function abandon(applyment: string) {
         return 404
     } 
 
-    doc.state = 
+    doc.state = 3
 }
 
 export async function find(job?: string, applicant?: string) {

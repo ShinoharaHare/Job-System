@@ -55,15 +55,31 @@ v-card.wrapper(tile, height="100%")
                     outlined,
                     color="primary",
                     width="70%",
-                    @click="apply"
+                    @click="apply",
+                    v-if="!isApplied"
                 ) 我要應徵
+                
+                span(v-else)
+                    v-btn(
+                        outlined,
+                        color="red",
+                        @click="abandon",
+                        v-if="isApplied.state == 0 || isApplied.state == 1"
+                    ) 放棄
+
+                    v-btn(
+                        outlined,
+                        color="green",
+                        @click="confirm",
+                        v-if="isApplied.state == 1"
+                    ) 確認
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop, Ref } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 
-import { IAccount, IJob } from '@/server/models'
+import { IAccount, IJob, IApplyment, Applyment } from '@/server/models'
 import { sendMessage } from '../sysmsg'
 
 import TagPicker from '@/client/components/TagPicker.vue'
@@ -87,6 +103,12 @@ export default class extends Vue {
         tags: [],
         time: []
     }
+
+    isApplied: any = {
+        state: Number
+    }
+
+    applymentsByJob: IApplyment[] = []
 
     headers = [
         { text: '星期(幾)', value: 'weekday', align: 'center' },
@@ -123,6 +145,12 @@ export default class extends Vue {
         }
     }
 
+    async getApplyments(){
+        const { data } = await axios.get('/api/applyment', { params: { job: this.id }})
+        this.applymentsByJob = data
+        this.isApplied = this.applymentsByJob.find(i => i.applicant === this.account._id)
+    }
+
     async apply() {
         let { status } = await axios.post('/api/applyment', {
             job: this.$route.params.id,
@@ -140,8 +168,32 @@ export default class extends Vue {
         }
     }
 
+    async abandon() {
+        let { status } = await axios.post(`/api/applyment/${this.isApplied._id}/abandon`)
+        switch (status) {
+            case 200:
+                sendMessage('放棄成功')
+                break
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
+        }
+    }
+
+    async confirm() {
+        let { status } = await axios.post(`/api/applyment/${this.isApplied._id}/confirm`)
+        console.log(status)
+        switch (status) {
+            case 200:
+                sendMessage('確認成功')
+                break
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
+        }
+    }
+
     mounted() {
         this.loadJob()
+        this.getApplyments()
     }
 }
 </script>
