@@ -179,7 +179,7 @@ router.post('/:id/unfavorite', auth, async (req, res) => {
     }
 })
 
-router.get('/:id/finish', auth, findJob, async (req, res) => {
+router.post('/:id/finish', auth, findJob, async (req, res) => {
     try {
         await req.job!.updateOne({
             finish: true
