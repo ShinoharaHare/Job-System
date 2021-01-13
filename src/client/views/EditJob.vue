@@ -62,7 +62,7 @@ export default class extends Vue {
 
         switch (status) {
             case 200:
-                sendMessage('修改成功')
+                sendMessage('修改成功', { timeout: 500 })
                 break
 
             case 401:
