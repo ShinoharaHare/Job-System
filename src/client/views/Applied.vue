@@ -2,70 +2,101 @@
 v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
         v-toolbar-title
-            h3 已應徵之工作
+            h3.ma-5 已應徵之工作
 
-    v-expansion-panels.mt-5(tile, popout, multiple, hover)
-        v-expansion-panel(v-for="({ title, publisher, content, vacancies, time, tags }, i) in jobs", :key="i")
-            v-expansion-panel-header
-                v-panel-title
-                    h3 {{ title }}
-                v-panel-description {{ publisher }}
-            v-expansion-panel-content
-                v-divider
-                v-card-actions
-                    v-list(two-line, width="100%")
-                        v-list-item
-                            v-list-item-content
-                                v-list-item-title 工作內容
-                                v-list-item-subtitle {{ content }}
+    v-list(two-line)
+        template(v-for="({ job, state }, i) in applyments")
+            v-list-item(@click="toJob(job._id)", :key="i")
+                v-list-item-content.mx-5
+                    v-list-item-title
+                        h3 {{ job.title }}
 
-                        v-list-item
-                            v-list-item-content
-                                v-list-item-title 工作人數
-                                v-list-item-subtitle {{ vacancies }}人
+                    v-list-item-subtitle
+                        v-chip.mr-1(
+                            x-small,
+                            color="primary",
+                            :key="i",
+                            v-for="(tag, i) in job.tags"
+                        ) {{ tag }}
 
-                        v-list-item
-                            v-list-item-content
-                                v-list-item-title 工作時間
-                                v-list-item-subtitle {{ time }}
+                v-avatar(tile, width="100")
+                    v-chip(small, :color="getColor(state)") {{ getText(state) }}
 
-                        v-list-item
-                            v-list-item-content
-                                v-list-item-title 工作標籤
-                                v-list-item-subtitle {{ tags }}
-
-                        v-divider.pa-1
-                        v-list-item
-                            v-spacer
-                            v-list-item-icon
-                                v-btn(color="primary") 確認
-                                v-btn(color="error") 撤銷
+            v-divider
 </template>
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
+import { namespace } from 'vuex-class'
+import { sendMessage } from '@/client/sysmsg'
+import { IAccount, IApplyment, IJob } from '@/server/models'
+
+const Account = namespace('Account')
+
+enum State {
+    Pending = 0, // 初始狀態，等待刊登者回應
+    Accepted, // 刊登者接受
+    Rejected, // 刊登者拒絕
+    Abandoned, // 申請人放棄
+    Confirmed, // 申請人確認,
+    Finished // 完成
+}
 
 @Component
 export default class extends Vue {
-    jobs: any[] = []
+    @Account.State account!: IAccount
+
+    applyments: IApplyment[] = []
+
+    getColor(state: State) {
+        switch (state) {
+            case State.Pending:
+                return 'secondary'
+            case State.Accepted:
+                return 'light-blue'
+            case State.Rejected:
+                return 'green'
+            case State.Confirmed:
+                return 'red'
+            case State.Abandoned:
+                return 'red'
+        }
+    }
+
+    getText(state: State) {
+        switch (state) {
+            case State.Pending:
+                return '等待中'
+            case State.Accepted:
+                return '雇主已接受'
+            case State.Rejected:
+                return '雇主已拒絕'
+            case State.Confirmed:
+                return '已確認'
+            case State.Abandoned:
+                return '已放棄'
+        }
+    }
+
+    // 從 account 找 applyments
+    async getApplyment() {
+        const { data } = await axios.get('/api/applyment')
+        this.applyments = data
+    }
+
+    toJob(id: string) {
+        this.$router.push(`/job/${id}`)
+    }
 
     mounted() {
-        for (let i = 0; i < 5; i++) {
-            this.jobs.push({
-                title: '工讀生',
-                publisher: 'WJ股份有限公司',
-                content: '賣屁股',
-                vacancies: '6',
-                time: '17:10 ~ 23:10',
-                tags: '#屁#股'
-            })
-        }
+        this.getApplyment()
     }
 }
 </script>
 
 <style lang="scss" scoped>
-.v-btn--absolute.v-btn--bottom, .v-btn--fixed.v-btn--bottom {
+.v-btn--absolute.v-btn--bottom,
+.v-btn--fixed.v-btn--bottom {
     bottom: 16px !important;
 }
 </style>

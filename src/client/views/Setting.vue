@@ -3,7 +3,7 @@ v-card(tile, height="100%")
     v-toolbar(dark, color="primary")
         v-toolbar-title 設定
 
-    v-list(v-if="isLogin" two-line)
+    v-list(v-if="isLogin", two-line)
         v-list-item(to="/personal")
             v-list-item-avatar
                 v-icon(large) mdi-account-outline
@@ -15,7 +15,7 @@ v-card(tile, height="100%")
 
     v-divider
 
-    v-list(v-if="isJobSeeker" subheader)
+    v-list(v-if="isJobSeeker", subheader)
         v-list-item(to="/link-ntou")
             v-list-item-icon
                 v-icon mdi-link-variant
@@ -30,7 +30,7 @@ v-card(tile, height="100%")
 
     v-divider
 
-    v-list(v-if="isLogin" subheader)
+    v-list(v-if="isLogin", subheader)
         //- v-subheader(inset) 控制
 
         v-list-item(@click="switchUserState")
@@ -39,14 +39,13 @@ v-card(tile, height="100%")
             v-list-item-content
                 v-list-item-title 切換模式
 
-        v-list-item(@click="showResumeTemplate = true" v-if="isJobSeeker")
+        v-list-item(to="/resume", v-if="isJobSeeker")
             v-list-item-icon
                 v-icon mdi-text-box-outline
             v-list-item-content
                 v-list-item-title 履歷範本
             v-list-item-icon
                 v-icon mdi-chevron-right
-            ResumeTemplatesDialog(v-model="showResumeTemplate")
 
         v-list-item(@click="showBlacklist = true")
             v-list-item-icon
@@ -61,7 +60,7 @@ v-card(tile, height="100%")
 
     v-list(subheader)
         //- v-subheader(inset) 控制
-        v-list-item(v-if="!isLogin" to="/login")
+        v-list-item(v-if="!isLogin", to="/login")
             v-list-item-icon
                 v-icon mdi-login-variant
             v-list-item-content
@@ -95,55 +94,46 @@ v-card(tile, height="100%")
 import { Vue, Component } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import BlacklistDialog from '@/client/components/BlacklistDialog.vue'
-import ResumeTemplatesDialog from '@/client/components/ResumeTemplatesDialog.vue'
 import { sendMessage } from '../sysmsg'
+import { IAccount } from '@/server/models'
 
 const Account = namespace('Account')
 
-@Component({ components: { BlacklistDialog, ResumeTemplatesDialog } })
+@Component({ components: { BlacklistDialog } })
 export default class extends Vue {
-    @Account.Action('logout') _logout!: Function
-    @Account.Action('switchUserState') _switchUserState!: Function
+    @Account.State account!: IAccount
     @Account.State isJobSeeker!: boolean
     @Account.State isLogin!: boolean
+    @Account.Action('logout') _logout!: Function
+    @Account.Action('switchUserState') _switchUserState!: Function
 
-    name = ''
     showBlacklist = false
-    showResumeTemplate = false
 
     logoutDialog = {
         show: false,
         loading: false
     }
 
-    async getName() {
-        const { status, data } = await axios.get('/api/account', {
-            params: { fields: ['personal'] }
-        })
-
-        switch (status) {
-        case 200:
-            this.name = data.personal.nameZH
-            break
-        }
+    get name() {
+        return this.account?.personal?.nameZH
     }
 
     async logout() {
         this.logoutDialog.loading = true
         const status = await this._logout()
         switch (status) {
-        case 204:
-            sendMessage('已登出')
-            this.logoutDialog.show = false
-            location.replace('/')
-            break
+            case 204:
+                sendMessage('已登出')
+                this.logoutDialog.show = false
+                location.replace('/')
+                break
 
-        case 401:
-            sendMessage('尚未登入', { color: 'error' })
-            break
+            case 401:
+                sendMessage('尚未登入', { color: 'error' })
+                break
 
-        default:
-            sendMessage('未知的錯誤', { color: 'error' })
+            default:
+                sendMessage('未知的錯誤', { color: 'error' })
         }
         this.logoutDialog.loading = false
     }
@@ -154,7 +144,7 @@ export default class extends Vue {
     }
 
     mounted() {
-        this.getName()
+        
     }
 }
 

@@ -17,8 +17,8 @@ v-card(flat, tile, height="100%")
                     color="primary",
                     width="40%",
                     :loading="loading",
-                    @click="submit"
-                ) 新建
+                    @click="save"
+                ) 儲存
                 v-spacer
 </template>
 
@@ -27,22 +27,42 @@ import { Vue, Component, Ref } from 'vue-property-decorator'
 
 import JobEditor from '@/client/components/JobEditor.vue'
 import { sendMessage } from '../sysmsg'
+import { IJob } from '@/server/models'
 
 @Component({ components: { JobEditor } })
 export default class extends Vue {
     @Ref() editor!: JobEditor
+
+    job: IJob | null = null
+
     loading = false
 
-    async submit() {
+    get id() {
+        return this.$route.params.id
+    }
+
+    async loadJob() {
+        const { status, data } = await axios.get(`/api/job/${this.id}`)
+
+        switch (status) {
+            case 200:
+                this.job = data
+                break
+        }
+
+        this.editor.setData(this.job!)
+    }
+
+    async save() {
         this.loading = true
-        const { status, data } = await axios.post('/api/job', {
+        const { status, data } = await axios.put('/api/job', {
             data: this.editor.getData()
         })
         this.loading = false
 
         switch (status) {
             case 201:
-                sendMessage('新建成功')
+                sendMessage('修改成功')
                 break
 
             case 401:
@@ -53,27 +73,7 @@ export default class extends Vue {
     }
 
     mounted() {
-        this.editor.content.setContent(`### 公司名稱
-和蚊子便利商店
-
-### 工作內容
-* #### 打包作業
-* #### 接待客人
-* #### 整理清潔環境
-* #### 外送服務
-<br> 
-
-### 待遇
-時薪 $160 
-
-### 需求人數
-1人
-
-### 工作地點
-基隆市中正區北寧路2號`)
+        this.loadJob()
     }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

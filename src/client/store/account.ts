@@ -2,7 +2,6 @@ import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
 import sha256 from 'crypto-js/sha256'
 
 import { IAccount } from '@/server/models/account'
-import { IJob } from '@/server/models/job'
 
 interface IPayload {
     email: string;
@@ -31,11 +30,18 @@ export default class extends VuexModule {
     }
 
     @Action
+    async register({ email, password }: IPayload) {
+        const hash = sha256(password).toString()
+        const { status } = await axios.post('/api/account', { email, hash })
+        return status
+    }
+
+    @Action
     async login({ email, password }: IPayload) {
         const hash = sha256(password).toString()
         const { status, data } = await axios.post('/api/account/login', { email, hash })
 
-        this.context.commit('setIsLogin', status === 200)
+        this.context.dispatch('getAccountInfo')
 
         return status
     }
@@ -58,6 +64,26 @@ export default class extends VuexModule {
         if (status === 200) {
             this.context.commit('setAccount', data)
             this.context.commit('setIsLogin', true)
+        }
+    }
+
+    @Action
+    async favorite(job: any) {
+        let { status } = await axios.post(`/api/job/${job}/favorite`)
+        if (status === 200) {
+            let temp = this.account
+            temp!.favorite!.push(job)
+            this.context.commit('setAccount', temp)
+        }
+    }
+
+    @Action
+    async unfavorite(job: any) {
+        let { status } = await axios.post(`/api/job/${job}/unfavorite`)
+        if (status === 200) {
+            let temp = this.account
+            temp!.favorite! = temp!.favorite!.filter(x => x != job)
+            this.context.commit('setAccount', temp)
         }
     }
 }

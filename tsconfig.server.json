@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist/server",
+        "plugins": [
+            {
+                "transform": "typescript-transform-paths"
+            }
+        ]
+    },
+    "exclude": [
+        "src/client",
+        "tests/**/*.ts",
+        "tests/**/*.tsx"
+    ]
+}

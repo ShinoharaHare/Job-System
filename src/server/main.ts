@@ -1,12 +1,13 @@
 import config from './config'
-import api from './routes/api'
+import routes from './routes'
 
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import history from 'connect-history-api-fallback'
 
 import * as path from 'path'
-import './AccountBackend'
+import './applyment'
+// import './AccountBackend'
 
 const app = express()
 
@@ -14,10 +15,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cookieParser())
 
-app.use('/api', api)
+app.use('/', routes)
 
 app.use(history())
-app.use(express.static(path.resolve(__dirname, '../../dist/client')))
+app.use(express.static(path.resolve(__dirname, '../client')))
 
 const port = Number(process.env.PORT) || 3000
 app.listen(port, () => {
