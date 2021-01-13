@@ -1,23 +1,9 @@
 import { Applyment, DApplyment, Job } from './models'
 import { sendNots } from '@/server/notification'
+import { ApplymentState as State } from '@/server/enums'
 
 import { Types } from 'mongoose'
 import 'ts-mongoose/plugin'
-
-enum State {
-    Pending = 0, // 初始狀態，等待刊登者回應
-    Accepted, // 刊登者接受
-    Confirmed, // 申請人確認,
-
-    // 結束狀態
-    Abandoned, // 申請人放棄
-    Rejected, // 刊登者拒絕
-    Finished // 完成
-}
-
-export enum ErrorCode {
-    
-}
 
 function notify(id: any, title: string, text: string) {
     sendNots([Types.ObjectId(id)], title, text)
@@ -109,12 +95,20 @@ export async function apply({ applicant, job, resume }: {
 }
 
 export async function findByApplicant(applicant: string) {
-    let applyments = await Applyment.find({ applicant }).populateTs('job')
+    let applyments = await Applyment
+        .find({ applicant })
+        .populateTs('job')
+        .populateTs('applicant')
+
     return applyments
 }
 
 export async function findByJob(job: string) {
-    let applyments = await Applyment.find({ job }).populateTs('job')
+    let applyments = await Applyment
+        .find({ job })
+        .populateTs('job')
+        .populateTs('applicant')
+
     return applyments
 }
 
@@ -183,4 +177,8 @@ export async function finish(id: string) {
 
     applyment.state = State.Finished
     await applyment.save()
+}
+
+export async function deleteByJob(job: string) {
+    await Applyment.deleteMany({ job })
 }

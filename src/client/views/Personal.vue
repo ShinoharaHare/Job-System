@@ -1,6 +1,6 @@
 <template lang="pug">
 v-card(height="100%")
-    v-toolbar(flat)
+    v-toolbar
         v-btn(icon, @click="$router.back()")
             v-icon(color="error") mdi-arrow-left
         v-spacer
@@ -12,19 +12,20 @@ v-card(height="100%")
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component, Ref } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
+import { sendMessage } from '../sysmsg'
 
 import PersonalInfo from '@/client/components/PersonalInfo.vue'
-import { sendMessage } from '../sysmsg'
+
 
 @Component({ components: { PersonalInfo } })
 export default class extends Vue {
-    personalInfo!: any
+    @Ref() info!: PersonalInfo
 
     async save() {
         const { status } = await axios.patch('/api/account', {
-            data: { personal: this.personalInfo.getData() }
+            data: { personal: this.info.getData() }
         })
 
         switch (status) {
@@ -41,14 +42,14 @@ export default class extends Vue {
         }
     }
 
-    async getData() {
+    async loadData() {
         const { status, data } = await axios.get('/api/account', {
             params: { fields: ['personal'] }
         })
 
         switch (status) {
         case 200:
-            this.personalInfo.setData(data.personal)
+            this.info.setData(data.personal)
             break
 
         case 401:
@@ -61,8 +62,7 @@ export default class extends Vue {
     }
 
     mounted() {
-        this.personalInfo = this.$refs.info
-        this.getData()
+        this.loadData()
     }
 }
 </script>

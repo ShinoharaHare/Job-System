@@ -7,9 +7,9 @@ const SEvent = createSchema({
     end: Type.string({ required: true }),
     weekday: Type.number({ required: true })
 },
-{
-    _id: false
-})
+    {
+        _id: false
+    })
 
 const ResumeTemplate = createSchema({
     name: Type.string({ required: true }),
@@ -33,9 +33,9 @@ const SPersonal = createSchema({
     gender: Type.string(),
     bloodType: Type.string()
 },
-{
-    _id: false
-})
+    {
+        _id: false
+    })
 
 export const SAccount = createSchema({
     email: Type.string({ required: true, unique: true }),
@@ -47,7 +47,7 @@ export const SAccount = createSchema({
     notification: Type.array().of(Notification),
     favorite: Type.array().of(Type.ref(Type.objectId()).to('Job', SJob)),
     events: Type.array().of(SEvent),
-    personal: Type.schema().of(SPersonal),
+    personal: Type.schema({ default: {} }).of(SPersonal),
     resetPwd: Type.object().of({
         code: Type.string({}),
         expired: Type.number({})

@@ -3,6 +3,7 @@ import * as Applyment from '@/server/applyment'
 
 import { Router } from 'express'
 import { Account } from '@/server/models'
+
 const router = Router()
 
 router.post('/', auth, required('job', 'resume'), async (req, res) => {
@@ -32,6 +33,10 @@ router.get('/', auth, async (req, res) => {
     } else {
         res.status(200).json(result)
     }
+})
+
+router.get('/', async (req, res) => {
+
 })
 
 router.post('/:id/accept', auth, async (req, res) => {
@@ -83,7 +88,7 @@ router.post('/:id/finish', auth, async (req, res) => {
 router.get('/name', auth, async (req, res) => {
     const account = await Account.findOne({
         _id: Object(req.query.candidateID),
-    },{email:1, personal:1, _id:0})
+    }, { email: 1, personal: 1, _id: 0 })
 
     res.status(200).json(account)
 })

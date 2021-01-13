@@ -34,11 +34,6 @@ const routes: Array<RouteConfig> = [
         component: () => import('@/client/views/NewJob.vue')
     },
     {
-        path: '/job/modify/:id',
-        name: 'ModifyJob',
-        component: () => import('@/client/views/ModifyJob.vue')
-    },
-    {
         path: '/job/:id',
         name: 'Job',
         component: () => import('@/client/views/Job.vue')
@@ -52,6 +47,16 @@ const routes: Array<RouteConfig> = [
         path: '/job/:id/apply',
         name: 'ApplyJob',
         component: () => import('@/client/views/ApplyJob.vue')
+    },
+    {
+        path: '/job/:id/applicant',
+        name: 'Applicant',
+        component: () => import('@/client/views/Applicant.vue')
+    },
+    {
+        path: '/applyment/:id',
+        name: 'Applyment',
+        component: () => import('@/client/views/Applyment.vue')
     },
     {
         path: '/published',
@@ -77,11 +82,6 @@ const routes: Array<RouteConfig> = [
         path: '/resume/new',
         name: 'NewResume',
         component: () => import('@/client/views/NewResume.vue')
-    },
-    {
-        path: '/resume/:id',
-        // name: 'EditResume',
-        // component: () => import('@/client/views/EditResume.vue')
     },
     {
         path: '/resume/:id/edit',
