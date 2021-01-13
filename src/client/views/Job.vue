@@ -3,7 +3,6 @@ v-card.wrapper(tile, height="100%")
     v-toolbar(dark)
         v-btn(icon, @click="$router.back()")
             v-icon mdi-arrow-left
-
         | {{ job.title }}
         v-spacer
 

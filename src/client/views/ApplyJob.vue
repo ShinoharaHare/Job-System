@@ -1,7 +1,9 @@
 <template lang="pug">
 v-card(height="100vh")
     v-toolbar(dark)
-        v-toolbar-title 應徵 {{ job.title }}
+        v-toolbar-title
+            span.text-h6 應徵 
+            span.text-h5 {{ job.title }}
 
     v-card-text
         v-select(
@@ -28,15 +30,28 @@ v-card(height="100vh")
                     @click="apply"
                 ) 提交履歷
                 v-spacer
+
+    v-dialog(v-model="warning")
+        v-card
+            v-card-title
+                h4 不要翹課喔
+
+            v-card-text 
+                h3 請注意，此工作時間跟課表有衝突喔!
+
+            v-card-actions
+                v-spacer
+                v-btn(outlined, color="primary", @click="warning = false") 我知道了
 </template>
 
 <script lang="ts">
 import { Vue, Component, Ref } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import { sendMessage } from '../sysmsg'
+import { IAccount } from '@/server/models'
 
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
-import { IAccount } from '@/server/models'
+
 
 const Account = namespace('Account')
 
@@ -55,6 +70,7 @@ export default class extends Vue {
     }
 
     loading = false
+    warning = false
 
     get id() {
         return this.$route.params.id
@@ -72,6 +88,39 @@ export default class extends Vue {
     select(i: number) {
         let templates = this.account?.resumeTemplates || []
         this.editor.setContent(templates[i].content)
+    }
+
+    compareTime(dateStr1: string, dateStr2: string): number { // 1: >, -1: <, 0: ==
+        return (Date.parse(`0 ${dateStr1}`) - Date.parse(`0 ${dateStr2}`)) / 1000
+    }
+
+    conflict(event1: any, event2: any): boolean {
+        if (this.compareTime(event1.start, event2.start) <= 0) {
+            if (this.compareTime(event1.end, event2.start) > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            if (this.compareTime(event2.end, event1.start) > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    checkTime() {
+        for (let jobTime of this.job.time) {
+            for (let event of this.account.events!) {
+                if (event.weekday == jobTime.weekday) {
+                    if (this.conflict(event, jobTime)) {
+                        this.warning = true
+                        return
+                    }
+                }
+            }
+        }
     }
 
     async apply() {
@@ -101,6 +150,7 @@ export default class extends Vue {
 
         if (status === 200) {
             this.job = data
+            this.checkTime()
         }
     }
 
