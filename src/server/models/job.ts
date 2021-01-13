@@ -17,7 +17,8 @@ export const SJob = createSchema({
     // vacanies: Type.number({ required: true }),
     time: Type.array({ required: true }).of(Time),
     tags: Type.array({ required: true }).of(Type.string()),
-    publisher: Type.objectId({ required: true })
+    publisher: Type.objectId({ required: true }),
+    finish: Type.boolean({ default: false })
 })
 
 SJob.add({
