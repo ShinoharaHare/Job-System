@@ -84,6 +84,7 @@ import { sendMessage } from '../sysmsg'
 import TagPicker from '@/client/components/TagPicker.vue'
 import RichTextEditor from '@/client/components/RichTextEditor.vue'
 import router from '@/server/routes/api/applyment'
+import { ApplymentState } from '@/server/enums'
 
 const Account = namespace('Account')
 
@@ -152,7 +153,10 @@ export default class extends Vue {
     async checkIsApplied() {
         const { status, data } = await axios.get('/api/applyment', { params: { job: this.id } })
         if (status == 200) {
-            this.isApplied = !!data.find((i: any) => i.applicant._id === this.account._id)
+            let applyments: any[] = data
+            this.isApplied = applyments.some(x => {
+                return x.applicant._id == this.account._id && x.state! <= ApplymentState.Confirmed
+            })
         }
     }
 
