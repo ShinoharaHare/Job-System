@@ -9,7 +9,7 @@ v-card(tile, height="100%")
                 v-icon(large) mdi-account-outline
 
             v-list-item-content
-                v-list-item-title.headline {{ name }}
+                v-list-item-title.headline {{ name || account.email }}
                 v-list-item-subtitle 編輯資料
                     v-icon mdi-chevron-right
 
