@@ -73,6 +73,8 @@ export default class extends Vue {
                 return 'red'
             case State.Confirmed:
                 return 'green'
+            case State.Finished:
+                return 'deep-purple darken-1'
         }
     }
 
@@ -81,13 +83,15 @@ export default class extends Vue {
             case State.Pending:
                 return '等待中'
             case State.Accepted:
-                return '雇主已接受'
+                return '待確認'
             case State.Rejected:
-                return '雇主已拒絕'
+                return '拒絕'
             case State.Abandoned:
                 return '已放棄'
             case State.Confirmed:
-                return '已確認'
+                return '進行中'
+            case State.Finished:
+                return '完成'
         }
     }
 

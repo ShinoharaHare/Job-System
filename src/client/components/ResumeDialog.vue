@@ -1,17 +1,16 @@
 <template lang="pug">
-v-dialog(eager, :value="value")
+v-dialog(eager, :value="value" @input="$emit('input', $event)")
     v-card(tile)
-        v-toolbar(dark)
+        //- v-toolbar(dark)
             v-btn(icon, @click="$emit('input', false)")
                 v-icon mdi-close
-            //- v-toolbar-title 履歷
+            v-toolbar-title 履歷
 
         RichTextEditor(
             hideToolbar,
             hideStatus,
             readOnly,
-            ref="editor",
-            height="calc(100vh - 56px)"
+            ref="editor"
         )
 
         //- v-footer(fixed, padless)

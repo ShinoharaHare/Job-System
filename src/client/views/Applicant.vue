@@ -39,7 +39,7 @@ v-card(tile)
 
                             v-btn(
                                 outlined,
-                                color="yellow darken-1",
+                                color="deep-purple darken-1",
                                 @click="finish(x._id)",
                                 v-if="isFinishable(x.state)"
                             ) 完成
@@ -91,6 +91,8 @@ export default class extends Vue {
                 return 'green'
             case State.Abandoned:
                 return 'red'
+            case State.Finished:
+                return 'deep-purple darken-1'
         }
     }
 
@@ -99,13 +101,15 @@ export default class extends Vue {
             case State.Pending:
                 return '待回應'
             case State.Accepted:
-                return '待確認'
+                return '等待中'
             case State.Rejected:
                 return '已拒絕'
             case State.Confirmed:
-                return '已確認'
+                return '進行中'
             case State.Abandoned:
-                return '已放棄'
+                return '放棄'
+            case State.Finished:
+                return '完成'
         }
     }
 
