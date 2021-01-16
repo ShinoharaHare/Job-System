@@ -1,49 +1,55 @@
 <template lang="pug">
 v-card(tile, height="100%")
-    v-toolbar(dark, color="primary")
+    v-toolbar(dark, color="primary" style="z-index: 1")
         v-toolbar-title 應徵管理
 
-    v-list(two-line)
-        template(v-for="({ job, state, _id }, i) in applyments")
-            v-list-group
-                template(#activator)
-                    v-list-item-content
-                        v-list-item-title
-                            h3 {{ job.title }}
+    v-card(flat, :loading="loading")
+        v-list(two-line, v-if="applyments.length > 0")
+            template(v-for="({ job, state, _id }, i) in applyments")
+                v-list-group
+                    template(#activator)
+                        v-list-item-content
+                            v-list-item-title
+                                h3 {{ job.title }}
 
-                        v-list-item-subtitle
-                            v-chip.mr-1(
-                                x-small,
+                            v-list-item-subtitle
+                                v-chip.mr-1(
+                                    x-small,
+                                    color="primary",
+                                    :key="i",
+                                    v-for="(tag, i) in job.tags"
+                                ) {{ tag }}
+
+                        v-list-item-avatar(tile, width="60")
+                            v-chip(small, dark, :color="getColor(state)") {{ getText(state) }}
+
+                    v-card(flat)
+                        v-card-actions
+                            v-spacer
+                            v-btn(
+                                outlined,
+                                color="secondary",
+                                :to="`/job/${job._id}`"
+                            ) 查看
+                            v-btn(
+                                outlined,
+                                color="error",
+                                :disabled="!isAbandonable(state)",
+                                @click="abandon(_id)"
+                            ) 放棄
+                            v-btn(
+                                outlined,
                                 color="primary",
-                                :key="i",
-                                v-for="(tag, i) in job.tags"
-                            ) {{ tag }}
+                                :disabled="!isConfirmable(state)",
+                                @click="confirm(_id)"
+                            ) 確認
 
-                    v-list-item-avatar(tile, width="60")
-                        v-chip(small, dark, :color="getColor(state)") {{ getText(state) }}
+                v-divider
 
-                v-card(flat)
-                    v-card-actions
-                        v-spacer
-                        v-btn(
-                            outlined,
-                            color="secondary",
-                            :to="`/job/${job._id}`"
-                        ) 查看
-                        v-btn(
-                            outlined,
-                            color="error",
-                            :disabled="!isAbandonable(state)",
-                            @click="abandon(_id)"
-                        ) 放棄
-                        v-btn(
-                            outlined,
-                            color="primary",
-                            :disabled="!isConfirmable(state)",
-                            @click="confirm(_id)"
-                        ) 確認
-
-            v-divider
+        v-card-text.text-center(v-else)
+            v-avatar(size="300")
+                v-img(:src="require('@/client/assets/empty.png')")
+            .text-h5 還沒有應徵工作喔
 </template>
 
 <script lang="ts">
@@ -60,6 +66,7 @@ export default class extends Vue {
     @Account.State account!: IAccount
 
     applyments: IApplyment[] = []
+    loading = false
 
     getColor(state: State) {
         switch (state) {
@@ -134,7 +141,10 @@ export default class extends Vue {
     }
 
     async loadApplyments() {
+        this.loading = true
         const { data } = await axios.get('/api/applyment')
+        this.loading = false
+
         this.applyments = data
     }
 

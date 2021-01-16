@@ -43,7 +43,12 @@ v-card(
 
             v-divider(v-if="i < items.length - 1")
 
-    v-card-text.text-center(v-else) 沒有資料
+    v-card-text.text-center(v-else)
+        v-avatar(size="300")
+            v-img(:src="emptyImage")
+        .text-h5 {{ emptyText }}
+                
+            
 </template>
 
 <script lang="ts">
@@ -61,6 +66,8 @@ export default class extends Vue {
     @Prop() outlined!: boolean
     @Prop() loading!: boolean
     @Prop() disabled!: boolean
+    @Prop() emptyText!: string
+    @Prop() emptyImage!: string
 
 
     @Account.State account!: IAccount

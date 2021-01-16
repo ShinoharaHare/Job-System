@@ -42,9 +42,11 @@ v-card(tile, height="100%")
                 )
 
         JobList(
+            outlined,
+            empty-text="沒有結果",
+            :empty-image="require('@/client/assets/no-result.svg')",
             :items="jobs",
             :height="jobListHeight",
-            outlined,
             :loading="loading",
             :disabled="loading"
         )
