@@ -1,5 +1,5 @@
 <template lang="pug">
-v-card(flat style="padding-bottom: 56px")
+v-card(flat, style="padding-bottom: 56px")
     v-card-text
         v-text-field(label="標題", v-model="title")
 
@@ -37,6 +37,7 @@ v-card(flat style="padding-bottom: 56px")
                                     dense,
                                     outlined,
                                     label="星期(幾)",
+                                    prepend-icon="mdi-calendar-range",
                                     :items="addTimeDialog.weekdays",
                                     v-model="addTimeDialog.weekday"
                                 )
