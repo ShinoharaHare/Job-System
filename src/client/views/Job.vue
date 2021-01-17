@@ -20,7 +20,7 @@ v-card.wrapper(tile, height="100%")
 
             v-row
                 v-col 
-                    TagPicker(readOnly, ref="tagPicker", label="標籤")
+                    TagPicker(readOnly, label="標籤", v-model="job.tags")
 
             v-row
                 v-col
@@ -96,7 +96,6 @@ export default class extends Vue {
     @Account.Action unfavorite!: Function
 
     @Ref() editor!: RichTextEditor
-    @Ref() tagPicker!: TagPicker
 
     job: any = {
         title: '',
@@ -131,7 +130,6 @@ export default class extends Vue {
 
     setData(job: IJob) {
         this.job = job
-        this.tagPicker.setData(job.tags)
         this.editor.setContent(job.content!)
         this.editor.refresh()
     }

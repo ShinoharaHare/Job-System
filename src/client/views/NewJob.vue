@@ -34,9 +34,14 @@ export default class extends Vue {
     loading = false
 
     async submit() {
+        let d = this.editor.getData()
+        if (!d.title) {
+            sendMessage('請填寫標題', { color: 'warning', timeout: 1000 })
+            return
+        }
         this.loading = true
         const { status, data } = await axios.post('/api/job', {
-            data: this.editor.getData()
+            data: d
         })
         this.loading = false
 

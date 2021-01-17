@@ -29,17 +29,7 @@ v-card(tile, height="100%")
                 v-btn(color="primary", @click="search") 搜尋
 
         v-expand-transition
-            div(v-if="showTags")
-                v-autocomplete(
-                    outlined,
-                    clearable,
-                    multiple,
-                    chips,
-                    deletable-chips,
-                    label="標籤過濾",
-                    :items="allTags",
-                    v-model="tags"
-                )
+            TagPicker(label="標籤過濾", v-if="showTags", v-model="tags")
 
         JobList(
             outlined,
@@ -67,7 +57,6 @@ export default class extends Vue {
 
     searchText = ''
     showTags = false
-    allTags = []
     loading = false
     tags: string[] = []
     jobs: any[] = []
@@ -84,12 +73,6 @@ export default class extends Vue {
             this.jobs = data
     }
 
-    async loadTags() {
-        let { status, data } = await axios.get('/api/job/tags')
-        if (status === 200)
-            this.allTags = data.map((x: any) => x.name)
-    }
-
     async search() {
         this.loading = true
         let { status, data } = await axios.get('/api/job/search', {
@@ -104,7 +87,6 @@ export default class extends Vue {
 
     mounted() {
         this.loadJobs()
-        this.loadTags()
     }
 }
 </script>
