@@ -49,56 +49,18 @@ v-card(flat, tile)
                         :items="addDialog.weekdays",
                         :rules="[required]"
                     )
-
-                    v-menu(
-                        ref="menu1",
-                        transition="scale-transition",
-                        v-model="addDialog.menu1",
-                        :close-on-content-click="false",
-                        :return-value.sync="addDialog.start"
+                    TimePicker(
+                        label="開始時間",
+                        prepend-icon="mdi-clock-start",
+                        :rules="[required]",
+                        v-model="addDialog.start"
                     )
-                        template(v-slot:activator="{ on, attrs }")
-                            v-text-field(
-                                required,
-                                readonly,
-                                label="開始時間",
-                                prepend-icon="mdi-clock-time-twelve-outline",
-                                :rules="[required]",
-                                v-model="addDialog.start",
-                                v-bind="attrs",
-                                v-on="on"
-                            )
-
-                        v-time-picker(
-                            v-if="addDialog.menu1",
-                            v-model="addDialog.start",
-                            @click:minute="$refs.menu1.save(addDialog.start)"
-                        )
-
-                    v-menu(
-                        ref="menu2",
-                        transition="scale-transition",
-                        v-model="addDialog.menu2",
-                        :close-on-content-click="false",
-                        :return-value.sync="addDialog.end"
+                    TimePicker(
+                        label="結束時間",
+                        prepend-icon="mdi-clock-end",
+                        :rules="[required]",
+                        v-model="addDialog.end"
                     )
-                        template(v-slot:activator="{ on, attrs }")
-                            v-text-field(
-                                required,
-                                readonly,
-                                label="結束時間",
-                                prepend-icon="mdi-clock-outline",
-                                :rules="[required]",
-                                v-model="addDialog.end",
-                                v-bind="attrs",
-                                v-on="on"
-                            )
-
-                        v-time-picker(
-                            v-if="addDialog.menu2",
-                            v-model="addDialog.end",
-                            @click:minute="$refs.menu2.save(addDialog.end)"
-                        )
 
                 v-card-actions
                     v-spacer
@@ -115,7 +77,9 @@ v-card(flat, tile)
 import { IEvent } from '@/server/models'
 import { Vue, Component, Prop, Watch } from 'vue-property-decorator'
 
-@Component
+import TimePicker from '@/client/components/TimePicker.vue'
+
+@Component({ components: { TimePicker } })
 export default class extends Vue {
     events: any[] = []
     weekdays = [1, 2, 3, 4, 5, 6, 0]
@@ -143,9 +107,7 @@ export default class extends Vue {
         weekday: 0,
         start: '',
         end: '',
-        valid: false,
-        menu1: false,
-        menu2: false
+        valid: false
     }
 
     removeDialog = {

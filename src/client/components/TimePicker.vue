@@ -1,11 +1,5 @@
 <template lang="pug">
-v-dialog(
-    persistent,
-    width="290px",
-    ref="dialog",
-    :return-value.sync="value",
-    v-model="dialog"
-)
+v-dialog(persistent, width="290px", v-model="dialog")
     template(v-slot:activator="{ on, attrs }")
         v-text-field(
             outlined,
@@ -14,6 +8,7 @@ v-dialog(
             :prepend-icon="prependIcon",
             :label="label",
             :value="value",
+            :rules="rules",
             v-bind="attrs",
             v-on="on"
         )
@@ -22,12 +17,12 @@ v-dialog(
         year-icon="mdi-calendar-blank",
         prev-icon="mdi-skip-previous",
         next-icon="mdi-skip-next",
-        :value="value",
-        @input="$emit('input', $event)"
+        v-model="time",
+        v-if="dialog"
     )
         v-spacer
-        v-btn(text, color="primary", @click="dialog = false") 取消
-        v-btn(text, color="primary", @click="$refs.dialog.save(value)") 確認
+        v-btn(text, color="error", @click="dialog = false") 取消
+        v-btn(text, color="primary", @click="save") 確認
 </template>
 
 <script lang="ts">
@@ -39,9 +34,17 @@ export default class extends Vue {
     value!: string
     @Prop({ default: '' })
     label!: string
-    @Prop({ default: ''})
+    @Prop({ default: '' })
     prependIcon!: string
+    @Prop()
+    rules!: ((v: string) => boolean | string)[]
 
+    time = null
     dialog = false
+
+    save() {
+        this.dialog = false
+        this.$emit('input', this.time)
+    }
 }
 </script>
